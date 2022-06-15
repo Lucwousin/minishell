@@ -23,11 +23,15 @@ LIBFT_LIB = $(addprefix $(LIBFT_DIR), libft.a)
 LIBFT_INC = $(addprefix $(LIBFT_DIR), $(INC_DIR))
 INCLUDES += -I $(LIBFT_INC)
 
+LIBS += $(LIBFT_LIB)
+LIBS += -lreadline
+LIBS += -lhistory
+
 all: $(NAME)
 
 $(NAME): $(LIBFT_LIB) $(OBJS_PREFIXED)
 	@echo "Compiling main executable!"
-	@$(CC) $(CFLAGS) $(LIBFT_LIB) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS_PREFIXED) $(LIBS) -o $(NAME)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES)
 	@mkdir -p $(@D)
