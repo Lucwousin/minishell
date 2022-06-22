@@ -1,7 +1,7 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS += $(INCLUDES) -Wall -Werror -Wextra
+CFLAGS += $(INCLUDES) -Wall -Werror -Wextra -g
 
 OBJ_DIR = obj/
 SRC_DIR = src/
