@@ -8,8 +8,11 @@ SRC_DIR = src/
 INC_DIR = include/
 INCLUDES += -I $(INC_DIR)
 
-SRCS = minishell.c
-HEADERS = minishell.h
+SRCS = minishell.c															\
+	   lexer/tokenize.c														\
+	   lexer/matcher.c
+HEADERS = minishell.h														\
+		  token.h
 HEADER_FILES += $(addprefix $(INC_DIR), $(HEADERS))
 OBJS = $(SRCS:.c=.o)
 OBJS_PREFIXED = $(addprefix $(OBJ_DIR), $(OBJS))
