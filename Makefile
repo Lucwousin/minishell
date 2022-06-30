@@ -26,6 +26,10 @@ LIBFT_LIB = $(addprefix $(LIBFT_DIR), libft.a)
 LIBFT_INC = $(addprefix $(LIBFT_DIR), $(INC_DIR))
 INCLUDES += -I $(LIBFT_INC)
 
+ifeq ($(shell uname), Darwin)
+	LIBS += -L$(HOME)/.brew/opt/readline/lib
+endif
+
 LIBS += $(LIBFT_LIB)
 LIBS += -lreadline
 LIBS += -lhistory
