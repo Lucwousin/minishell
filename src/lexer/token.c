@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <token.h>
+#include <libft.h>
 
 void	resize_tokens(t_tokens *data, size_t new_len)
 {
