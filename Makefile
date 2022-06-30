@@ -8,6 +8,7 @@ CFLAGS += -I $(INCD)
 # SOURCE FILES
 SRCD = src/
 SRCS = minishell.c															\
+	   lexer/token.c														\
 	   lexer/tokenize.c														\
 	   lexer/matcher.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
