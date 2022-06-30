@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token.h"
-#include "libft.h"
+#include <token.h>
+#include <libft.h>
 #include <stdbool.h>
 
 /**

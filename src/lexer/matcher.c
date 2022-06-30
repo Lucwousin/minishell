@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token.h"
-#include "libft.h"
+#include <token.h>
+#include <libft.h>
 
 static void	match_operator(const char *cmd, size_t *idx, t_codepoint *token)
 {
