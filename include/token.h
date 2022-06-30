@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   token.h                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: user <user@student.codam.nl>                 +#+                     */
+/*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/22 14:00:50 by user          #+#    #+#                 */
-/*   Updated: 2022/06/22 14:00:50 by user          ########   odam.nl         */
+/*   Created: 2022/06/22 14:00:50 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/06/22 14:00:50 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 

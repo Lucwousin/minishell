@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   matcher.c                                          :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: user <user@student.codam.nl>                 +#+                     */
+/*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/22 13:57:32 by user          #+#    #+#                 */
-/*   Updated: 2022/06/22 13:57:32 by user          ########   odam.nl         */
+/*   Created: 2022/06/22 13:57:32 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/06/22 13:57:32 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
