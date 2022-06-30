@@ -1,62 +1,78 @@
 NAME = minishell
 
 CC = gcc
-CFLAGS += $(INCLUDES) -Wall -Werror -Wextra -g
 
-OBJ_DIR = obj/
-SRC_DIR = src/
-INC_DIR = include/
-INCLUDES += -I $(INC_DIR)
+CFLAGS += -Wall -Werror -Wextra
+CFLAGS += -I $(INCD)
 
+# SOURCE FILES
+SRCD = src/
 SRCS = minishell.c															\
 	   lexer/tokenize.c														\
 	   lexer/matcher.c
-HEADERS = minishell.h														\
-		  token.h
-HEADER_FILES += $(addprefix $(INC_DIR), $(HEADERS))
-OBJS = $(SRCS:.c=.o)
-OBJS_PREFIXED = $(addprefix $(OBJ_DIR), $(OBJS))
+SRCP = $(addprefix $(SRCD), $(SRCS))
 
-LIBFT_DIR = libft/
-LIBFT_HEADERS = libft.h\
-				get_next_line.h\
-				ft_printf.h
-HEADER_FILES += $(addprefix $(LIBFT_INC), $(LIBFT_HEADERS))
-LIBFT_LIB = $(addprefix $(LIBFT_DIR), libft.a)
-LIBFT_INC = $(addprefix $(LIBFT_DIR), $(INC_DIR))
-INCLUDES += -I $(LIBFT_INC)
+# OBJECT FILES
+OBJD = obj/
+OBJS = $(SRCS:.c=.o)
+OBJP = $(addprefix $(OBJD), $(OBJS))
+
+# HEADER FILES
+INCD = include/
+INCS = minishell.h															\
+	   token.h
+INCP = $(addprefix $(INCD), $(INCS))
+
+HEADERS += $(INCP)
+
+# LIBRARIES
+
+#		LIBFT
+LIBFT_D = libft/
+LIBFT_N = libft.a
+LIBFT_H = libft.h															\
+		  get_next_line.h													\
+		  ft_printf.h
+LIBFT_I = $(addprefix $(LIBFT_D), $(INCD))
+LIBFT_L = $(addprefix $(LIBFT_D), $(LIBFT_N))
+
+CFLAGS += -I $(LIBFT_I)
+LIBS += $(LIBFT_L)
+HEADERS += $(addprefix $(LIBFT_I), $(LIBFT_H))
+
+#		READLINE
+LIBS += -lreadline
+LIBS += -lhistory
 
 ifeq ($(shell uname), Darwin)
 	LIBS += -L$(HOME)/.brew/opt/readline/lib
 endif
 
-LIBS += $(LIBFT_LIB)
-LIBS += -lreadline
-LIBS += -lhistory
 
+# RECIPES
 all: $(NAME)
 
-$(NAME): $(LIBFT_LIB) $(OBJS_PREFIXED)
+$(NAME): $(LIBFT_L) $(OBJP)
 	@echo "Compiling main executable!"
-	@$(CC) $(CFLAGS) $(OBJS_PREFIXED) $(LIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJP) $(LIBS) -o $(NAME)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER_FILES)
+$(OBJD)%.o: $(SRCD)%.c $(HEADERS)
 	@mkdir -p $(@D)
 	@echo "Compiling: $<"
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
-$(LIBFT_LIB):
-	@$(MAKE) -C $(LIBFT_DIR)
+$(LIBFT_L):
+	@$(MAKE) -C $(LIBFT_D)
 
 clean:
-	@rm -rf $(OBJ_DIR)
-	@echo "Done cleaning $(CURDIR)/$(OBJ_DIR)"
-	@$(MAKE) -C $(LIBFT_DIR) clean
+	@rm -rf $(OBJD)
+	@echo "Done cleaning $(CURDIR)/$(OBJD)"
+	@$(MAKE) -C $(LIBFT_D) clean
 
 fclean:
 	@rm -f $(NAME)
 	@$(MAKE) clean
-	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(MAKE) -C $(LIBFT_D) fclean
 
 re: fclean
 	@$(MAKE)
