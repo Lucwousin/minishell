@@ -18,8 +18,7 @@
 # define OPERATOR_CHARS		"|<>"
 # define QUOTE_CHARS		"'\""
 
-# include <stdbool.h>
-# include <stddef.h>
+# include <dynarr.h>
 
 /**
  * A token type
@@ -51,15 +50,10 @@ typedef struct s_codepoint {
 	size_t	end;
 }	t_codepoint;
 
-typedef struct s_tokens {
-	t_codepoint	*tokens;
-	size_t		tokens_size;
-}	t_tokens;
+t_dynarr	tokenize(const char *cmd);
 
-t_tokens		tokenize(const char *cmd);
+void		match_token(const char *cmd, size_t *idx, t_codepoint *token);
 
-void			match_token(const char *cmd, size_t *idx, t_codepoint *token);
-
-void			resize_tokens(t_tokens *data, size_t new_len);
+void		resize_tokens(t_dynarr *data, size_t new_len);
 
 #endif

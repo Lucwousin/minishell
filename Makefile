@@ -20,7 +20,6 @@ CFLAGS += -I $(INCD)
 # SOURCE FILES
 SRCD = src/
 SRCS = minishell.c															\
-	   lexer/token.c														\
 	   lexer/tokenize.c														\
 	   lexer/matcher.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
@@ -45,7 +44,8 @@ LIBFT_D = libft/
 LIBFT_N = libft.a
 LIBFT_H = libft.h															\
 		  get_next_line.h													\
-		  ft_printf.h
+		  ft_printf.h														\
+		  dynarr.h
 LIBFT_I = $(addprefix $(LIBFT_D), $(INCD))
 LIBFT_L = $(addprefix $(LIBFT_D), $(LIBFT_N))
 

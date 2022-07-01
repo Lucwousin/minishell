@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <token.h>
-#include <libft.h>
-#include <stdbool.h>
 
 /**
  * Split up the input string into something more manageable.
@@ -20,17 +18,13 @@
  * * words (anything else)
  * * end of input (we're done)
  */
-t_tokens	tokenize(const char *cmd)
+t_dynarr	tokenize(const char *cmd)
 {
-	t_tokens	data;
+	t_dynarr	data;
 	t_codepoint	token;
-	size_t		token_idx;
 	size_t		str_idx;
 
-	data.tokens = NULL;
-	data.tokens_size = 0;
-	resize_tokens(&data, TOKENS_INIT_SIZE);
-	token_idx = 0;
+	dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_codepoint));
 	str_idx = 0;
 	while (true)
 	{
@@ -38,9 +32,7 @@ t_tokens	tokenize(const char *cmd)
 		match_token(cmd, &str_idx, &token);
 		if (token.token == END_OF_INPUT)
 			break ;
-		if (token_idx == data.tokens_size)
-			resize_tokens(&data, data.tokens_size * 2);
-		data.tokens[token_idx++] = token;
+		dynarr_add(&data, &token, 1);
 	}
 	return (data);
 }
