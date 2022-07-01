@@ -56,3 +56,6 @@ dkms.conf
 
 # Executable
 minishell
+
+# vscode config file
+.vscode
