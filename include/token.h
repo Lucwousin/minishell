@@ -66,6 +66,4 @@ t_dynarr	tokenize(const char *cmd);
 
 void		match_token(const char *cmd, size_t *idx, t_token *token);
 
-void		resize_tokens(t_dynarr *data, size_t new_len);
-
 #endif
