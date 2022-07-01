@@ -25,25 +25,71 @@ static void	match_operator(const char *cmd, size_t *idx, t_token *token)
 	token->end = *idx - 1;
 }
 
+static void	handle_var(const char *cmd, size_t *idx, t_token *token)
+{
+	t_token	subtoken;
+	char	c;
+
+	subtoken.token = VARIABLE;
+	subtoken.start = *idx;
+	while (true)
+	{
+		c = cmd[*idx++];
+		if (strcontains(BLANK_CHARS, c) || \
+			strcontains(OPERATOR_CHARS, c) || \
+			strcontains(QUOTE_CHARS, c) || \
+			c == VAR_CHAR || c == '\0')
+			break ;
+	}
+	subtoken.end = *idx - 1;
+	if (!dynarr_add(&token->sub, &subtoken, 1))
+		exit(EXIT_FAILURE); // TODO: error handlign
+}
+
+static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
+{
+	t_token	subtoken;
+	char	c;
+	char	*close;
+	char	*var;
+
+	subtoken.token = QUOTE;
+	subtoken.start = *idx;
+	if (!dynarr_create(&subtoken.sub, SUB_INIT_SIZE, sizeof(t_token)))
+		exit(EXIT_FAILURE); //todo: err handling
+	c = cmd[*idx++];
+	close = ft_strchr(cmd + *idx, c);
+	if (close == NULL)
+		return ;
+	if (c == DOUBLE_QUOTE)
+	{
+		var = ft_strchr(cmd + *idx, VAR_CHAR);
+		if (var != NULL && var < close)
+		{
+			*idx = var - cmd;
+			handle_var(cmd, idx, &subtoken);
+		}
+	}
+	*idx = close - cmd + 1;
+	subtoken.end = *idx - 1;
+	if (!dynarr_add(&token->sub, &subtoken, 1))
+		exit(EXIT_FAILURE); // todo: err handign
+}
+
 static void	match_word(const char *cmd, size_t *idx, t_token *token)
 {
-	char	c;
-	char	*close_quote;
-
 	if (token->token == END_OF_INPUT)
 	{
+		if (!dynarr_create(&token->sub, SUB_INIT_SIZE, sizeof(t_token)))
+			exit(EXIT_FAILURE); // TODO: better error handling
 		token->token = WORD;
 		token->start = *idx;
 	}
-	c = cmd[(*idx)++];
-	if (strcontains(QUOTE_CHARS, c))
-	{
-		close_quote = ft_strchr(cmd + *idx, c);
-		if (close_quote != NULL)
-			*idx = close_quote - cmd + 1;
-	}
-	match_token(cmd, idx, token);
-	token->end = *idx - 1;
+	if (strcontains(QUOTE_CHARS, cmd[*idx]))
+		handle_quote(cmd, idx, token);
+	else if (cmd[*idx] == VAR_CHAR)
+		handle_var(cmd, idx, token);
+	match_token(cmd, ++idx, token);
 }
 
 void	match_token(const char *cmd, size_t *idx, t_token *token)
@@ -53,7 +99,10 @@ void	match_token(const char *cmd, size_t *idx, t_token *token)
 	if (strcontains(BLANK_CHARS, cmd[*idx]))
 	{
 		if (token->token != END_OF_INPUT)
-			return ;
+		{
+			token->end = *idx - 1;
+			return;
+		}
 		while (strcontains(BLANK_CHARS, cmd[*idx]))
 			++(*idx);
 	}

@@ -13,10 +13,14 @@
 #ifndef TOKEN_H
 # define TOKEN_H
 
-# define TOKENS_INIT_SIZE	32
-# define BLANK_CHARS		" \t"
-# define OPERATOR_CHARS		"|<>"
-# define QUOTE_CHARS		"'\""
+# define TOKENS_INIT_SIZE		32
+# define SUB_INIT_SIZE			4
+# define BLANK_CHARS			" \t"
+# define OPERATOR_CHARS			"|<>"
+# define QUOTE_CHARS			"'\""
+# define SINGLE_QUOTE			'\''
+# define DOUBLE_QUOTE			'"'
+# define VAR_CHAR				'$'
 
 # include <dynarr.h>
 
@@ -26,11 +30,15 @@
  * OPERATOR is for pipes and redirections
  * WORD is for everything else
  * END_OF_INPUT signifies the end of the input (duh)
+ * VARIABLE is a subtoken type, signifying a variable
+ * QUOTE is a subtoken type, signifying a quoted part
  */
 typedef enum e_tokentype {
 	END_OF_INPUT,
 	OPERATOR,
-	WORD
+	WORD,
+	VARIABLE,
+	QUOTE
 }	t_tokentype;
 
 /**
@@ -43,11 +51,15 @@ typedef enum e_tokentype {
  * token = WORD
  * start = 3 (because input[3] == 't')
  * end = 16 (because input[16] == 'd')
+ * 
+ * sub is a dynamic array containing the sub-tokens for this token
+ * (only initialized for WORD and QUOTE type tokens)
  */
 typedef struct s_token {
 	t_tokentype	token;
 	size_t		start;
 	size_t		end;
+	t_dynarr	sub;
 }	t_token;
 
 t_dynarr	tokenize(const char *cmd);

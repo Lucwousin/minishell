@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <token.h>
+#include <stdlib.h>
 
 /**
  * Split up the input string into something more manageable.
@@ -24,7 +25,8 @@ t_dynarr	tokenize(const char *cmd)
 	t_token		token;
 	size_t		str_idx;
 
-	dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_token));
+	if (!dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_token)))
+		exit(EXIT_FAILURE); // TODO: better error handling
 	str_idx = 0;
 	while (true)
 	{
@@ -32,7 +34,12 @@ t_dynarr	tokenize(const char *cmd)
 		match_token(cmd, &str_idx, &token);
 		if (token.token == END_OF_INPUT)
 			break ;
-		dynarr_add(&data, &token, 1);
+		if (token.token == WORD && !dynarr_finalize(&token.sub))
+			exit(EXIT_FAILURE); // you know the drill
+		if (!dynarr_add(&data, &token, 1))
+			exit(EXIT_FAILURE); // TODO: better error handling
 	}
+	if (!dynarr_finalize(&data)) // Shrink the array as small as possible
+		exit(EXIT_FAILURE); // how many exits can we reach?
 	return (data);
 }
