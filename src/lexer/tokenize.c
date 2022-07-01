@@ -19,13 +19,12 @@
  * * words (anything else)
  * * end of input (we're done)
  */
-t_dynarr	tokenize(const char *cmd)
+void	tokenize(t_dynarr *tokens, const char *cmd)
 {
-	t_dynarr	data;
 	t_token		token;
 	size_t		str_idx;
 
-	if (!dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_token)))
+	if (!dynarr_create(tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
 		exit(EXIT_FAILURE); // TODO: better error handling
 	str_idx = 0;
 	while (true)
@@ -36,10 +35,9 @@ t_dynarr	tokenize(const char *cmd)
 			break ;
 		if (token.token == WORD && !dynarr_finalize(&token.sub))
 			exit(EXIT_FAILURE); // you know the drill
-		if (!dynarr_add(&data, &token, 1))
+		if (!dynarr_add(tokens, &token, 1))
 			exit(EXIT_FAILURE); // TODO: better error handling
 	}
-	if (!dynarr_finalize(&data)) // Shrink the array as small as possible
+	if (!dynarr_finalize(tokens)) // Shrink the array as small as possible
 		exit(EXIT_FAILURE); // how many exits can we reach?
-	return (data);
 }
