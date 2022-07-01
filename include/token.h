@@ -27,11 +27,11 @@
  * WORD is for everything else
  * END_OF_INPUT signifies the end of the input (duh)
  */
-typedef enum e_token {
+typedef enum e_tokentype {
 	END_OF_INPUT,
 	OPERATOR,
 	WORD
-}	t_token;
+}	t_tokentype;
 
 /**
  * A struct containing information about a token in the input.
@@ -44,15 +44,15 @@ typedef enum e_token {
  * start = 3 (because input[3] == 't')
  * end = 16 (because input[16] == 'd')
  */
-typedef struct s_codepoint {
-	t_token	token;
-	size_t	start;
-	size_t	end;
-}	t_codepoint;
+typedef struct s_token {
+	t_tokentype	token;
+	size_t		start;
+	size_t		end;
+}	t_token;
 
 t_dynarr	tokenize(const char *cmd);
 
-void		match_token(const char *cmd, size_t *idx, t_codepoint *token);
+void		match_token(const char *cmd, size_t *idx, t_token *token);
 
 void		resize_tokens(t_dynarr *data, size_t new_len);
 

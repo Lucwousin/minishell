@@ -21,10 +21,10 @@
 t_dynarr	tokenize(const char *cmd)
 {
 	t_dynarr	data;
-	t_codepoint	token;
+	t_token		token;
 	size_t		str_idx;
 
-	dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_codepoint));
+	dynarr_create(&data, TOKENS_INIT_SIZE, sizeof(t_token));
 	str_idx = 0;
 	while (true)
 	{

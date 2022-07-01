@@ -13,7 +13,7 @@
 #include <token.h>
 #include <libft.h>
 
-static void	match_operator(const char *cmd, size_t *idx, t_codepoint *token)
+static void	match_operator(const char *cmd, size_t *idx, t_token *token)
 {
 	char	c;
 
@@ -25,7 +25,7 @@ static void	match_operator(const char *cmd, size_t *idx, t_codepoint *token)
 	token->end = *idx - 1;
 }
 
-static void	match_word(const char *cmd, size_t *idx, t_codepoint *token)
+static void	match_word(const char *cmd, size_t *idx, t_token *token)
 {
 	char	c;
 	char	*close_quote;
@@ -46,7 +46,7 @@ static void	match_word(const char *cmd, size_t *idx, t_codepoint *token)
 	token->end = *idx - 1;
 }
 
-void	match_token(const char *cmd, size_t *idx, t_codepoint *token)
+void	match_token(const char *cmd, size_t *idx, t_token *token)
 {
 	if (cmd[*idx] == '\0' || cmd[*idx] == '\n')
 		return ;
