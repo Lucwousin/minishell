@@ -6,7 +6,7 @@
 #    By: lsinke <lsinke@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2022/06/30 18:29:13 by lsinke        #+#    #+#                  #
-#    Updated: 2022/06/30 18:29:13 by lsinke        ########   odam.nl          #
+#    Updated: 2022/07/01 13:53:55 by pmolnar       ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,12 +55,16 @@ HEADERS += $(addprefix $(LIBFT_I), $(LIBFT_H))
 
 #		READLINE
 LIBS += -lreadline
-LIBS += -lhistory
 
+# 		MAC SPECIFIC LINKING
 ifeq ($(shell uname), Darwin)
-	LIBS += -L$(HOME)/.brew/opt/readline/lib
+	LIBS += -L$(shell brew --prefix readline)
 endif
 
+#		LINUX SPECIFIC LINKIG
+ifeq ($(shell uname), Linux)
+	LIBS += -lhistory
+endif
 
 # RECIPES
 all: $(NAME)
