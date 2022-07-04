@@ -10,14 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <dynarr.h>
 #include <minishell.h>
+#include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
+#include "token.h"
 
 static void	do_something_with_input(char *input)
 {
-	(void) input;
+	t_dynarr	tokens;
+	t_exp_token	*expanded;
+	
+	tokenize(&tokens, input);
+	expanded = expand(&tokens, input);
+	for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
+		printf("%s\n", expanded[i].str);
+
 	// Lexer
 	// Parser
 	// Executor
