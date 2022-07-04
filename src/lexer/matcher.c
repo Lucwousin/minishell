@@ -22,7 +22,6 @@ static void	match_operator(const char *cmd, size_t *idx, t_token *token)
 	c = cmd[*idx];
 	while (cmd[*idx] == c)
 		++(*idx);
-	token->end = *idx - 1;
 }
 
 static void	handle_var(const char *cmd, size_t *idx, t_token *token)
@@ -96,11 +95,6 @@ static void	match_word(const char *cmd, size_t *idx, t_token *token)
 
 void	match_token(const char *cmd, size_t *idx, t_token *token)
 {
-	if (cmd[*idx] == '\0' || cmd[*idx] == '\n')
-	{
-		token->end = *idx - 1;
-		return;
-	}
 	if (strcontains(BLANK_CHARS, cmd[*idx]))
 	{
 		if (token->token != END_OF_INPUT)
@@ -111,10 +105,16 @@ void	match_token(const char *cmd, size_t *idx, t_token *token)
 		while (strcontains(BLANK_CHARS, cmd[*idx]))
 			++(*idx);
 	}
+	if (cmd[*idx] == '\0' || cmd[*idx] == '\n')
+	{
+		token->end = *idx - 1;
+		return;
+	}
 	if (strcontains(OPERATOR_CHARS, cmd[*idx]))
 	{
 		if (token->token == END_OF_INPUT)
 			match_operator(cmd, idx, token);
+		token->end = *idx - 1;
 		return ;
 	}
 	return (match_word(cmd, idx, token));

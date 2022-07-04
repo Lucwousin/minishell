@@ -10,13 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#define ARRAY	0
-#define INDEX	1
-#define STRING	2
-
 #include <token.h>
 #include <stdlib.h>
 #include "libft.h"
+
+#define ARRAY	0
+#define INDEX	1
+#define STRING	2
 
 static void	expand_variable(t_dynarr *buffer, t_token *token, const char *str)
 {
@@ -61,9 +61,9 @@ static char	*expand_subs(t_dynarr *buf, t_token *token, const char *str)
 			expand_subs(buf, sub, str);
 		}
 	}
-	if (str_index <= token->end)
-		if (!dynarr_add(buf, (char *) str + str_index, token->end - str_index + 1))
-			exit(EXIT_FAILURE); // todo: error
+	if (str_index <= token->end && \
+		!dynarr_add(buf, (void *) str + str_index, token->end - str_index + 1))
+		exit(EXIT_FAILURE); // todo: error
 	if (token->token == WORD && (!dynarr_addone(buf, "") || !dynarr_finalize(buf)))
 		exit(EXIT_FAILURE);
 	return (buf->arr);
