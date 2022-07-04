@@ -16,12 +16,15 @@ CC = gcc
 
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
+CFLAGS += -g
+CFLAGS += -fsanitize=address
 
 # SOURCE FILES
 SRCD = src/
 SRCS = minishell.c															\
 	   lexer/tokenize.c														\
-	   lexer/matcher.c
+	   lexer/matcher.c														\
+	   lexer/expander.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES

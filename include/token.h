@@ -62,8 +62,14 @@ typedef struct s_token {
 	t_dynarr	sub;
 }	t_token;
 
-void	tokenize(t_dynarr *tokens, const char *cmd);
+typedef struct s_expanded_token {
+	t_tokentype	type;
+	char		*str;
+}	t_exp_token;
 
-void	match_token(const char *cmd, size_t *idx, t_token *token);
+void		tokenize(t_dynarr *tokens, const char *cmd);
+void		match_token(const char *cmd, size_t *idx, t_token *token);
+
+t_exp_token	*expand(t_dynarr *tokens, const char *cmd);
 
 #endif
