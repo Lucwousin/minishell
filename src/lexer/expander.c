@@ -64,7 +64,7 @@ static char	*expand_subs(t_dynarr *buf, t_token *token, const char *str)
 	if (str_index <= token->end)
 		if (!dynarr_add(buf, (char *) str + str_index, token->end - str_index + 1))
 			exit(EXIT_FAILURE); // todo: error
-	if (token->token == WORD && (!dynarr_add(buf, "", 1) || !dynarr_finalize(buf)))
+	if (token->token == WORD && (!dynarr_addone(buf, "") || !dynarr_finalize(buf)))
 		exit(EXIT_FAILURE);
 	return (buf->arr);
 }

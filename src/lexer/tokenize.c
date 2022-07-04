@@ -36,7 +36,7 @@ void	tokenize(t_dynarr *tokens, const char *cmd)
 			break ;
 		if (token.token == WORD && !dynarr_finalize(&token.sub))
 			exit(EXIT_FAILURE); // you know the drill
-		if (!dynarr_add(tokens, &token, 1))
+		if (!dynarr_addone(tokens, &token))
 			exit(EXIT_FAILURE); // TODO: better error handling
 	}
 	if (!dynarr_finalize(tokens)) // Shrink the array as small as possible
