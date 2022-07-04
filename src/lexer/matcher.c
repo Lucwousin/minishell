@@ -42,7 +42,7 @@ static void	handle_var(const char *cmd, size_t *idx, t_token *token)
 			break ;
 	}
 	subtoken.end = --(*idx);
-	if (!dynarr_add(&token->sub, &subtoken, 1))
+	if (!dynarr_addone(&token->sub, &subtoken))
 		exit(EXIT_FAILURE); // TODO: error handlign
 }
 
@@ -73,7 +73,7 @@ static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
 	*idx = close - cmd;
 	subtoken.end = *idx;
 	if (!dynarr_finalize(&subtoken.sub) || \
-		!dynarr_add(&token->sub, &subtoken, 1))
+		!dynarr_addone(&token->sub, &subtoken))
 		exit(EXIT_FAILURE); // todo: err handign
 }
 
