@@ -45,11 +45,25 @@ static void	handle_var(const char *cmd, size_t *idx, t_token *token)
 		exit(EXIT_FAILURE); // TODO: error handlign
 }
 
+static void	find_vars(
+		const char *cmd, size_t *idx, t_token *token, const char *close)
+{
+	char	*var;
+
+	while (true)
+	{
+		var = ft_strchr(cmd + *idx + 1, VAR_CHAR);
+		if (var == NULL || var >= close)
+			break ;
+		*idx = var - cmd;
+		handle_var(cmd, idx, token);
+	}
+}
+
 static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
 {
 	t_token	subtoken;
 	char	*close;
-	char	*var;
 
 	close = ft_strchr(cmd + *idx + 1, cmd[*idx]);
 	if (close == NULL)
@@ -59,16 +73,7 @@ static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
 	if (!dynarr_create(&subtoken.sub, SUB_INIT_SIZE, sizeof(t_token)))
 		exit(EXIT_FAILURE); //todo: err handling
 	if (cmd[*idx] == DOUBLE_QUOTE)
-	{
-		while (true)
-		{
-			var = ft_strchr(cmd + *idx + 1, VAR_CHAR);
-			if (var == NULL || var >= close)
-				break ;
-			*idx = var - cmd;
-			handle_var(cmd, idx, &subtoken);
-		}
-	}
+		find_vars(cmd, idx, &subtoken, close);
 	*idx = close - cmd;
 	subtoken.end = *idx;
 	if (!dynarr_finalize(&subtoken.sub) || \
