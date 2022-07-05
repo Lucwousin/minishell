@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include "libft.h"
 
+static void	expand_sub(
+				t_dynarr *buf, t_token *sub, size_t str_index, const char *cmd);
+
 static void	expand_variable(t_dynarr *buffer, t_token *token, const char *str)
 {
 	char	*var_name;
@@ -44,25 +47,32 @@ static char	*expand_subs(t_dynarr *buf, t_token *token, const char *str)
 	while (sub_index < token->sub.length)
 	{
 		sub = dynarr_get(&token->sub, sub_index++);
-		if (sub->start > str_index && \
-			!dynarr_add(buf, (void *) str + str_index, sub->start - str_index))
-			exit(EXIT_FAILURE); // todo: error
 		str_index = sub->end + 1;
-		if (sub->token == VARIABLE)
-			expand_variable(buf, sub, str);
-		else if (sub->start - sub->end > 1)
-		{
-			sub->start += 1;
-			sub->end -= 1;
-			expand_subs(buf, sub, str);
-		}
+		expand_sub(buf, sub, str_index, str);
 	}
 	if (str_index <= token->end && \
 		!dynarr_add(buf, (void *) str + str_index, token->end - str_index + 1))
 		exit(EXIT_FAILURE); // todo: error
-	if (token->token == WORD && (!dynarr_addone(buf, "") || !dynarr_finalize(buf)))
+	if (token->token == WORD
+		&& (!dynarr_addone(buf, "") || !dynarr_finalize(buf)))
 		exit(EXIT_FAILURE);
 	return (buf->arr);
+}
+
+static void	expand_sub(
+		t_dynarr *buf, t_token *sub, size_t str_index, const char *cmd)
+{
+	if (sub->start > str_index && \
+		!dynarr_add(buf, (void *) cmd + str_index, sub->start - str_index))
+		exit(EXIT_FAILURE); // todo: error
+	if (sub->token == VARIABLE)
+		expand_variable(buf, sub, cmd);
+	else if (sub->start - sub->end > 1)
+	{
+		sub->start += 1;
+		sub->end -= 1;
+		expand_subs(buf, sub, cmd);
+	}
 }
 
 static void	expand_token(void *data, void *arg_p)
@@ -84,6 +94,7 @@ static void	expand_token(void *data, void *arg_p)
 				arg->cmd, token.start, token.end - token.start + 1);
 	if (exp_token->str == NULL)
 		exit(EXIT_FAILURE); //todo: error handling
+	arg->index++;
 }
 
 t_exp_token	*expand(t_dynarr *tokens, const char *cmd)
