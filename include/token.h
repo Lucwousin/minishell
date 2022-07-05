@@ -44,6 +44,8 @@
  *     PIPE is an operator type signifying a pipe "|"
  *     RED_IN is an operator type signifying a input redirection "<"
  *     RED_HD is an operator type signifying a here_document "<<"
+ *         This includes the delimiter, to make handling quoted delimiters
+ *         possible
  *     RED_OUT is an operator type signifying a output redirection ">"
  *     RED_APP is an operator type signifying appending redirection ">>"
  */
