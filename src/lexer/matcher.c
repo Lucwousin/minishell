@@ -13,7 +13,7 @@
 #include <token.h>
 #include <libft.h>
 
-static void	match_operator(const char *cmd, size_t *idx, t_token *token)
+void	match_operator(const char *cmd, size_t *idx, t_token *token)
 {
 	char	c;
 
@@ -76,7 +76,7 @@ static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
 		exit(EXIT_FAILURE); // todo: err handign
 }
 
-static void	match_word(const char *cmd, size_t *idx, t_token *token)
+void	match_word(const char *cmd, size_t *idx, t_token *token)
 {
 	if (token->token == END_OF_INPUT)
 	{
@@ -91,26 +91,4 @@ static void	match_word(const char *cmd, size_t *idx, t_token *token)
 		handle_var(cmd, idx, token);
 	(*idx)++;
 	match_token(cmd, idx, token);
-}
-
-void	match_token(const char *cmd, size_t *idx, t_token *token)
-{
-	if (strcontains(BLANK_CHARS, cmd[*idx]) || \
-		cmd[*idx] == '\0' || cmd[*idx] == '\n')
-	{
-		token->end = *idx - 1;
-		while (strcontains(BLANK_CHARS, cmd[*idx]))
-			++(*idx);
-		if (token->token != END_OF_INPUT || \
-			cmd[*idx] == '\0' || cmd[*idx] == '\n')
-			return ;
-	}
-	if (strcontains(OPERATOR_CHARS, cmd[*idx]))
-	{
-		if (token->token == END_OF_INPUT)
-			match_operator(cmd, idx, token);
-		token->end = *idx - 1;
-		return ;
-	}
-	return (match_word(cmd, idx, token));
 }

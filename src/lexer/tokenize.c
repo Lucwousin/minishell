@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <libft.h>
 #include <token.h>
-#include <stdlib.h>
 
 /**
  * Split up the input string into something more manageable.
@@ -40,4 +40,26 @@ void	tokenize(t_dynarr *tokens, const char *cmd)
 	}
 	if (!dynarr_finalize(tokens)) // Shrink the array as small as possible
 		exit(EXIT_FAILURE); // how many exits can we reach?
+}
+
+void	match_token(const char *cmd, size_t *idx, t_token *token)
+{
+	if (strcontains(BLANK_CHARS, cmd[*idx]) || \
+		cmd[*idx] == '\0' || cmd[*idx] == '\n')
+	{
+		token->end = *idx - 1;
+		while (strcontains(BLANK_CHARS, cmd[*idx]))
+			++(*idx);
+		if (token->token != END_OF_INPUT || \
+			cmd[*idx] == '\0' || cmd[*idx] == '\n')
+			return ;
+	}
+	if (strcontains(OPERATOR_CHARS, cmd[*idx]))
+	{
+		if (token->token == END_OF_INPUT)
+			match_operator(cmd, idx, token);
+		token->end = *idx - 1;
+		return ;
+	}
+	return (match_word(cmd, idx, token));
 }
