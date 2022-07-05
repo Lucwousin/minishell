@@ -48,23 +48,23 @@ static void	handle_var(const char *cmd, size_t *idx, t_token *token)
 static void	handle_quote(const char *cmd, size_t *idx, t_token *token)
 {
 	t_token	subtoken;
-	char	c;
 	char	*close;
 	char	*var;
 
-	c = cmd[*idx];
-	close = ft_strchr(cmd + *idx + 1, c);
+	close = ft_strchr(cmd + *idx + 1, cmd[*idx]);
 	if (close == NULL)
 		return ;
 	subtoken.token = QUOTE;
 	subtoken.start = *idx;
 	if (!dynarr_create(&subtoken.sub, SUB_INIT_SIZE, sizeof(t_token)))
 		exit(EXIT_FAILURE); //todo: err handling
-	if (c == DOUBLE_QUOTE)
+	if (cmd[*idx] == DOUBLE_QUOTE)
 	{
-		var = ft_strchr(cmd + *idx + 1, VAR_CHAR);
-		if (var != NULL && var < close)
+		while (true)
 		{
+			var = ft_strchr(cmd + *idx + 1, VAR_CHAR);
+			if (var == NULL || var >= close)
+				break ;
 			*idx = var - cmd;
 			handle_var(cmd, idx, &subtoken);
 		}
@@ -89,7 +89,7 @@ static void	match_word(const char *cmd, size_t *idx, t_token *token)
 		handle_quote(cmd, idx, token);
 	else if (cmd[*idx] == VAR_CHAR)
 		handle_var(cmd, idx, token);
-	*idx = *idx + 1;
+	(*idx)++;
 	match_token(cmd, idx, token);
 }
 
