@@ -95,20 +95,15 @@ static void	match_word(const char *cmd, size_t *idx, t_token *token)
 
 void	match_token(const char *cmd, size_t *idx, t_token *token)
 {
-	if (strcontains(BLANK_CHARS, cmd[*idx]))
-	{
-		if (token->token != END_OF_INPUT)
-		{
-			token->end = *idx - 1;
-			return;
-		}
-		while (strcontains(BLANK_CHARS, cmd[*idx]))
-			++(*idx);
-	}
-	if (cmd[*idx] == '\0' || cmd[*idx] == '\n')
+	if (strcontains(BLANK_CHARS, cmd[*idx]) || \
+		cmd[*idx] == '\0' || cmd[*idx] == '\n')
 	{
 		token->end = *idx - 1;
-		return;
+		while (strcontains(BLANK_CHARS, cmd[*idx]))
+			++(*idx);
+		if (token->token != END_OF_INPUT || \
+			cmd[*idx] == '\0' || cmd[*idx] == '\n')
+			return ;
 	}
 	if (strcontains(OPERATOR_CHARS, cmd[*idx]))
 	{
