@@ -21,24 +21,43 @@
 # define SINGLE_QUOTE			'\''
 # define DOUBLE_QUOTE			'"'
 # define VAR_CHAR				'$'
+# define PIPE_STR				"|"
+# define RED_HD_STR				"<<"
+# define RED_IN_STR				"<"
+# define RED_APPEND_STR			">>"
+# define RED_OUT_STR			">"
 
 # include <dynarr.h>
 
 /**
  * A token type
  *
- * OPERATOR is for pipes and redirections
- * WORD is for everything else
- * END_OF_INPUT signifies the end of the input (duh)
- * VARIABLE is a subtoken type, signifying a variable
- * QUOTE is a subtoken type, signifying a quoted part
+ * END_OF_INPUT signifies the end of the input
+ *
+ * WORD is for everything that's not an operator type.
+ *     VARIABLE is a subtoken type for a word (or quote), signifying a variable
+ *     QUOTE is a subtoken type, signifying a quoted part of a word. This can
+ *         contain variables.
+ *
+ * OPERATOR is for pipes and redirections. All token types with value greater
+ * than this one are operator types:
+ *     PIPE is an operator type signifying a pipe "|"
+ *     RED_IN is an operator type signifying a input redirection "<"
+ *     RED_HD is an operator type signifying a here_document "<<"
+ *     RED_OUT is an operator type signifying a output redirection ">"
+ *     RED_APP is an operator type signifying appending redirection ">>"
  */
 typedef enum e_tokentype {
 	END_OF_INPUT,
-	OPERATOR,
 	WORD,
 	VARIABLE,
-	QUOTE
+	QUOTE,
+	OPERATOR,
+	PIPE,
+	RED_IN,
+	RED_HD,
+	RED_OUT,
+	RED_APP
 }	t_tokentype;
 
 /**
