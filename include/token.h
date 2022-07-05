@@ -67,6 +67,12 @@ typedef struct s_expanded_token {
 	char		*str;
 }	t_exp_token;
 
+typedef struct s_expander_argument {
+	t_exp_token	*expanded;
+	const char	*cmd;
+	size_t		index;
+}	t_exp_arg;
+
 void		tokenize(t_dynarr *tokens, const char *cmd);
 void		match_token(const char *cmd, size_t *idx, t_token *token);
 void		match_operator(const char *cmd, size_t *idx, t_token *token);
