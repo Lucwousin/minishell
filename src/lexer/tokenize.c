@@ -12,7 +12,6 @@
 
 #include <token.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 /**
  * Split up the input string into something more manageable.
