@@ -14,10 +14,6 @@
 #include <stdlib.h>
 #include "libft.h"
 
-#define ARRAY	0
-#define INDEX	1
-#define STRING	2
-
 static void	expand_variable(t_dynarr *buffer, t_token *token, const char *str)
 {
 	char	*var_name;
@@ -69,43 +65,37 @@ static char	*expand_subs(t_dynarr *buf, t_token *token, const char *str)
 	return (buf->arr);
 }
 
-static void	expand_token(void *data, void *params[3])
+static void	expand_token(void *data, void *arg_p)
 {
+	t_exp_arg	*arg;
+	t_exp_token	*exp_token;
 	t_token		token;
-	t_exp_token	*array;
-	const char	*string;
-	size_t		index;
 	t_dynarr	buffer;
 
 	ft_memcpy(&token, data, sizeof(t_token));
+	arg = arg_p;
 	buffer.capacity = 0;
-	index = *((size_t *) params[INDEX]);
-	*((size_t *) params[INDEX]) = index + 1;
-	array = params[ARRAY];
-	string = params[STRING];
-	array[index].type = token.token;
-	if (token.token != WORD || token.sub.length == 0)
-		array[index].str = ft_substr(string, token.start, token.end - token.start + 1);
+	exp_token = arg->expanded + arg->index;
+	exp_token->type = token.token;
+	if (token.token == WORD && token.sub.length != 0)
+		exp_token->str = expand_subs(&buffer, &token, arg->cmd);
 	else
-		array[index].str = expand_subs(&buffer, &token, string);
-	if (array[index].str == NULL)
+		exp_token->str = ft_substr(
+				arg->cmd, token.start, token.end - token.start + 1);
+	if (exp_token->str == NULL)
 		exit(EXIT_FAILURE); //todo: error handling
 }
 
 t_exp_token	*expand(t_dynarr *tokens, const char *cmd)
 {
-	t_exp_token	*expanded;
-	void		*params[3];
-	size_t		index;
+	t_exp_arg	arg;
 
-	index = 0;
-	expanded = malloc((tokens->capacity + 1) * sizeof(t_exp_token));
-	if (expanded == NULL)
+	arg.cmd = cmd;
+	arg.index = 0;
+	arg.expanded = malloc((tokens->capacity + 1) * sizeof(t_exp_token));
+	if (arg.expanded == NULL)
 		exit(EXIT_FAILURE); // todo: better error handling
-	expanded[tokens->capacity].type = END_OF_INPUT;
-	params[ARRAY] = expanded;
-	params[INDEX] = &index;
-	params[STRING] = (void *) cmd;
-	dynarr_foreach(tokens, (void (*)(void *, void *)) expand_token, params);
-	return (params[ARRAY]);
+	arg.expanded[tokens->capacity].type = END_OF_INPUT;
+	dynarr_foreach(tokens, expand_token, &arg);
+	return (arg.expanded);
 }
