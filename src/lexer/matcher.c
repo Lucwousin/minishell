@@ -16,12 +16,24 @@
 void	match_operator(const char *cmd, size_t *idx, t_token *token)
 {
 	char	c;
+	size_t	len;
 
 	token->token = OPERATOR;
 	token->start = *idx;
 	c = cmd[*idx];
 	while (cmd[*idx] == c)
 		++(*idx);
+	len = *idx - token->start;
+	if (ft_strncmp(PIPE_STR, cmd + token->start, len) == 0)
+		token->token = PIPE;
+	else if (ft_strncmp(RED_IN_STR, cmd + token->start, len) == 0)
+		token->token = RED_IN;
+	else if (ft_strncmp(RED_HD_STR, cmd + token->start, len) == 0)
+		token->token = RED_HD;
+	else if (ft_strncmp(RED_OUT_STR, cmd + token->start, len) == 0)
+		token->token = RED_OUT;
+	else if (ft_strncmp(RED_APPEND_STR, cmd + token->start, len) == 0)
+		token->token = RED_APP;
 }
 
 static void	handle_var(const char *cmd, size_t *idx, t_token *token)
