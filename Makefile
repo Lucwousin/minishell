@@ -17,7 +17,7 @@ CC = gcc
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
 CFLAGS += -g
-CFLAGS += -fsanitize=address
+#CFLAGS += -fsanitize=address
 
 # SOURCE FILES
 SRCD = src/

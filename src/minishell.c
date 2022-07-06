@@ -33,6 +33,7 @@ static void	print_command(void *command, void *arg)
 	while (*argv++ != NULL);
 
 	printf("---- End cmd ----\n");
+	free(cmd->argv);
 }
 
 static void	do_something_with_input(char *input)
@@ -47,9 +48,12 @@ static void	do_something_with_input(char *input)
 	parse(expanded, &commands);
 	for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
 		printf("%s\n", expanded[i].str);
-	free(expanded);
 	dynarr_foreach(&commands, print_command, NULL);
-
+	dynarr_delete(&commands);
+	for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
+		free(expanded[i].str);
+	free(expanded);
+	system("leaks minishell");
 	// Lexer
 	// Parser
 	// Executor
@@ -77,8 +81,10 @@ int	main(int argc, char **argv, char **envp)
 		if (!input)
 			break ;
 		if	(*input)
+		{
 			add_history(input);
-		do_something_with_input(input);
+			do_something_with_input(input);
+		}
 		free(input);
 	}
 }

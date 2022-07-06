@@ -56,6 +56,7 @@ static char	*expand_subs(t_dynarr *buf, t_token *token, const char *str)
 	if (token->token == WORD
 		&& (!dynarr_addone(buf, "") || !dynarr_finalize(buf)))
 		exit(EXIT_FAILURE);
+	dynarr_delete(&token->sub);
 	return (buf->arr);
 }
 

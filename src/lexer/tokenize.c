@@ -33,8 +33,13 @@ void	tokenize(t_dynarr *tokens, const char *cmd)
 		match_token(cmd, &str_idx, &token);
 		if (token.token == END_OF_INPUT)
 			break ;
-		if (token.token == WORD && !dynarr_finalize(&token.sub))
-			exit(EXIT_FAILURE); // you know the drill
+		if (token.token == WORD)
+		{
+			if (token.sub.length == 0)
+				dynarr_delete(&token.sub);
+			else if (!dynarr_finalize(&token.sub))
+				exit(EXIT_FAILURE); // you know the drill
+		}
 		if (!dynarr_addone(tokens, &token))
 			exit(EXIT_FAILURE); // TODO: better error handling
 	}
