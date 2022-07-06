@@ -24,7 +24,8 @@ SRCD = src/
 SRCS = minishell.c															\
 	   lexer/tokenize.c														\
 	   lexer/matcher.c														\
-	   lexer/expander.c
+	   lexer/expander.c														\
+	   parser/parse.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
@@ -35,6 +36,7 @@ OBJP = $(addprefix $(OBJD), $(OBJS))
 # HEADER FILES
 INCD = include/
 INCS = minishell.h															\
+	   command.h															\
 	   token.h
 INCP = $(addprefix $(INCD), $(INCS))
 
