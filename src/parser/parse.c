@@ -37,11 +37,13 @@ static void	set_redir(t_command *command, t_tokentype type, t_exp_token *arg)
 
 static void	add_cmd(t_dynarr *commands, t_command *command, t_dynarr *argv_arr)
 {
-	if (!dynarr_addone(argv_arr, NULL) || \
+	static const char	*nul = NULL;
+
+	if (!dynarr_addone(argv_arr, &nul) || \
 		!dynarr_finalize(argv_arr))
 		exit(EXIT_FAILURE); // TODO: error
 	command->argv = argv_arr->arr;
-	dynarr_addone(commands, &command);
+	dynarr_addone(commands, command);
 }
 
 static size_t	parse_cmd(t_exp_token *expanded, t_dynarr *commands, size_t i)
@@ -49,18 +51,19 @@ static size_t	parse_cmd(t_exp_token *expanded, t_dynarr *commands, size_t i)
 	t_dynarr	argv_arr;
 	t_command	command;
 
-	command = (t_command){NULL, {STDIN_FILENO, STDOUT_FILENO}};
-	if (!dynarr_create(&argv_arr, ARGV_INIT_SIZE, sizeof(char *)))
+	command.fds[STDIN_FILENO] = STDIN_FILENO;
+	command.fds[STDOUT_FILENO] = STDOUT_FILENO;
+	if (!dynarr_create(&argv_arr, ARGV_INIT_SIZE, sizeof(char **)))
 		exit(EXIT_FAILURE); // TODO: erorr
 	while (expanded[i].type != END_OF_INPUT)
 	{
 		if (expanded[i].type == OPERATOR)
 			exit(EXIT_FAILURE); // This is also a syntax error - not implemented operator
-		if (expanded[i].type >= PIPE && expanded[i].type <= RED_APP)
+		else if (expanded[i].type >= RED_IN && expanded[i].type <= RED_APP)
 			set_redir(&command, expanded[i].type, expanded + i + 1);
-		if (expanded[i].type == WORD)
-			dynarr_addone(&argv_arr, expanded[i].str);
-		if (expanded[i].type == PIPE)
+		else if (expanded[i].type == WORD)
+			dynarr_addone(&argv_arr, &expanded[i].str);
+		else if (expanded[i].type == PIPE)
 			break ;
 		i += g_tokens_used[expanded[i].type];
 	}
@@ -79,7 +82,18 @@ void	parse(t_exp_token *expanded, t_dynarr *commands)
 		exit(EXIT_FAILURE); // TODO: erorr
 	i = 0;
 	while (expanded[i].type != END_OF_INPUT)
+	{
 		i = parse_cmd(expanded, commands, i);
+		if (expanded[i].type != PIPE)
+			continue ;
+		if (expanded[i + 1].type == PIPE || \
+			expanded[i + 1].type == END_OF_INPUT || \
+			commands->length == 0)
+			exit(EXIT_FAILURE); // todo: error
+		// todo: pipe prev and next command here. pipes will be overwritten
+		// by redirections in the next command though
+		++i;
+	}
 	if (!dynarr_finalize(commands))
 		exit(EXIT_FAILURE); // todo: error
 }

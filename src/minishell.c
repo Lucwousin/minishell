@@ -16,17 +16,39 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
-#include "token.h"
+#include <token.h>
+#include <command.h>
+
+static void	print_command(void *command, void *arg)
+{
+	t_command *cmd = command;
+	char **argv = cmd->argv;
+	(void) arg;
+	printf("---- Command ----\n");
+
+	printf("%d fd in\n", cmd->fds[0]);
+	printf("%d fd out\n", cmd->fds[1]);
+
+	do printf("%s\n", *argv);
+	while (*argv++ != NULL);
+
+	printf("---- End cmd ----\n");
+}
 
 static void	do_something_with_input(char *input)
 {
 	t_dynarr	tokens;
 	t_exp_token	*expanded;
+	t_dynarr	commands;
 	
 	tokenize(&tokens, input);
 	expanded = expand(&tokens, input);
+	dynarr_delete(&tokens);
+	parse(expanded, &commands);
 	for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
 		printf("%s\n", expanded[i].str);
+	free(expanded);
+	dynarr_foreach(&commands, print_command, NULL);
 
 	// Lexer
 	// Parser
