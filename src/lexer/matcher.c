@@ -49,7 +49,7 @@ static void	handle_var(const char *cmd, size_t *idx, t_token *token)
 		if (strcontains(BLANK_CHARS, c) || \
 			strcontains(OPERATOR_CHARS, c) || \
 			strcontains(QUOTE_CHARS, c) || \
-			c == VAR_CHAR || c == '\0')
+			c == VAR_CHAR || c == '\0' || c == '\n')
 			break ;
 	}
 	subtoken.end = --(*idx);
