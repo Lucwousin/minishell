@@ -1,26 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   minishell.h                                        :+:    :+:            */
+/*   init_env.c                                         :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/30 18:29:45 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/06/30 18:29:45 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/06 21:38:45 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/06 21:38:45 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
+#include <minishell.h>
 
-# define MINISHELL_H
-# define PROMPT "minishell> "
+bool	init_environment(t_msh *msh)
+{
+	extern char	**environ;
+	size_t		index;
 
-# include <env.h>
-# include <stdbool.h>
-# include <stdint.h>
-
-typedef struct s_minishell {
-	t_dynarr	envp;
-}	t_msh;
-
-#endif
+	if (!dynarr_create(&msh->envp, ENV_INIT_SIZE, sizeof(t_env_var)))
+		return (false);
+	index = 0;
+	while (environ[index] != NULL)
+	{
+		if (parse_env_var(&msh->envp, environ[index++]))
+			continue ;
+		dynarr_delete(&msh->envp);
+		return (false);
+	}
+	return (true);
+}

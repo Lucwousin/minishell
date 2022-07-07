@@ -29,8 +29,8 @@ static void	print_command(void *command, void *arg)
 	printf("%d fd in\n", cmd->fds[0]);
 	printf("%d fd out\n", cmd->fds[1]);
 
-	do printf("%s\n", *argv);
-	while (*argv++ != NULL);
+	while (*argv != NULL)
+		printf("%s\n", *argv++);
 
 	printf("---- End cmd ----\n");
 	free(cmd->argv);
@@ -66,9 +66,24 @@ static void	do_something_with_input(char *input)
 
 }
 
+static void print_env_var(void *v, void *ign)
+{
+	(void) ign;
+	
+	t_env_var	*var = v;
+	char *str = (char *) env_var_to_str(var);
+	printf("%s\n", str);
+	free(str);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
+	t_msh	msh;
+
+	if (!init_environment(&msh))
+		exit(EXIT_FAILURE);
+	dynarr_foreach(&msh.envp, print_env_var, NULL);
 
 	(void) argc;
 	(void) argv;
@@ -80,11 +95,14 @@ int	main(int argc, char **argv, char **envp)
 		input = readline(PROMPT);
 		if (!input)
 			break ;
-		if	(*input)
+		if (*input)
 		{
 			add_history(input);
 			do_something_with_input(input);
+			if (strcmp(input, "exit") == 0)
+				break ;
 		}
 		free(input);
 	}
+	delete_environment(&msh.envp);
 }

@@ -22,6 +22,9 @@ CFLAGS += -g
 # SOURCE FILES
 SRCD = src/
 SRCS = minishell.c															\
+	   env/init_env.c														\
+	   env/del_env.c														\
+	   env/env_str.c														\
 	   lexer/tokenize.c														\
 	   lexer/matcher.c														\
 	   lexer/expander.c														\
@@ -36,6 +39,7 @@ OBJP = $(addprefix $(OBJD), $(OBJS))
 # HEADER FILES
 INCD = include/
 INCS = minishell.h															\
+	   env.h																\
 	   command.h															\
 	   token.h
 INCP = $(addprefix $(INCD), $(INCS))
@@ -97,5 +101,8 @@ fclean:
 
 re: fclean
 	@$(MAKE)
+
+valgrind: all
+	@valgrind --leak-check=full --show-reachable=yes --suppressions=minishell_vg.supp $(CURDIR)/$(NAME)
 
 .PHONY: all clean fclean re
