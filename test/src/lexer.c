@@ -36,11 +36,14 @@ static void	print_token(void *tokenp, void *ign)
 	(void) ign;
 	printf("token %s - start %lu - end %lu ", 
 		g_tokenstr[token->token], token->start, token->end);
-	if ((token->token == WORD || token->token == QUOTE)
-		&& token->sub.length != 0)
+	if (token->token == WORD || token->token == QUOTE)
 	{
-		printf("subtokens:\n");
-		dynarr_foreach(&token->sub, print_token, "\t");
+		if (token->sub.length != 0)
+		{
+			printf("subtokens:\n");
+			dynarr_foreach(&token->sub, print_token, "\t");
+		}
+		dynarr_delete(&token->sub);
 	}
 	printf("token end\n");
 }
@@ -54,6 +57,7 @@ static void	test(char *line)
 	tokenize(&output, line);
 	printf("%s - %lu tokens\n", line, output.length);
 	dynarr_foreach(&output, print_token, &sub_depth);
+	dynarr_delete(&output);
 }
 
 int	main(void)
