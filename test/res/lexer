@@ -1,0 +1,9 @@
+
+cat
+cat -e
+"cat -e"
+"$cat"
+'$cat'
+cat'at'
+cat"at"
+<< test cat | cat -e > test2

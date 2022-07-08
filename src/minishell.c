@@ -40,7 +40,7 @@ static void	do_something_with_input(char *input)
 
 }
 
-int	main(int argc, char **argv, char **envp)
+void	minishell(int argc, char **argv, char **envp)
 {
 	char	*input;
 

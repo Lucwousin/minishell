@@ -1,23 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   minishell.h                                        :+:    :+:            */
+/*   main.c                                             :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/06/30 18:29:45 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/06/30 18:29:45 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
+#include <minishell.h>
 
-# include <stdbool.h>
-# include <stdint.h>
-
-# define MINISHELL_H
-# define PROMPT "minishell> "
-
-void	minishell(int argc, char **argv, char **envp);
-
-#endif
+int	main(int argc, char **argv, char **envp)
+{
+	minishell(argc, argv, envp);
+}
