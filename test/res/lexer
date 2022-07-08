@@ -1,9 +1,24 @@
+#Empty line
 
+#1 word
 cat
+#2 words
 cat -e
+#1 word, double quotes
 "cat -e"
+#1 word, single quotes
+'cat -e'
+#1 word, variable
+$cat
+#1 word, double quotes, variable 
 "$cat"
+#1 word, singel quotes, variable (ignored)
 '$cat'
+#1 word, partially single quoted
 cat'at'
+#1 word, partially double quoted
 cat"at"
+#heredoc, word, pipe, 2 words, red_out, word
 << test cat | cat -e > test2
+#lots of words
+cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat

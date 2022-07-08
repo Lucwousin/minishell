@@ -118,25 +118,28 @@ test: $(TEST_LIB)
 		echo "Running test $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
 		$(CC) $(CFLAGS) $(TEST_LIBS) $(test) -o $(TEST_EXE); \
-		$(TEST_EXE) > $(TESTNAME)-output; \
+		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-output; \
 		rm -f $(TESTNAME)-diff; \
 		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
-		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi;\
+		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \
+		echo "Test $(test) done"; \
 	)
+	@rm -f $(TEST_EXE)
 
 $(TEST_LIB): $(NAME) $(TEST_LIB_OBJS)
 	@ar -cr $(TEST_LIB) $(TEST_LIB_OBJS)
 	@echo "Done creating archive $<"
 
 generate_test_files: $(TEST_LIB)
-	$(foreach test, $(TEST_SRCP), \
-		@$(CC) $(CFLAGS) $(TEST_LIBS) $(test) -o $(TEST_EXE); \
-		$(TEST_EXE) > $(TEST_RESD)/$(basename $(notdir $(test)))-expected; \
+	@$(foreach test, $(TEST_SRCP), \
+		echo "Generating files for $(test)"; \
+		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
+		$(CC) $(CFLAGS) $(TEST_LIBS) $(test) -o $(TEST_EXE); \
+		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-expected; \
 	)
 
 cleantest:
 	@rm -f $(TEST_RESD)*-diff $(TEST_RESD)*-output
 	@rm -f $(TEST_LIB)
-	@rm -f $(TEST_EXE)
 
 .PHONY: all clean fclean re test

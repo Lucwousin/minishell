@@ -13,12 +13,8 @@
 #include "get_next_line.h"
 #include "dynarr.h"
 #include "token.h"
-#include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
-
-#define RES_DIR "test/res"
-#define TEST_NAME "lexer"
 
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
@@ -36,36 +32,40 @@ static const char	*g_tokenstr[] = {
 static void	print_token(void *tokenp, void *ign)
 {
 	t_token	*token = tokenp;
-	printf("token %s - start %lu - end %lu\n",
-			g_tokenstr[token->token], token->start, token->end);
+
+	(void) ign;
+	printf("token %s - start %lu - end %lu ", 
+		g_tokenstr[token->token], token->start, token->end);
 	if ((token->token == WORD || token->token == QUOTE)
 		&& token->sub.length != 0)
 	{
 		printf("subtokens:\n");
-		dynarr_foreach(&token->sub, print_token, ign);
+		dynarr_foreach(&token->sub, print_token, "\t");
 	}
-	printf("token end\n\n");
+	printf("token end\n");
 }
 
 static void	test(char *line)
 {
 	t_dynarr	output;
+	size_t		sub_depth;
 
+	sub_depth = 0;
 	tokenize(&output, line);
 	printf("%s - %lu tokens\n", line, output.length);
-	dynarr_foreach(&output, print_token, NULL);
+	dynarr_foreach(&output, print_token, &sub_depth);
 }
 
 int	main(void)
 {
 	char	*line;
-	int32_t	fd;
 
-	fd = open(RES_DIR"/"TEST_NAME, O_RDONLY);
-
-	while ((line = get_next_line(fd)))
+	while ((line = get_next_line(STDIN_FILENO)))
 	{
-		test(line);
+		if (*line != '#')
+			test(line);
+		else
+			printf("%s\n", line + 1);
 		free(line);
 	}
 }

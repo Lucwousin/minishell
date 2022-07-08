@@ -1,89 +1,136 @@
+Empty line
+
 
  - 0 tokens
+1 word
+
 cat
  - 1 tokens
-token WORD - start 0 - end 2
-token end
+token WORD - start 0 - end 2 token end
+2 words
 
 cat -e
  - 2 tokens
-token WORD - start 0 - end 2
-token end
-
-token WORD - start 4 - end 5
-token end
+token WORD - start 0 - end 2 token end
+token WORD - start 4 - end 5 token end
+1 word, double quotes
 
 "cat -e"
  - 1 tokens
-token WORD - start 0 - end 7
-subtokens:
-token QUOTE - start 0 - end 7
+token WORD - start 0 - end 7 subtokens:
+token QUOTE - start 0 - end 7 token end
 token end
+1 word, single quotes
 
+'cat -e'
+ - 1 tokens
+token WORD - start 0 - end 7 subtokens:
+token QUOTE - start 0 - end 7 token end
 token end
+1 word, variable
+
+$cat
+ - 1 tokens
+token WORD - start 0 - end 3 subtokens:
+token VARIABLE - start 0 - end 3 token end
+token end
+1 word, double quotes, variable 
 
 "$cat"
  - 1 tokens
-token WORD - start 0 - end 5
-subtokens:
-token QUOTE - start 0 - end 5
-subtokens:
-token VARIABLE - start 1 - end 4
+token WORD - start 0 - end 5 subtokens:
+token QUOTE - start 0 - end 5 subtokens:
+token VARIABLE - start 1 - end 4 token end
 token end
-
 token end
-
-token end
+1 word, singel quotes, variable (ignored)
 
 '$cat'
  - 1 tokens
-token WORD - start 0 - end 5
-subtokens:
-token QUOTE - start 0 - end 5
+token WORD - start 0 - end 5 subtokens:
+token QUOTE - start 0 - end 5 token end
 token end
-
-token end
+1 word, partially single quoted
 
 cat'at'
  - 1 tokens
-token WORD - start 0 - end 6
-subtokens:
-token QUOTE - start 3 - end 6
+token WORD - start 0 - end 6 subtokens:
+token QUOTE - start 3 - end 6 token end
 token end
-
-token end
+1 word, partially double quoted
 
 cat"at"
  - 1 tokens
-token WORD - start 0 - end 6
-subtokens:
-token QUOTE - start 3 - end 6
+token WORD - start 0 - end 6 subtokens:
+token QUOTE - start 3 - end 6 token end
 token end
+heredoc, word, pipe, 2 words, red_out, word
 
-token end
+<< test cat | cat -e > test2
+ - 8 tokens
+token RED_HD - start 0 - end 1 token end
+token WORD - start 3 - end 6 token end
+token WORD - start 8 - end 10 token end
+token PIPE - start 12 - end 12 token end
+token WORD - start 14 - end 16 token end
+token WORD - start 18 - end 19 token end
+token RED_OUT - start 21 - end 21 token end
+token WORD - start 23 - end 27 token end
+lots of words
 
-<< test cat | cat -e > test2 - 8 tokens
-token RED_HD - start 0 - end 1
-token end
-
-token WORD - start 3 - end 6
-token end
-
-token WORD - start 8 - end 10
-token end
-
-token PIPE - start 12 - end 12
-token end
-
-token WORD - start 14 - end 16
-token end
-
-token WORD - start 18 - end 19
-token end
-
-token RED_OUT - start 21 - end 21
-token end
-
-token WORD - start 23 - end 27
-token end
-
+cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat - 55 tokens
+token WORD - start 0 - end 2 token end
+token WORD - start 4 - end 6 token end
+token WORD - start 8 - end 10 token end
+token WORD - start 12 - end 14 token end
+token WORD - start 16 - end 18 token end
+token WORD - start 20 - end 22 token end
+token WORD - start 24 - end 26 token end
+token WORD - start 28 - end 30 token end
+token WORD - start 32 - end 34 token end
+token WORD - start 36 - end 38 token end
+token WORD - start 40 - end 42 token end
+token WORD - start 44 - end 46 token end
+token WORD - start 48 - end 50 token end
+token WORD - start 52 - end 54 token end
+token WORD - start 56 - end 58 token end
+token WORD - start 60 - end 62 token end
+token WORD - start 64 - end 66 token end
+token WORD - start 68 - end 70 token end
+token WORD - start 72 - end 74 token end
+token WORD - start 76 - end 78 token end
+token WORD - start 80 - end 82 token end
+token WORD - start 84 - end 86 token end
+token WORD - start 88 - end 90 token end
+token WORD - start 92 - end 94 token end
+token WORD - start 96 - end 98 token end
+token WORD - start 100 - end 102 token end
+token WORD - start 104 - end 106 token end
+token WORD - start 108 - end 110 token end
+token WORD - start 112 - end 114 token end
+token WORD - start 116 - end 118 token end
+token WORD - start 120 - end 122 token end
+token WORD - start 124 - end 126 token end
+token WORD - start 128 - end 130 token end
+token WORD - start 132 - end 134 token end
+token WORD - start 136 - end 138 token end
+token WORD - start 140 - end 142 token end
+token WORD - start 144 - end 146 token end
+token WORD - start 148 - end 150 token end
+token WORD - start 152 - end 154 token end
+token WORD - start 156 - end 158 token end
+token WORD - start 160 - end 162 token end
+token WORD - start 164 - end 166 token end
+token WORD - start 168 - end 170 token end
+token WORD - start 172 - end 174 token end
+token WORD - start 176 - end 178 token end
+token WORD - start 180 - end 182 token end
+token WORD - start 184 - end 186 token end
+token WORD - start 188 - end 190 token end
+token WORD - start 192 - end 194 token end
+token WORD - start 196 - end 198 token end
+token WORD - start 200 - end 202 token end
+token WORD - start 204 - end 206 token end
+token WORD - start 208 - end 210 token end
+token WORD - start 212 - end 214 token end
+token WORD - start 216 - end 218 token end
