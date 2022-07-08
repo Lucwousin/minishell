@@ -59,3 +59,7 @@ minishell
 
 # vscode config file
 .vscode
+
+# Test outputs
+*-diff
+*-output
