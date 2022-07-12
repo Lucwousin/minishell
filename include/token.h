@@ -14,6 +14,7 @@
 # define TOKEN_H
 
 # define TOKENS_INIT_SIZE		32
+# define QUOTE_STACK_INIT_SIZE	16
 # define EOF_CHARS				"\n"
 # define BLANK_CHARS			" \t"
 # define OPERATOR_CHARS			"|<>"

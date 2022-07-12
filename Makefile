@@ -24,9 +24,11 @@ SRCD = src/
 SRCS = main.c																\
 	   minishell.c															\
 	   lexer/tokenize.c														\
+	   lexer/evaluate.c														\
 	   lexer/lex/lex_operator.c												\
 	   lexer/lex/lex_simple.c												\
-	   lexer/lex/lex_variable.c
+	   lexer/lex/lex_variable.c												\
+	   parser/parser.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
@@ -37,7 +39,8 @@ OBJP = $(addprefix $(OBJD), $(OBJS))
 # HEADER FILES
 INCD = include/
 INCS = minishell.h															\
-	   token.h
+	   token.h																\
+	   parser.h
 INCP = $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
