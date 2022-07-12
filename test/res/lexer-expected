@@ -1,136 +1,220 @@
+
 Empty line
+ - 1 tokens
+token   END_OF_INPUT - start    0 - end    0 ""
 
-
- - 0 tokens
 1 word
+cat - 2 tokens
+token           WORD - start    0 - end    2 "cat"
+token   END_OF_INPUT - start    3 - end    3 ""
 
-cat
- - 1 tokens
-token WORD - start 0 - end 2 token end
 2 words
+cat -e - 4 tokens
+token           WORD - start    0 - end    2 "cat"
+token     WHITESPACE - start    3 - end    3 " "
+token           WORD - start    4 - end    5 "-e"
+token   END_OF_INPUT - start    6 - end    6 ""
 
-cat -e
- - 2 tokens
-token WORD - start 0 - end 2 token end
-token WORD - start 4 - end 5 token end
 1 word, double quotes
+"cat -e" - 6 tokens
+token         DQUOTE - start    0 - end    0 """
+token           WORD - start    1 - end    3 "cat"
+token     WHITESPACE - start    4 - end    4 " "
+token           WORD - start    5 - end    6 "-e"
+token         DQUOTE - start    7 - end    7 """
+token   END_OF_INPUT - start    8 - end    8 ""
 
-"cat -e"
- - 1 tokens
-token WORD - start 0 - end 7 subtokens:
-token QUOTE - start 0 - end 7 token end
-token end
 1 word, single quotes
+'cat -e' - 6 tokens
+token         SQUOTE - start    0 - end    0 "'"
+token           WORD - start    1 - end    3 "cat"
+token     WHITESPACE - start    4 - end    4 " "
+token           WORD - start    5 - end    6 "-e"
+token         SQUOTE - start    7 - end    7 "'"
+token   END_OF_INPUT - start    8 - end    8 ""
 
-'cat -e'
- - 1 tokens
-token WORD - start 0 - end 7 subtokens:
-token QUOTE - start 0 - end 7 token end
-token end
 1 word, variable
+$cat - 2 tokens
+token       VARIABLE - start    0 - end    3 "$cat"
+token   END_OF_INPUT - start    4 - end    4 ""
 
-$cat
- - 1 tokens
-token WORD - start 0 - end 3 subtokens:
-token VARIABLE - start 0 - end 3 token end
-token end
 1 word, double quotes, variable 
+"$cat" - 4 tokens
+token         DQUOTE - start    0 - end    0 """
+token       VARIABLE - start    1 - end    4 "$cat"
+token         DQUOTE - start    5 - end    5 """
+token   END_OF_INPUT - start    6 - end    6 ""
 
-"$cat"
- - 1 tokens
-token WORD - start 0 - end 5 subtokens:
-token QUOTE - start 0 - end 5 subtokens:
-token VARIABLE - start 1 - end 4 token end
-token end
-token end
 1 word, singel quotes, variable (ignored)
+'$cat' - 4 tokens
+token         SQUOTE - start    0 - end    0 "'"
+token       VARIABLE - start    1 - end    4 "$cat"
+token         SQUOTE - start    5 - end    5 "'"
+token   END_OF_INPUT - start    6 - end    6 ""
 
-'$cat'
- - 1 tokens
-token WORD - start 0 - end 5 subtokens:
-token QUOTE - start 0 - end 5 token end
-token end
 1 word, partially single quoted
+cat'at' - 5 tokens
+token           WORD - start    0 - end    2 "cat"
+token         SQUOTE - start    3 - end    3 "'"
+token           WORD - start    4 - end    5 "at"
+token         SQUOTE - start    6 - end    6 "'"
+token   END_OF_INPUT - start    7 - end    7 ""
 
-cat'at'
- - 1 tokens
-token WORD - start 0 - end 6 subtokens:
-token QUOTE - start 3 - end 6 token end
-token end
 1 word, partially double quoted
+cat"at" - 5 tokens
+token           WORD - start    0 - end    2 "cat"
+token         DQUOTE - start    3 - end    3 """
+token           WORD - start    4 - end    5 "at"
+token         DQUOTE - start    6 - end    6 """
+token   END_OF_INPUT - start    7 - end    7 ""
 
-cat"at"
- - 1 tokens
-token WORD - start 0 - end 6 subtokens:
-token QUOTE - start 3 - end 6 token end
-token end
 heredoc, word, pipe, 2 words, red_out, word
+<< test cat | cat -e > test2 - 16 tokens
+token       OPERATOR - start    0 - end    1 "<<"
+token     WHITESPACE - start    2 - end    2 " "
+token           WORD - start    3 - end    6 "test"
+token     WHITESPACE - start    7 - end    7 " "
+token           WORD - start    8 - end   10 "cat"
+token     WHITESPACE - start   11 - end   11 " "
+token       OPERATOR - start   12 - end   12 "|"
+token     WHITESPACE - start   13 - end   13 " "
+token           WORD - start   14 - end   16 "cat"
+token     WHITESPACE - start   17 - end   17 " "
+token           WORD - start   18 - end   19 "-e"
+token     WHITESPACE - start   20 - end   20 " "
+token       OPERATOR - start   21 - end   21 ">"
+token     WHITESPACE - start   22 - end   22 " "
+token           WORD - start   23 - end   27 "test2"
+token   END_OF_INPUT - start   28 - end   28 ""
 
-<< test cat | cat -e > test2
- - 8 tokens
-token RED_HD - start 0 - end 1 token end
-token WORD - start 3 - end 6 token end
-token WORD - start 8 - end 10 token end
-token PIPE - start 12 - end 12 token end
-token WORD - start 14 - end 16 token end
-token WORD - start 18 - end 19 token end
-token RED_OUT - start 21 - end 21 token end
-token WORD - start 23 - end 27 token end
 lots of words
+cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat - 110 tokens
+token           WORD - start    0 - end    2 "cat"
+token     WHITESPACE - start    3 - end    3 " "
+token           WORD - start    4 - end    6 "cat"
+token     WHITESPACE - start    7 - end    7 " "
+token           WORD - start    8 - end   10 "cat"
+token     WHITESPACE - start   11 - end   11 " "
+token           WORD - start   12 - end   14 "cat"
+token     WHITESPACE - start   15 - end   15 " "
+token           WORD - start   16 - end   18 "cat"
+token     WHITESPACE - start   19 - end   19 " "
+token           WORD - start   20 - end   22 "cat"
+token     WHITESPACE - start   23 - end   23 " "
+token           WORD - start   24 - end   26 "cat"
+token     WHITESPACE - start   27 - end   27 " "
+token           WORD - start   28 - end   30 "cat"
+token     WHITESPACE - start   31 - end   31 " "
+token           WORD - start   32 - end   34 "cat"
+token     WHITESPACE - start   35 - end   35 " "
+token           WORD - start   36 - end   38 "cat"
+token     WHITESPACE - start   39 - end   39 " "
+token           WORD - start   40 - end   42 "cat"
+token     WHITESPACE - start   43 - end   43 " "
+token           WORD - start   44 - end   46 "cat"
+token     WHITESPACE - start   47 - end   47 " "
+token           WORD - start   48 - end   50 "cat"
+token     WHITESPACE - start   51 - end   51 " "
+token           WORD - start   52 - end   54 "cat"
+token     WHITESPACE - start   55 - end   55 " "
+token           WORD - start   56 - end   58 "cat"
+token     WHITESPACE - start   59 - end   59 " "
+token           WORD - start   60 - end   62 "cat"
+token     WHITESPACE - start   63 - end   63 " "
+token           WORD - start   64 - end   66 "cat"
+token     WHITESPACE - start   67 - end   67 " "
+token           WORD - start   68 - end   70 "cat"
+token     WHITESPACE - start   71 - end   71 " "
+token           WORD - start   72 - end   74 "cat"
+token     WHITESPACE - start   75 - end   75 " "
+token           WORD - start   76 - end   78 "cat"
+token     WHITESPACE - start   79 - end   79 " "
+token           WORD - start   80 - end   82 "cat"
+token     WHITESPACE - start   83 - end   83 " "
+token           WORD - start   84 - end   86 "cat"
+token     WHITESPACE - start   87 - end   87 " "
+token           WORD - start   88 - end   90 "cat"
+token     WHITESPACE - start   91 - end   91 " "
+token           WORD - start   92 - end   94 "cat"
+token     WHITESPACE - start   95 - end   95 " "
+token           WORD - start   96 - end   98 "cat"
+token     WHITESPACE - start   99 - end   99 " "
+token           WORD - start  100 - end  102 "cat"
+token     WHITESPACE - start  103 - end  103 " "
+token           WORD - start  104 - end  106 "cat"
+token     WHITESPACE - start  107 - end  107 " "
+token           WORD - start  108 - end  110 "cat"
+token     WHITESPACE - start  111 - end  111 " "
+token           WORD - start  112 - end  114 "cat"
+token     WHITESPACE - start  115 - end  115 " "
+token           WORD - start  116 - end  118 "cat"
+token     WHITESPACE - start  119 - end  119 " "
+token           WORD - start  120 - end  122 "cat"
+token     WHITESPACE - start  123 - end  123 " "
+token           WORD - start  124 - end  126 "cat"
+token     WHITESPACE - start  127 - end  127 " "
+token           WORD - start  128 - end  130 "cat"
+token     WHITESPACE - start  131 - end  131 " "
+token           WORD - start  132 - end  134 "cat"
+token     WHITESPACE - start  135 - end  135 " "
+token           WORD - start  136 - end  138 "cat"
+token     WHITESPACE - start  139 - end  139 " "
+token           WORD - start  140 - end  142 "cat"
+token     WHITESPACE - start  143 - end  143 " "
+token           WORD - start  144 - end  146 "cat"
+token     WHITESPACE - start  147 - end  147 " "
+token           WORD - start  148 - end  150 "cat"
+token     WHITESPACE - start  151 - end  151 " "
+token           WORD - start  152 - end  154 "cat"
+token     WHITESPACE - start  155 - end  155 " "
+token           WORD - start  156 - end  158 "cat"
+token     WHITESPACE - start  159 - end  159 " "
+token           WORD - start  160 - end  162 "cat"
+token     WHITESPACE - start  163 - end  163 " "
+token           WORD - start  164 - end  166 "cat"
+token     WHITESPACE - start  167 - end  167 " "
+token           WORD - start  168 - end  170 "cat"
+token     WHITESPACE - start  171 - end  171 " "
+token           WORD - start  172 - end  174 "cat"
+token     WHITESPACE - start  175 - end  175 " "
+token           WORD - start  176 - end  178 "cat"
+token     WHITESPACE - start  179 - end  179 " "
+token           WORD - start  180 - end  182 "cat"
+token     WHITESPACE - start  183 - end  183 " "
+token           WORD - start  184 - end  186 "cat"
+token     WHITESPACE - start  187 - end  187 " "
+token           WORD - start  188 - end  190 "cat"
+token     WHITESPACE - start  191 - end  191 " "
+token           WORD - start  192 - end  194 "cat"
+token     WHITESPACE - start  195 - end  195 " "
+token           WORD - start  196 - end  198 "cat"
+token     WHITESPACE - start  199 - end  199 " "
+token           WORD - start  200 - end  202 "cat"
+token     WHITESPACE - start  203 - end  203 " "
+token           WORD - start  204 - end  206 "cat"
+token     WHITESPACE - start  207 - end  207 " "
+token           WORD - start  208 - end  210 "cat"
+token     WHITESPACE - start  211 - end  211 " "
+token           WORD - start  212 - end  214 "cat"
+token     WHITESPACE - start  215 - end  215 " "
+token           WORD - start  216 - end  218 "cat"
+token   END_OF_INPUT - start  219 - end  219 ""
 
-cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat - 55 tokens
-token WORD - start 0 - end 2 token end
-token WORD - start 4 - end 6 token end
-token WORD - start 8 - end 10 token end
-token WORD - start 12 - end 14 token end
-token WORD - start 16 - end 18 token end
-token WORD - start 20 - end 22 token end
-token WORD - start 24 - end 26 token end
-token WORD - start 28 - end 30 token end
-token WORD - start 32 - end 34 token end
-token WORD - start 36 - end 38 token end
-token WORD - start 40 - end 42 token end
-token WORD - start 44 - end 46 token end
-token WORD - start 48 - end 50 token end
-token WORD - start 52 - end 54 token end
-token WORD - start 56 - end 58 token end
-token WORD - start 60 - end 62 token end
-token WORD - start 64 - end 66 token end
-token WORD - start 68 - end 70 token end
-token WORD - start 72 - end 74 token end
-token WORD - start 76 - end 78 token end
-token WORD - start 80 - end 82 token end
-token WORD - start 84 - end 86 token end
-token WORD - start 88 - end 90 token end
-token WORD - start 92 - end 94 token end
-token WORD - start 96 - end 98 token end
-token WORD - start 100 - end 102 token end
-token WORD - start 104 - end 106 token end
-token WORD - start 108 - end 110 token end
-token WORD - start 112 - end 114 token end
-token WORD - start 116 - end 118 token end
-token WORD - start 120 - end 122 token end
-token WORD - start 124 - end 126 token end
-token WORD - start 128 - end 130 token end
-token WORD - start 132 - end 134 token end
-token WORD - start 136 - end 138 token end
-token WORD - start 140 - end 142 token end
-token WORD - start 144 - end 146 token end
-token WORD - start 148 - end 150 token end
-token WORD - start 152 - end 154 token end
-token WORD - start 156 - end 158 token end
-token WORD - start 160 - end 162 token end
-token WORD - start 164 - end 166 token end
-token WORD - start 168 - end 170 token end
-token WORD - start 172 - end 174 token end
-token WORD - start 176 - end 178 token end
-token WORD - start 180 - end 182 token end
-token WORD - start 184 - end 186 token end
-token WORD - start 188 - end 190 token end
-token WORD - start 192 - end 194 token end
-token WORD - start 196 - end 198 token end
-token WORD - start 200 - end 202 token end
-token WORD - start 204 - end 206 token end
-token WORD - start 208 - end 210 token end
-token WORD - start 212 - end 214 token end
-token WORD - start 216 - end 218 token end
+Something with parentheses and tabs
+cat (cat) "cat" (cat)		caaat - 16 tokens
+token           WORD - start    0 - end    2 "cat"
+token     WHITESPACE - start    3 - end    3 " "
+token       PAR_OPEN - start    4 - end    4 "("
+token           WORD - start    5 - end    7 "cat"
+token      PAR_CLOSE - start    8 - end    8 ")"
+token     WHITESPACE - start    9 - end    9 " "
+token         DQUOTE - start   10 - end   10 """
+token           WORD - start   11 - end   13 "cat"
+token         DQUOTE - start   14 - end   14 """
+token     WHITESPACE - start   15 - end   15 " "
+token       PAR_OPEN - start   16 - end   16 "("
+token           WORD - start   17 - end   19 "cat"
+token      PAR_CLOSE - start   20 - end   20 ")"
+token     WHITESPACE - start   21 - end   22 "		"
+token           WORD - start   23 - end   27 "caaat"
+token   END_OF_INPUT - start   28 - end   28 ""

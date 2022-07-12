@@ -1,18 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   lex_variable.c                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/11 23:40:52 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/11 23:40:52 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include <token.h>
 
-int	main(int argc, char **argv, char **envp)
+bool	lex_variable(t_lexer *lexer, t_char_type type)
 {
-	minishell(argc, argv, envp);
+	if (type == VAR_S || type == WORD_S)
+		return (consume_char(lexer));
+	return (switch_state(lexer, DEFAULT));
 }

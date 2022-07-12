@@ -21,12 +21,12 @@
 static void	do_something_with_input(char *input)
 {
 	t_dynarr	tokens;
-	t_exp_token	*expanded;
+	//t_exp_token	*expanded;
 	
 	tokenize(&tokens, input);
-	expanded = expand(&tokens, input);
-	for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
-		printf("%s\n", expanded[i].str);
+	//expanded = expand(&tokens, input);
+	//for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
+	//	printf("%s\n", expanded[i].str);
 
 	// Lexer
 	// Parser

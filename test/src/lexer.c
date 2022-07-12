@@ -10,53 +10,44 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include "dynarr.h"
-#include "token.h"
+#include <get_next_line.h>
+#include <dynarr.h>
+#include <token.h>
 #include <stdio.h>
 #include <unistd.h>
 
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
+[WHITESPACE] = "WHITESPACE",
 [WORD] = "WORD",
 [VARIABLE] = "VARIABLE",
-[QUOTE] = "QUOTE",
+[SQUOTE] = "SQUOTE",
+[DQUOTE] = "DQUOTE",
+[PAR_OPEN] = "PAR_OPEN",
+[PAR_CLOSE] = "PAR_CLOSE",
 [OPERATOR] = "OPERATOR",
-[PIPE] = "PIPE",
-[RED_IN] = "RED_IN",
-[RED_HD] = "RED_HD",
-[RED_OUT] = "RED_OUT",
-[RED_APP] = "RED_APP",
 };
 
-static void	print_token(void *tokenp, void *ign)
+static void	print_token(void *tokenp, void *str)
 {
-	t_token	*token = tokenp;
+	t_token	*token;
+	char	*substr;
 
-	(void) ign;
-	printf("token %s - start %lu - end %lu ", 
-		g_tokenstr[token->token], token->start, token->end);
-	if (token->token == WORD || token->token == QUOTE)
-	{
-		if (token->sub.length != 0)
-		{
-			printf("subtokens:\n");
-			dynarr_foreach(&token->sub, print_token, "\t");
-		}
-		dynarr_delete(&token->sub);
-	}
-	printf("token end\n");
+	token = tokenp;
+	substr = ft_substr(str, token->start, token->end - token->start + 1);
+	printf("token %14s - start %4lu - end %4lu \"%s\"\n",
+		g_tokenstr[token->token], token->start, token->end, substr);
+	free(substr);
 }
 
 static void	test(char *line)
 {
 	t_dynarr	output;
-	size_t		sub_depth;
 
-	sub_depth = 0;
+	line[ft_strlen(line) - 1] = '\0';
 	tokenize(&output, line);
 	printf("%s - %lu tokens\n", line, output.length);
-	dynarr_foreach(&output, print_token, &sub_depth);
+	dynarr_foreach(&output, print_token, line);
 	dynarr_delete(&output);
 }
 
@@ -64,12 +55,15 @@ int	main(void)
 {
 	char	*line;
 
-	while ((line = get_next_line(STDIN_FILENO)))
+	while (true)
 	{
+		line = get_next_line(STDIN_FILENO);
+		if (line == NULL)
+			break ;
 		if (*line != '#')
 			test(line);
 		else
-			printf("%s\n", line + 1);
+			printf("\n%s", line + 1);
 		free(line);
 	}
 }

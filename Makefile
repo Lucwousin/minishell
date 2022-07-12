@@ -24,8 +24,9 @@ SRCD = src/
 SRCS = main.c																\
 	   minishell.c															\
 	   lexer/tokenize.c														\
-	   lexer/matcher.c														\
-	   lexer/expander.c
+	   lexer/lex/lex_operator.c												\
+	   lexer/lex/lex_simple.c												\
+	   lexer/lex/lex_variable.c
 SRCP = $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
@@ -113,11 +114,11 @@ fclean:
 re: fclean
 	@$(MAKE)
 
-test: $(TEST_LIB)
+test: $(TEST_LIBS)
 	@$(foreach test, $(TEST_SRCP), \
 		echo "Running test $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(CFLAGS) $(TEST_LIBS) $(test) -o $(TEST_EXE); \
+		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
 		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-output; \
 		rm -f $(TESTNAME)-diff; \
 		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
@@ -126,15 +127,15 @@ test: $(TEST_LIB)
 	)
 	@rm -f $(TEST_EXE)
 
-$(TEST_LIB): $(NAME) $(TEST_LIB_OBJS)
+$(TEST_LIB): $(NAME) $(TEST_LIB_OBJS) $(LIBFT_L)
 	@ar -cr $(TEST_LIB) $(TEST_LIB_OBJS)
 	@echo "Done creating archive $<"
 
-generate_test_files: $(TEST_LIB)
+generate_test_files: $(TEST_LIBS)
 	@$(foreach test, $(TEST_SRCP), \
 		echo "Generating files for $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(CFLAGS) $(TEST_LIBS) $(test) -o $(TEST_EXE); \
+		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
 		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-expected; \
 	)
 

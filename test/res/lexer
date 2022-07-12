@@ -22,3 +22,5 @@ cat"at"
 << test cat | cat -e > test2
 #lots of words
 cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat
+#Something with parentheses and tabs
+cat (cat) "cat" (cat)		caaat

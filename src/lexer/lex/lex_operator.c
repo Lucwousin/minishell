@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   lex_operator.c                                     :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/11 23:40:50 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/11 23:40:50 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include <token.h>
 
-int	main(int argc, char **argv, char **envp)
+bool	lex_operator(t_lexer *lexer, t_char_type type)
 {
-	minishell(argc, argv, envp);
+	if (type == OPERATOR_S)
+		if (lexer->idx == lexer->current_token.start || \
+			lexer->str[lexer->idx - 1] == lexer->str[lexer->idx])
+			return (consume_char(lexer));
+	return (switch_state(lexer, DEFAULT));
 }
