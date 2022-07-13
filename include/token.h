@@ -14,6 +14,7 @@
 # define TOKEN_H
 
 # define TOKENS_INIT_SIZE		32
+
 # define EOF_CHARS				"\n"
 # define BLANK_CHARS			" \t"
 # define OPERATOR_CHARS			"|<>"
@@ -22,6 +23,9 @@
 # define VAR_CHAR				'$'
 # define PAR_OPEN_CHAR			'('
 # define PAR_CLOSE_CHAR			')'
+
+# define TOKEN_S_QUOTED			128
+# define TOKEN_D_QUOTED			256
 
 # include <dynarr.h>
 
@@ -84,5 +88,7 @@ bool		lex_simple_single(t_lexer *lexer, t_char_type type);
 
 bool		consume_char(t_lexer *lexer);
 bool		switch_state(t_lexer *lexer, t_lex_state new_state);
+
+bool		evaluate(t_dynarr *tokens);
 
 #endif

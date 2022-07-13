@@ -48,6 +48,9 @@ static void	test(char *line)
 	tokenize(&output, line);
 	printf("%s - %lu tokens\n", line, output.length);
 	dynarr_foreach(&output, print_token, line);
+	evaluate(&output);
+	printf("after whitespace removal - %lu tokens\n", output.length);
+	dynarr_foreach(&output, print_token, line);
 	dynarr_delete(&output);
 }
 

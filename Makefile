@@ -24,6 +24,7 @@ SRCD = src/
 SRCS = main.c																\
 	   minishell.c															\
 	   lexer/tokenize.c														\
+	   lexer/evaluate.c														\
 	   lexer/lex/lex_operator.c												\
 	   lexer/lex/lex_simple.c												\
 	   lexer/lex/lex_variable.c
