@@ -10,9 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = minishell
+NAME := minishell
 
-CC = gcc
+CC := gcc
 
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
@@ -20,43 +20,43 @@ CFLAGS += -g
 CFLAGS += -fsanitize=address
 
 # SOURCE FILES
-SRCD = src/
-SRCS = main.c																\
-	   minishell.c															\
-	   lexer/tokenize.c														\
-	   lexer/evaluate.c														\
-	   lexer/lex/lex_operator.c												\
-	   lexer/lex/lex_simple.c												\
-	   lexer/lex/lex_variable.c												\
-	   parser/parse.c
-SRCP = $(addprefix $(SRCD), $(SRCS))
+SRCD := src/
+SRCS := main.c																\
+		minishell.c															\
+		lexer/tokenize.c													\
+		lexer/evaluate.c													\
+		lexer/lex/lex_operator.c											\
+		lexer/lex/lex_simple.c												\
+		lexer/lex/lex_variable.c											\
+		parser/parse.c
+SRCP := $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
-OBJD = obj/
-OBJS = $(SRCS:.c=.o)
-OBJP = $(addprefix $(OBJD), $(OBJS))
+OBJD := obj/
+OBJS := $(SRCS:.c=.o)
+OBJP := $(addprefix $(OBJD), $(OBJS))
 
 # HEADER FILES
-INCD = include/
-INCS = minishell.h															\
-	   token.h																\
-	   parse.h
-INCP = $(addprefix $(INCD), $(INCS))
+INCD := include/
+INCS := minishell.h															\
+		token.h																\
+		parse.h
+INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
 
 # TEST FILES
-TEST_DIR = test/
+TEST_DIR := test/
 
-TEST_EXE = $(addprefix $(TEST_DIR), .test)
-TEST_RESD = $(addprefix $(TEST_DIR), res/)
+TEST_EXE := $(addprefix $(TEST_DIR), .test)
+TEST_RESD := $(addprefix $(TEST_DIR), res/)
 
-TEST_SRCD = $(addprefix $(TEST_DIR), $(SRCD))
-TEST_SRCS = lexer.c
-TEST_SRCP = $(addprefix $(TEST_SRCD), $(TEST_SRCS))
+TEST_SRCD := $(addprefix $(TEST_DIR), $(SRCD))
+TEST_SRCS := lexer.c
+TEST_SRCP := $(addprefix $(TEST_SRCD), $(TEST_SRCS))
 
-TEST_LIB = $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
-TEST_LIB_OBJS = $(filter-out $(OBJD)main.o, $(OBJP))
+TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
+TEST_LIB_OBJS := $(filter-out $(OBJD)main.o, $(OBJP))
 
 TEST_LIBS += $(TEST_LIB)
 TEST_LIBS += $(LIBFT_L)
@@ -64,13 +64,13 @@ TEST_LIBS += $(LIBFT_L)
 # LIBRARIES
 
 #		LIBFT
-LIBFT_D = libft/
-LIBFT_N = libft.a
-LIBFT_H = libft.h															\
+LIBFT_D := libft/
+LIBFT_N := libft.a
+LIBFT_H := libft.h															\
 		  get_next_line.h													\
 		  dynarr.h
-LIBFT_I = $(addprefix $(LIBFT_D), $(INCD))
-LIBFT_L = $(addprefix $(LIBFT_D), $(LIBFT_N))
+LIBFT_I := $(addprefix $(LIBFT_D), $(INCD))
+LIBFT_L := $(addprefix $(LIBFT_D), $(LIBFT_N))
 
 CFLAGS += -I $(LIBFT_I)
 LIBS += $(LIBFT_L)
@@ -89,17 +89,20 @@ ifeq ($(shell uname), Linux)
 	LIBS += -lhistory
 endif
 
+#		RANDOM THINGS
+COMPILE := @$(CC) $(CFLAGS)
+
 # RECIPES
 all: $(NAME) test
 
 $(NAME): $(LIBFT_L) $(OBJP)
 	@echo "Compiling main executable!"
-	@$(CC) $(CFLAGS) $(OBJP) $(LIBS) -o $(NAME)
+	$(COMPILE) $(OBJP) $(LIBS) -o $(NAME)
 
 $(OBJD)%.o: $(SRCD)%.c $(HEADERS)
 	@mkdir -p $(@D)
 	@echo "Compiling: $<"
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	$(COMPILE) -c -o $@ $<
 
 $(LIBFT_L):
 	@$(MAKE) -C $(LIBFT_D)
@@ -132,7 +135,7 @@ test: $(TEST_LIBS)
 
 $(TEST_LIB): $(NAME) $(TEST_LIB_OBJS) $(LIBFT_L)
 	@ar -cr $(TEST_LIB) $(TEST_LIB_OBJS)
-	@echo "Done creating archive $<"
+	@echo "Done creating archive $(TEST_LIB)"
 
 generate_test_files: $(TEST_LIBS)
 	@$(foreach test, $(TEST_SRCP), \
