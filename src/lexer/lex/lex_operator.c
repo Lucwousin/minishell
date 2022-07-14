@@ -16,7 +16,8 @@ bool	lex_operator(t_lexer *lexer, t_char_type type)
 {
 	if (type == OPERATOR_S)
 		if (lexer->idx == lexer->current_token.start || \
-			lexer->str[lexer->idx - 1] == lexer->str[lexer->idx])
+			(lexer->idx == lexer->current_token.start + 1 \
+				&& lexer->str[lexer->idx - 1] == lexer->str[lexer->idx]))
 			return (consume_char(lexer));
 	return (switch_state(lexer, DEFAULT));
 }

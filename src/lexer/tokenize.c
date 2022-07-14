@@ -26,23 +26,23 @@ static t_lexerfunc	g_lex[] = {
 [VAR_S] = lex_variable,
 };
 
-static t_lex_state	get_type(char c)
+static t_lex_state	get_type(const char *c)
 {
-	if (ft_strchr(EOF_CHARS, c) != NULL)
+	if (ft_strchr(EOF_CHARS, *c) != NULL)
 		return (EOF_S);
-	if (ft_strchr(BLANK_CHARS, c) != NULL)
+	if (ft_strchr(BLANK_CHARS, *c) != NULL)
 		return (WHITE_S);
-	if (ft_strchr(OPERATOR_CHARS, c) != NULL)
+	if (ft_strchr(OPERATOR_CHARS, *c) != NULL)
 		return (OPERATOR_S);
-	if (c == SINGLE_QUOTE)
+	if (*c == SINGLE_QUOTE)
 		return (SQUOTE_S);
-	if (c == DOUBLE_QUOTE)
+	if (*c == DOUBLE_QUOTE)
 		return (DQUOTE_S);
-	if (c == VAR_CHAR)
+	if (*c == VAR_CHAR && get_type(c + 1) == WORD_S)
 		return (VAR_S);
-	if (c == PAR_OPEN_CHAR)
+	if (*c == PAR_OPEN_CHAR)
 		return (PAR_OPEN_S);
-	if (c == PAR_CLOSE_CHAR)
+	if (*c == PAR_CLOSE_CHAR)
 		return (PAR_CLOSE_S);
 	return (WORD_S);
 }
@@ -59,11 +59,9 @@ void	tokenize(t_dynarr *tokens, const char *cmd)
 	lexer.idx = 0;
 	if (!dynarr_create(lexer.tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
 		exit(EXIT_FAILURE); // TODO: error
-	while (lexer.state != ERROR && lexer.state != EOF_S)
-		if (!g_lex[lexer.state](&lexer, get_type(lexer.str[lexer.idx])))
+	while (lexer.state != EOF_S)
+		if (!g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
 			return ; //todo: An error occured somewhere!
-	if (lexer.state == ERROR)
-		return ; // TODO: syntax error near unexpected token 'x'
 	if (!dynarr_finalize(lexer.tokens))
 		return ; // TODO: error
 }
@@ -92,11 +90,11 @@ bool	switch_state(t_lexer *lexer, t_lex_state new_state)
 	};
 	bool						very_long_return_value_thanks_norminette;
 
-	if (new_state == ERROR || new_state == DEFAULT || new_state == EOF_S)
+	if (new_state == DEFAULT || new_state == EOF_S)
 		very_long_return_value_thanks_norminette = delimit_token(lexer);
 	else
 		very_long_return_value_thanks_norminette = true;
-	if (new_state != ERROR && new_state != EOF_S)
+	if (new_state != EOF_S)
 	{
 		lexer->current_token.token = types[new_state];
 		lexer->current_token.start = lexer->idx;

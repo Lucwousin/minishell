@@ -57,7 +57,7 @@ static void	add_quoted_bit(t_tokentype *shallow)
 	}
 }
 
-static bool	is_not_unclosed_quote(size_t idx, const t_tokentype *quoted)
+static bool	is_not_invalid_quote(size_t idx, const t_tokentype *quoted)
 {
 	if (quoted[idx] != SQUOTE && quoted[idx] != DQUOTE)
 		return (true);
@@ -79,7 +79,7 @@ static bool	remove_whitespace(t_dynarr *tokens, const t_tokentype *quoted)
 	while (idx < tokens->length)
 	{
 		cur = dynarr_get(tokens, idx);
-		if (quoted[idx] != WHITESPACE && is_not_unclosed_quote(idx, quoted))
+		if (quoted[idx] != WHITESPACE && is_not_invalid_quote(idx, quoted))
 		{
 			if (len != idx)
 				dynarr_set(tokens, len, cur);

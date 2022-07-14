@@ -24,3 +24,7 @@ cat"at"
 cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat cat
 #Something with parentheses and tabs
 cat (cat) "cat" (cat)		caaat
+#Single dollar sign is not a variable!
+cat $ $$ $hi
+#Operators have a maximum length of 2!
+>>>>> <<<<<< | || ||| || |

@@ -40,7 +40,6 @@ typedef enum e_lexer_state {
 	PAR_OPEN_S,
 	PAR_CLOSE_S,
 	EOF_S,
-	ERROR = -1
 }	t_lex_state;
 
 typedef t_lex_state	t_char_type;
@@ -90,5 +89,13 @@ bool		consume_char(t_lexer *lexer);
 bool		switch_state(t_lexer *lexer, t_lex_state new_state);
 
 bool		evaluate(t_dynarr *tokens);
+
+static inline bool	add_token(const char *cmd, t_dynarr *buf, t_token *token)
+{
+	size_t	len;
+
+	len = token->end - token->start + 1;
+	return (dynarr_add(buf, cmd + token->start, len));
+}
 
 #endif
