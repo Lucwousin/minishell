@@ -35,7 +35,7 @@ bool	toggle_quote(bool in_quote[2], t_tokentype type)
 		return (false);
 	if (in_quote[type == SQUOTE])
 		return (false);
-	in_quote[type != SQUOTE] = in_quote[type != SQUOTE];
+	in_quote[type != SQUOTE] = !in_quote[type != SQUOTE];
 	return (true);
 }
 
