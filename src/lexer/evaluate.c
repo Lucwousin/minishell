@@ -93,16 +93,13 @@ static bool	remove_whitespace(t_dynarr *tokens, const t_tokentype *quoted)
 bool	evaluate(t_dynarr *tokens)
 {
 	t_tokentype	*shallow;
+	bool		rv;
 
 	shallow = shallow_representation(tokens);
 	if (shallow == NULL)
 		return (false);
 	add_quoted_bit(shallow);
-	if (!remove_whitespace(tokens, shallow))
-	{
-		free(shallow);
-		return (false);
-	}
+	rv = remove_whitespace(tokens, shallow);
 	free(shallow);
-	return (true);
+	return (rv);
 }

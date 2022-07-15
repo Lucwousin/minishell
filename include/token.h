@@ -28,6 +28,7 @@
 # define TOKEN_D_QUOTED			256
 
 # include <dynarr.h>
+# include <input.h>
 
 typedef enum e_lexer_state {
 	DEFAULT,
@@ -43,18 +44,6 @@ typedef enum e_lexer_state {
 }	t_lex_state;
 
 typedef t_lex_state	t_char_type;
-
-typedef enum e_tokentype {
-	END_OF_INPUT = 0,
-	WHITESPACE,
-	WORD,
-	VARIABLE,
-	SQUOTE,
-	DQUOTE,
-	PAR_OPEN,
-	PAR_CLOSE,
-	OPERATOR
-}	t_tokentype;
 
 typedef struct s_token {
 	t_tokentype	token;
@@ -72,14 +61,6 @@ typedef struct s_lexer {
 
 typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
 
-/**
- * Tokenize the user input. Splits everything up into tokens (lexemes)
- * 
- * @param tokens[out] A dynamic array all the tokens will be added to.
- * @param cmd[in] The user input
- */
-void		tokenize(t_dynarr *tokens, const char *cmd);
-
 bool		lex_operator(t_lexer *lexer, t_char_type type);
 bool		lex_variable(t_lexer *lexer, t_char_type type);
 bool		lex_simple(t_lexer *lexer, t_char_type type);
@@ -87,8 +68,6 @@ bool		lex_simple_single(t_lexer *lexer, t_char_type type);
 
 bool		consume_char(t_lexer *lexer);
 bool		switch_state(t_lexer *lexer, t_lex_state new_state);
-
-bool		evaluate(t_dynarr *tokens);
 
 static inline bool	add_token(const char *cmd, t_dynarr *buf, t_token *token)
 {

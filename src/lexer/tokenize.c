@@ -47,9 +47,10 @@ static t_lex_state	get_type(const char *c)
 	return (WORD_S);
 }
 
-void	tokenize(t_dynarr *tokens, const char *cmd)
+bool	tokenize(t_dynarr *tokens, const char *cmd)
 {
-	t_lexer		lexer;
+	t_lexer	lexer;
+	bool	rv;
 
 	lexer.state = DEFAULT;
 	lexer.current_token.token = END_OF_INPUT;
@@ -57,13 +58,20 @@ void	tokenize(t_dynarr *tokens, const char *cmd)
 	lexer.tokens = tokens;
 	lexer.str = cmd;
 	lexer.idx = 0;
+	rv = true;
 	if (!dynarr_create(lexer.tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
-		exit(EXIT_FAILURE); // TODO: error
+		return (false);
 	while (lexer.state != EOF_S)
-		if (!g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
-			return ; //todo: An error occured somewhere!
-	if (!dynarr_finalize(lexer.tokens))
-		return ; // TODO: error
+	{
+		if (g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
+			continue ;
+		rv = false;
+		break ;
+	}
+	if (rv && dynarr_finalize(lexer.tokens))
+		return (true);
+	dynarr_delete(tokens);
+	return (rv);
 }
 
 static bool	delimit_token(t_lexer *lexer)
