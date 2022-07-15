@@ -45,12 +45,6 @@ typedef enum e_lexer_state {
 
 typedef t_lex_state	t_char_type;
 
-typedef struct s_token {
-	t_tokentype	type;
-	size_t		start;
-	size_t		end;
-}	t_token;
-
 typedef struct s_lexer {
 	t_lex_state	state;
 	t_dynarr	*tokens;
@@ -59,22 +53,26 @@ typedef struct s_lexer {
 	size_t		idx;
 }	t_lexer;
 
+typedef struct s_preparser {
+	const char	*cmd;
+	t_dynarr	*tokens;
+	size_t		idx;
+	t_exp_tok	cur;
+	bool		in_q[2];
+}	t_preparser;
+
 typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
 
-bool		lex_operator(t_lexer *lexer, t_char_type type);
-bool		lex_variable(t_lexer *lexer, t_char_type type);
-bool		lex_simple(t_lexer *lexer, t_char_type type);
-bool		lex_simple_single(t_lexer *lexer, t_char_type type);
+bool	lex_operator(t_lexer *lexer, t_char_type type);
+bool	lex_variable(t_lexer *lexer, t_char_type type);
+bool	lex_simple(t_lexer *lexer, t_char_type type);
+bool	lex_simple_single(t_lexer *lexer, t_char_type type);
 
-bool		consume_char(t_lexer *lexer);
-bool		switch_state(t_lexer *lexer, t_lex_state new_state);
+bool	consume_char(t_lexer *lexer);
+bool	switch_state(t_lexer *lexer, t_lex_state new_state);
 
-static inline bool	add_token(const char *cmd, t_dynarr *buf, t_token *token)
-{
-	size_t	len;
-
-	len = token->end - token->start + 1;
-	return (dynarr_add(buf, cmd + token->start, len));
-}
+bool	add_token(const char *cmd, t_dynarr *buf, t_token *token);
+bool	toggle_quote(bool in_quote[2], t_tokentype type);
+void	id_operator(const char *cmd, t_token *token, t_token *next);
 
 #endif

@@ -23,8 +23,11 @@ CFLAGS += -fsanitize=address
 SRCD := src/
 SRCS := main.c																\
 		minishell.c															\
+		error.c																\
 		lexer/tokenize.c													\
 		lexer/evaluate.c													\
+		lexer/preparse.c													\
+		lexer/token_utils.c													\
 		lexer/lex/lex_operator.c											\
 		lexer/lex/lex_simple.c												\
 		lexer/lex/lex_variable.c											\
@@ -39,6 +42,7 @@ OBJP := $(addprefix $(OBJD), $(OBJS))
 # HEADER FILES
 INCD := include/
 INCS := minishell.h															\
+		input.h																\
 		token.h																\
 		parse.h
 INCP := $(addprefix $(INCD), $(INCS))
@@ -67,8 +71,8 @@ TEST_LIBS += $(LIBFT_L)
 LIBFT_D := libft/
 LIBFT_N := libft.a
 LIBFT_H := libft.h															\
-		  get_next_line.h													\
-		  dynarr.h
+		   get_next_line.h													\
+		   dynarr.h
 LIBFT_I := $(addprefix $(LIBFT_D), $(INCD))
 LIBFT_L := $(addprefix $(LIBFT_D), $(LIBFT_N))
 

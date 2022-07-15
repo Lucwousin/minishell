@@ -13,6 +13,10 @@
 #ifndef INPUT_H
 # define INPUT_H
 
+# include <stdbool.h>
+# include <stddef.h>
+# include <dynarr.h>
+
 typedef enum e_tokentype {
 	END_OF_INPUT = 0,
 	WHITESPACE,
@@ -33,6 +37,17 @@ typedef enum e_tokentype {
 	PIPE
 }	t_tokentype;
 
+typedef struct s_token {
+	t_tokentype	type;
+	size_t		start;
+	size_t		end;
+}	t_token;
+
+typedef struct s_expanded_token {
+	t_tokentype	type;
+	char		*str;
+}	t_exp_tok;
+
 /**
  * Tokenize the user input. Splits everything up into tokens (lexemes)
  * 
@@ -41,15 +56,28 @@ typedef enum e_tokentype {
  * 
  * @return true if nothing went wrong, false if an allocation failed
  */
-bool		tokenize(t_dynarr *tokens, const char *cmd);
+bool	tokenize(t_dynarr *tokens, const char *cmd);
 
 /**
  * Remove all unnecessary whitespace and unclosed quotes
  * 
- * @param tokens[in/out]
+ * @param tokens[in/out] the tokens to evaluate
  *
- * @return 
+ * @return true if nothing went wrong, false if an allocation failed
  */
-bool		evaluate(t_dynarr *tokens);
+bool	evaluate(t_dynarr *tokens);
+
+/**
+ * Join all adjacent words, remove quotes, expand variables, combine redirects
+ * with their arguments.
+ * 
+ * @param tokens[in] the tokens to expand
+ * @param cmd[in]
+ * @param exp_tokens[out] the output array of expanded tokens
+ * 
+ * @return true if nothing went wrong, false in the case of a syntax error or
+ * allocation failure
+ */
+bool	preparse(t_dynarr *tokens, const char *cmd, t_dynarr *exp_tokens);
 
 #endif //INPUT_H
