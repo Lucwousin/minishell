@@ -32,28 +32,27 @@ static t_tokentype	*shallow_representation(t_dynarr *tokens)
 
 static void	add_quoted_bit(t_tokentype *shallow)
 {
-	bool	in_quotes[2];
+	bool	in_q[2];
+	size_t	quote_idx;
 	size_t	idx;
 
 	idx = 0;
-	in_quotes[0] = false;
-	in_quotes[1] = false;
+	in_q[0] = false;
+	in_q[1] = false;
 	while (shallow[idx] != END_OF_INPUT)
 	{
-		if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_quotes[0])
+		if (toggle_quote(in_q, shallow[idx]) && in_q[shallow[idx] != SQUOTE])
+			quote_idx = idx;
+		else if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_q[0])
 			shallow[idx] |= TOKEN_S_QUOTED;
-		if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_quotes[1])
+		else if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_q[1])
 			shallow[idx] |= TOKEN_D_QUOTED;
-		if (shallow[idx] == SQUOTE && in_quotes[1] == false)
-			in_quotes[0] = !in_quotes[0];
-		if (shallow[idx] == DQUOTE && in_quotes[0] == false)
-			in_quotes[1] = !in_quotes[1];
-		++idx;
-	}
-	if (in_quotes[0] || in_quotes[1])
-	{
-		while (shallow[--idx] & (TOKEN_S_QUOTED | TOKEN_D_QUOTED))
+		if (shallow[++idx] != END_OF_INPUT || (!in_q[0] && !in_q[1]))
+			continue ;
+		toggle_quote(in_q, shallow[quote_idx]);
+		while (--idx != quote_idx)
 			shallow[idx] &= ~(TOKEN_S_QUOTED | TOKEN_D_QUOTED);
+		idx++;
 	}
 }
 

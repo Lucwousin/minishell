@@ -28,3 +28,7 @@ cat (cat) "cat" (cat)		caaat
 cat $ $$ $hi
 #Operators have a maximum length of 2!
 >>>>> <<<<<< | || ||| || |
+#We should ignore unclosed quotes (after whitespace removal)
+"This quote is not closed 'but this different one is'
+#What happens if both types of quotes are unclosed?
+'Imagine closing your quotes like a loser"... lol
