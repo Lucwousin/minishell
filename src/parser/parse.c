@@ -13,10 +13,11 @@
 #include <parse.h>
 #include <token.h>
 
+/*
 
 bool	build_ast(const char *cmd, t_dynarr *tokens, t_dynarr *trunk)
 {
 	if (!dynarr_create(trunk, AST_INIT_SIZE, sizeof(t_ast_node)))
 		return (false);
 	
-}
+}*/

@@ -53,7 +53,7 @@ bool	tokenize(t_dynarr *tokens, const char *cmd)
 	bool	rv;
 
 	lexer.state = DEFAULT;
-	lexer.current_token.token = END_OF_INPUT;
+	lexer.current_token.type = END_OF_INPUT;
 	lexer.current_token.start = 0;
 	lexer.tokens = tokens;
 	lexer.str = cmd;
@@ -104,7 +104,7 @@ bool	switch_state(t_lexer *lexer, t_lex_state new_state)
 		very_long_return_value_thanks_norminette = true;
 	if (new_state != EOF_S)
 	{
-		lexer->current_token.token = types[new_state];
+		lexer->current_token.type = types[new_state];
 		lexer->current_token.start = lexer->idx;
 	}
 	lexer->state = new_state;

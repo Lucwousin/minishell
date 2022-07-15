@@ -46,7 +46,7 @@ typedef enum e_lexer_state {
 typedef t_lex_state	t_char_type;
 
 typedef struct s_token {
-	t_tokentype	token;
+	t_tokentype	type;
 	size_t		start;
 	size_t		end;
 }	t_token;

@@ -24,7 +24,7 @@ static t_tokentype	*shallow_representation(t_dynarr *tokens)
 	i = 0;
 	while (i < tokens->length)
 	{
-		shallow_copy[i] = ((t_token *) dynarr_get(tokens, i))->token;
+		shallow_copy[i] = ((t_token *) dynarr_get(tokens, i))->type;
 		++i;
 	}
 	return (shallow_copy);

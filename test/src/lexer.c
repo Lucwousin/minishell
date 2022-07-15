@@ -35,8 +35,8 @@ static void	print_token(void *tokenp, void *str)
 
 	token = tokenp;
 	substr = ft_substr(str, token->start, token->end - token->start + 1);
-	printf("token %14s - start %4lu - end %4lu \"%s\"\n",
-		g_tokenstr[token->token], token->start, token->end, substr);
+	printf("%14s - start %4lu - end %4lu \"%s\"\n",
+		g_tokenstr[token->type], token->start, token->end, substr);
 	free(substr);
 }
 
