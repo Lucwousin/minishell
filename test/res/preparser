@@ -1,0 +1,30 @@
+#Lines starting with hashtags are ignored, but printed
+#Lines starting with percent signs will change the environment (yes, this is confusing but $ is already in use for actual lines)
+%abc=123
+%def=456
+%ghi=789
+#Just a string with a single variable
+$abc
+#Multiple variables after one another?!
+$abc $def $ghi
+#Multiple variables after one another without spaces?!
+$abc$def$ghi
+%file=bread
+#Redirections?!
+< in > out << heredoc << "quoted" >> append
+#Redirections with no space?! (this is legal bash syntax)
+<in>out<<heredoc<<"quoted">>append
+#Redirections with variables n shit
+<< "$file"
+#What happens if I add more quotes?
+<< '"$file"'
+#What happens if I add more quotes (with expansion)?
+<< "'$file'"
+#Redirection syntax error
+>> |
+#Redirection syntax error 2
+>>
+#Redirection to a variable?
+> $abc
+#How many words will this be?
+$abc'$def'$ghi"$def"herlo$abc

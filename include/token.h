@@ -56,6 +56,7 @@ typedef struct s_lexer {
 typedef struct s_preparser {
 	const char	*cmd;
 	t_dynarr	*tokens;
+	t_dynarr	*output;
 	size_t		idx;
 	t_exp_tok	cur;
 	bool		in_q[2];
@@ -73,7 +74,7 @@ bool		switch_state(t_lexer *lexer, t_lex_state new_state);
 
 bool		add_token(const char *cmd, t_dynarr *buf, t_token *token);
 bool		toggle_quote(bool in_quote[2], t_tokentype type);
-void		id_operator(const char *cmd, t_token *token, t_token *next);
+void		id_operator(const char *cmd, t_token *token);
 t_char_type	get_type(const char *c);
 
 #endif

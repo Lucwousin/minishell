@@ -56,7 +56,8 @@ TEST_EXE := $(addprefix $(TEST_DIR), .test)
 TEST_RESD := $(addprefix $(TEST_DIR), res/)
 
 TEST_SRCD := $(addprefix $(TEST_DIR), $(SRCD))
-TEST_SRCS := lexer.c
+TEST_SRCS := lexer.c														\
+			 preparser.c
 TEST_SRCP := $(addprefix $(TEST_SRCD), $(TEST_SRCS))
 
 TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
@@ -129,7 +130,7 @@ test: $(TEST_LIBS)
 		echo "Running test $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
 		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
-		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-output; \
+		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
 		rm -f $(TESTNAME)-diff; \
 		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
 		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \
@@ -146,7 +147,7 @@ generate_test_files: $(TEST_LIBS)
 		echo "Generating files for $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
 		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
-		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-expected; \
+		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-expected 2> /dev/null; \
 	)
 
 cleantest:

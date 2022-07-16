@@ -39,7 +39,7 @@ bool	toggle_quote(bool in_quote[2], t_tokentype type)
 	return (true);
 }
 
-void	id_operator(const char *cmd, t_token *token, t_token *next)
+void	id_operator(const char *cmd, t_token *token)
 {
 	size_t		len;
 
@@ -58,8 +58,6 @@ void	id_operator(const char *cmd, t_token *token, t_token *next)
 		token->type = OR;
 	else
 		token->type = AND;
-	if (token->type == RED_HD && (next->type == SQUOTE || next->type == DQUOTE))
-		token->type = RED_HD_Q;
 }
 
 t_char_type	get_type(const char *c)

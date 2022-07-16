@@ -15,13 +15,12 @@
 #include <stdlib.h>
 #include "libft.h"
 
-#define SUCCESS		0
-#define NO_TOKEN	1
-#define MALLOC		2
-#define SYNTAX		3
+#define SUCCESS	0
+#define MALLOC	1
+#define SYNTAX	2
 
-#define SQUOTE_I	0
-#define DQUOTE_I	1
+#define S		0
+#define D		1
 
 bool			malloc_error(const char *where);
 bool			syntax_error(const char *cmd, t_token *token);
@@ -44,6 +43,7 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 {
 	char	*var_name;
 	char	*var_value;
+	char	*val;
 
 	// TODO: $?
 	var_name = ft_substr(pp->cmd, tok->start + 1, tok->end - tok->start);
@@ -51,8 +51,30 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 		return (false);
 	var_value = getenv(var_name);
 	free(var_name);
-	return (var_value == NULL \
-		|| dynarr_add(buf, var_value, ft_strlen(var_value)));
+	if (var_value == NULL)
+		return (true);
+	if (pp->in_q[D])
+		return (dynarr_add(buf, var_value, ft_strlen(var_value)));
+	val = var_value;
+	while (*val)
+	{
+		if (get_type(val) != WHITE_S && *val != '\n')
+		{
+			if (!dynarr_addone(buf, val))
+				return (false);
+		}
+		else if (buf->length != 0)
+		{
+			if (!dynarr_addone(buf, ""))
+				return (false);
+			pp->cur = (t_exp_tok){WORD, ft_strdup(buf->arr)};
+			if (pp->cur.str == NULL || !dynarr_addone(pp->output, &pp->cur))
+				return (false);
+			buf->length = 0;
+		}
+		++val;
+	}
+	return (true);
 }
 
 static uint8_t	expand(t_preparser *pp, t_dynarr *buf);
@@ -61,25 +83,26 @@ static uint8_t	try_concat(t_token *tok, t_preparser *pp, t_dynarr *buf)
 {
 	t_token	*nxt;
 
+	if (pp->in_q[S] || pp->in_q[D])
+	{
+		if (pp->cur.type == RED_HD)
+			pp->cur.type = RED_HD_Q;
+		return (expand(pp, buf));
+	}
 	nxt = dynarr_get(pp->tokens, pp->idx);
-	if (pp->in_q[SQUOTE_I])
-		if (nxt->type != SQUOTE)
-			return (expand(pp, buf));
-	if (pp->in_q[DQUOTE_I])
-		if (nxt->type != DQUOTE)
-			return (expand(pp, buf));
-	if ((tok->type == VARIABLE && nxt->type == WORD) || \
-		(nxt->type == VARIABLE && tok->type == WORD))
+	if (tok->type >= WORD && tok->type <= DQUOTE && \
+		nxt->type >= WORD && nxt->type <= DQUOTE)
 		if (tok->end == nxt->start - 1)
 			return (expand(pp, buf));
 	if (tok->type != OPERATOR)
 		return (SUCCESS);
-	id_operator(pp->cmd, tok, nxt);
-	if (tok->type == OR || tok->type == AND || tok->type == PIPE)
+	id_operator(pp->cmd, tok);
+	pp->cur.type = tok->type;
+	if (tok->type < RED_IN || tok->type > RED_APP)
 		return (SUCCESS);
-	if (nxt->type == SQUOTE || nxt->type == DQUOTE || nxt->type == WORD)
-		return (expand(pp, buf));
-	return (SYNTAX);
+	if (nxt->type < WORD || nxt->type > DQUOTE)
+		return (SYNTAX);
+	return (expand(pp, buf));
 }
 
 static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
@@ -88,22 +111,25 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	uint8_t	status;
 
 	t = dynarr_get(pp->tokens, pp->idx++);
-	if (toggle_quote(pp->in_q, t->type))
-		return (NO_TOKEN);
-	if (t->type == VARIABLE && !pp->in_q[SQUOTE_I])
+	if (buf->length == 0 && (pp->cur.type < RED_IN || pp->cur.type > RED_APP))
+		pp->cur.type = t->type;
+	if (t->type == VARIABLE && !pp->in_q[S] && \
+		pp->cur.type != RED_HD_Q && pp->cur.type != RED_HD)
 	{
 		if (!expand_var(pp, t, buf))
 			return (MALLOC);
 	}
-	else if ((t->type == WORD || pp->in_q[SQUOTE_I] || pp->in_q[DQUOTE_I]) \
-			&& !add_token(pp->cmd, buf, t))
-		return (MALLOC);
+	else if (!toggle_quote(pp->in_q, t->type)
+		&& (t->type == WORD || pp->in_q[0] || pp->in_q[1]))
+		if (!add_token(pp->cmd, buf, t))
+			return (MALLOC);
 	status = try_concat(t, pp, buf);
 	if (status == SYNTAX || status == MALLOC)
 		return (status);
-	if (!dynarr_addone(buf, ""))
+	if (pp->cur.str == NULL && !dynarr_addone(buf, ""))
 		return (MALLOC);
-	pp->cur = (t_exp_tok){t->type, ft_strdup(buf->arr)};
+	if (pp->cur.str == NULL)
+		pp->cur.str = ft_strdup(buf->arr);
 	return (status);
 }
 
@@ -113,16 +139,15 @@ bool	preparse(t_dynarr *tokens, const char *cmd, t_dynarr *exp_tokens)
 	uint8_t		err;
 	t_dynarr	buf;
 
-	pp = ((t_preparser){cmd, tokens, 0, {}, {false, false}});
+	pp = ((t_preparser){cmd, tokens, exp_tokens, 0, {}, {false, false}});
 	if (!dynarr_create(exp_tokens, tokens->length, sizeof(t_exp_tok)) || \
 		!dynarr_create(&buf, 128, sizeof(char)))
 		return (err_clean(&pp, MALLOC, exp_tokens));
 	while (pp.idx < tokens->length - 1)
 	{
 		buf.length = 0;
+		pp.cur.str = NULL;
 		err = expand(&pp, &buf);
-		if (err == NO_TOKEN)
-			continue ;
 		if (err != SUCCESS)
 			break ;
 		if (pp.cur.str != NULL && dynarr_addone(exp_tokens, &pp.cur))
@@ -131,7 +156,7 @@ bool	preparse(t_dynarr *tokens, const char *cmd, t_dynarr *exp_tokens)
 		break ;
 	}
 	dynarr_delete(&buf);
-	if ((err != SUCCESS && err != NO_TOKEN) || !dynarr_finalize(exp_tokens))
+	if (err != SUCCESS || !dynarr_finalize(exp_tokens))
 		return (err_clean(&pp, err, exp_tokens));
 	return (true);
 }
