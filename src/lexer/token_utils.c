@@ -74,7 +74,7 @@ t_char_type	get_type(const char *c)
 		return (SQUOTE_S);
 	if (*c == DOUBLE_QUOTE)
 		return (DQUOTE_S);
-	if (*c == VAR_CHAR && get_type(c + 1) == WORD_S)
+	if (*c == VAR_CHAR && (c[1] == VAR_CHAR || get_type(c + 1) == WORD_S))
 		return (VAR_S);
 	if (*c == PAR_OPEN_CHAR)
 		return (PAR_OPEN_S);

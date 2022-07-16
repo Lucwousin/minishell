@@ -364,6 +364,24 @@ after whitespace removal - 5 tokens
       VARIABLE - start    9 - end   11 "$hi"
   END_OF_INPUT - start   12 - end   12 ""
 
+Double dollar sign is a special case, it delimits itself after second $
+cat $$$ $$abc - 8 tokens
+          WORD - start    0 - end    2 "cat"
+    WHITESPACE - start    3 - end    3 " "
+      VARIABLE - start    4 - end    5 "$$"
+          WORD - start    6 - end    6 "$"
+    WHITESPACE - start    7 - end    7 " "
+      VARIABLE - start    8 - end    9 "$$"
+          WORD - start   10 - end   12 "abc"
+  END_OF_INPUT - start   13 - end   13 ""
+after whitespace removal - 6 tokens
+          WORD - start    0 - end    2 "cat"
+      VARIABLE - start    4 - end    5 "$$"
+          WORD - start    6 - end    6 "$"
+      VARIABLE - start    8 - end    9 "$$"
+          WORD - start   10 - end   12 "abc"
+  END_OF_INPUT - start   13 - end   13 ""
+
 Operators have a maximum length of 2!
 >>>>> <<<<<< | || ||| || | - 19 tokens
       OPERATOR - start    0 - end    1 ">>"

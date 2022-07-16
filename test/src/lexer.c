@@ -65,7 +65,7 @@ int	main(void)
 			break ;
 		if (*line != '#')
 			test(line);
-		else
+		else if (line[1] != '\n')
 			printf("\n%s", line + 1);
 		free(line);
 	}
