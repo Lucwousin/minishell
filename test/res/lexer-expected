@@ -476,3 +476,35 @@ after whitespace removal - 10 tokens
           WORD - start   42 - end   44 "..."
           WORD - start   46 - end   48 "lol"
   END_OF_INPUT - start   49 - end   49 ""
+
+Quotes within quotes, this should keep the 's
+"'yes'" - 6 tokens
+        DQUOTE - start    0 - end    0 """
+        SQUOTE - start    1 - end    1 "'"
+          WORD - start    2 - end    4 "yes"
+        SQUOTE - start    5 - end    5 "'"
+        DQUOTE - start    6 - end    6 """
+  END_OF_INPUT - start    7 - end    7 ""
+after whitespace removal - 6 tokens
+        DQUOTE - start    0 - end    0 """
+        SQUOTE - start    1 - end    1 "'"
+          WORD - start    2 - end    4 "yes"
+        SQUOTE - start    5 - end    5 "'"
+        DQUOTE - start    6 - end    6 """
+  END_OF_INPUT - start    7 - end    7 ""
+
+Quotes within quotes, this should keep the "s
+'"yes"' - 6 tokens
+        SQUOTE - start    0 - end    0 "'"
+        DQUOTE - start    1 - end    1 """
+          WORD - start    2 - end    4 "yes"
+        DQUOTE - start    5 - end    5 """
+        SQUOTE - start    6 - end    6 "'"
+  END_OF_INPUT - start    7 - end    7 ""
+after whitespace removal - 6 tokens
+        SQUOTE - start    0 - end    0 "'"
+        DQUOTE - start    1 - end    1 """
+          WORD - start    2 - end    4 "yes"
+        DQUOTE - start    5 - end    5 """
+        SQUOTE - start    6 - end    6 "'"
+  END_OF_INPUT - start    7 - end    7 ""

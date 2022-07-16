@@ -32,3 +32,7 @@ cat $ $$ $hi
 "This quote is not closed 'but this different one is'
 #What happens if both types of quotes are unclosed?
 'Imagine closing your quotes like a loser"... lol
+#Quotes within quotes, this should keep the 's
+"'yes'"
+#Quotes within quotes, this should keep the "s
+'"yes"'

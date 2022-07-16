@@ -43,9 +43,9 @@ static void	add_quoted_bit(t_tokentype *shallow)
 	{
 		if (toggle_quote(in_q, shallow[idx]) && in_q[shallow[idx] != SQUOTE])
 			quote_idx = idx;
-		else if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_q[0])
+		else if (shallow[idx] != SQUOTE && in_q[0])
 			shallow[idx] |= TOKEN_S_QUOTED;
-		else if (shallow[idx] != SQUOTE && shallow[idx] != DQUOTE && in_q[1])
+		else if (shallow[idx] != DQUOTE && in_q[1])
 			shallow[idx] |= TOKEN_D_QUOTED;
 		if (shallow[++idx] != END_OF_INPUT || (!in_q[0] && !in_q[1]))
 			continue ;
@@ -60,7 +60,7 @@ static bool	is_not_invalid_quote(size_t idx, const t_tokentype *quoted)
 {
 	if (quoted[idx] != SQUOTE && quoted[idx] != DQUOTE)
 		return (true);
-	if (idx > 0 && quoted[idx - 1] & (TOKEN_S_QUOTED | TOKEN_D_QUOTED))
+	if (idx > 0 && (quoted[idx - 1] & (TOKEN_S_QUOTED | TOKEN_D_QUOTED)))
 		return (true);
 	if (quoted[idx + 1] & (TOKEN_S_QUOTED | TOKEN_D_QUOTED))
 		return (true);
@@ -99,6 +99,5 @@ bool	evaluate(t_dynarr *tokens)
 		return (false);
 	add_quoted_bit(shallow);
 	rv = remove_whitespace(tokens, shallow);
-	free(shallow);
-	return (rv);
+	return (free(shallow), rv);
 }
