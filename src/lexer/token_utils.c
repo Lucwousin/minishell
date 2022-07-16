@@ -61,3 +61,24 @@ void	id_operator(const char *cmd, t_token *token, t_token *next)
 	if (token->type == RED_HD && (next->type == SQUOTE || next->type == DQUOTE))
 		token->type = RED_HD_Q;
 }
+
+t_char_type	get_type(const char *c)
+{
+	if (ft_strchr(EOF_CHARS, *c) != NULL)
+		return (EOF_S);
+	if (ft_strchr(BLANK_CHARS, *c) != NULL)
+		return (WHITE_S);
+	if (ft_strchr(OPERATOR_CHARS, *c) != NULL)
+		return (OPERATOR_S);
+	if (*c == SINGLE_QUOTE)
+		return (SQUOTE_S);
+	if (*c == DOUBLE_QUOTE)
+		return (DQUOTE_S);
+	if (*c == VAR_CHAR && get_type(c + 1) == WORD_S)
+		return (VAR_S);
+	if (*c == PAR_OPEN_CHAR)
+		return (PAR_OPEN_S);
+	if (*c == PAR_CLOSE_CHAR)
+		return (PAR_CLOSE_S);
+	return (WORD_S);
+}

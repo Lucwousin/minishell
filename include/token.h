@@ -63,16 +63,17 @@ typedef struct s_preparser {
 
 typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
 
-bool	lex_operator(t_lexer *lexer, t_char_type type);
-bool	lex_variable(t_lexer *lexer, t_char_type type);
-bool	lex_simple(t_lexer *lexer, t_char_type type);
-bool	lex_simple_single(t_lexer *lexer, t_char_type type);
+bool		lex_operator(t_lexer *lexer, t_char_type type);
+bool		lex_variable(t_lexer *lexer, t_char_type type);
+bool		lex_simple(t_lexer *lexer, t_char_type type);
+bool		lex_simple_single(t_lexer *lexer, t_char_type type);
 
-bool	consume_char(t_lexer *lexer);
-bool	switch_state(t_lexer *lexer, t_lex_state new_state);
+bool		consume_char(t_lexer *lexer);
+bool		switch_state(t_lexer *lexer, t_lex_state new_state);
 
-bool	add_token(const char *cmd, t_dynarr *buf, t_token *token);
-bool	toggle_quote(bool in_quote[2], t_tokentype type);
-void	id_operator(const char *cmd, t_token *token, t_token *next);
+bool		add_token(const char *cmd, t_dynarr *buf, t_token *token);
+bool		toggle_quote(bool in_quote[2], t_tokentype type);
+void		id_operator(const char *cmd, t_token *token, t_token *next);
+t_char_type	get_type(const char *c);
 
 #endif

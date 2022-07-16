@@ -26,27 +26,6 @@ static t_lexerfunc	g_lex[] = {
 [VAR_S] = lex_variable,
 };
 
-static t_lex_state	get_type(const char *c)
-{
-	if (ft_strchr(EOF_CHARS, *c) != NULL)
-		return (EOF_S);
-	if (ft_strchr(BLANK_CHARS, *c) != NULL)
-		return (WHITE_S);
-	if (ft_strchr(OPERATOR_CHARS, *c) != NULL)
-		return (OPERATOR_S);
-	if (*c == SINGLE_QUOTE)
-		return (SQUOTE_S);
-	if (*c == DOUBLE_QUOTE)
-		return (DQUOTE_S);
-	if (*c == VAR_CHAR && get_type(c + 1) == WORD_S)
-		return (VAR_S);
-	if (*c == PAR_OPEN_CHAR)
-		return (PAR_OPEN_S);
-	if (*c == PAR_CLOSE_CHAR)
-		return (PAR_CLOSE_S);
-	return (WORD_S);
-}
-
 bool	tokenize(t_dynarr *tokens, const char *cmd)
 {
 	t_lexer	lexer;
