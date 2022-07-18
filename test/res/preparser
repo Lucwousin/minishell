@@ -9,6 +9,22 @@ $abc
 $abc $def $ghi
 #Multiple variables after one another without spaces?!
 $abc$def$ghi
+#Variable delimited by another word (starting with quotes)
+$abc"def"
+%startspace= bye
+%endspace=hi 
+#Variable delimited by another variable starting with a space
+$abc$startspace
+#Variable delimited by another variable not starting with a sapce
+hey$endspace
+#Variable with a space on the end delimited by another word
+$endspace"hi"
+#Variable with a space, quoted
+"$startspace"
+#Word with variable starting with space
+hey$startspace
+#Word with variable starting with space (quoted)
+"hey$startspace"
 %file=bread
 #Redirections?!
 < in > out << heredoc << "quoted" >> append

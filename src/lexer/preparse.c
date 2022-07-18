@@ -65,7 +65,7 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 		{
 			if (!dynarr_addone(buf, ""))
 				return (false);
-			pp->cur = (t_exp_tok){WORD, ft_strdup(buf->arr)};
+			pp->cur = (t_exp_tok){VARIABLE, ft_strdup(buf->arr)};
 			if (pp->cur.str == NULL || !dynarr_addone(pp->output, &pp->cur))
 				return (false);
 			pp->cur.str = NULL;
@@ -123,7 +123,8 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 		if (!add_token(pp->cmd, buf, t))
 			return (MALLOC);
 	status = try_concat(t, pp, buf);
-	if (status == SYNTAX || status == MALLOC)
+	if (status == SYNTAX || status == MALLOC
+		|| (buf->length == 0 && pp->cur.type == VARIABLE))
 		return (status);
 	if (pp->cur.str == NULL && !dynarr_addone(buf, ""))
 		return (MALLOC);
@@ -149,7 +150,8 @@ bool	preparse(t_dynarr *tokens, const char *cmd, t_dynarr *exp_tokens)
 		err = expand(&pp, &buf);
 		if (err != SUCCESS)
 			break ;
-		if (pp.cur.str != NULL && dynarr_addone(exp_tokens, &pp.cur))
+		if ((pp.cur.str != NULL && dynarr_addone(exp_tokens, &pp.cur))
+			|| (pp.cur.str == NULL && pp.cur.type == VARIABLE))
 			continue ;
 		err = MALLOC;
 		break ;

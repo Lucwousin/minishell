@@ -30,6 +30,72 @@ $abc$def$ghi after whitespace removal: 4 tokens
 After pre-parsing - 1 tokens
       VARIABLE - "123456789"
 
+Variable delimited by another word (starting with quotes)
+$abc"def" after whitespace removal: 5 tokens
+      VARIABLE - start    0 - end    3 "$abc"
+        DQUOTE - start    4 - end    4 """
+          WORD - start    5 - end    7 "def"
+        DQUOTE - start    8 - end    8 """
+  END_OF_INPUT - start    9 - end    9 ""
+After pre-parsing - 1 tokens
+      VARIABLE - "123def"
+
+Variable delimited by another variable starting with a space
+$abc$startspace after whitespace removal: 3 tokens
+      VARIABLE - start    0 - end    3 "$abc"
+      VARIABLE - start    4 - end   14 "$startspace"
+  END_OF_INPUT - start   15 - end   15 ""
+After pre-parsing - 2 tokens
+      VARIABLE - "123"
+      VARIABLE - "bye"
+
+Variable delimited by another variable not starting with a sapce
+hey$endspace after whitespace removal: 3 tokens
+          WORD - start    0 - end    2 "hey"
+      VARIABLE - start    3 - end   11 "$endspace"
+  END_OF_INPUT - start   12 - end   12 ""
+After pre-parsing - 1 tokens
+      VARIABLE - "heyhi"
+
+Variable with a space on the end delimited by another word
+$endspace"hi" after whitespace removal: 5 tokens
+      VARIABLE - start    0 - end    8 "$endspace"
+        DQUOTE - start    9 - end    9 """
+          WORD - start   10 - end   11 "hi"
+        DQUOTE - start   12 - end   12 """
+  END_OF_INPUT - start   13 - end   13 ""
+After pre-parsing - 2 tokens
+      VARIABLE - "hi"
+          WORD - "hi"
+
+Variable with a space, quoted
+"$startspace" after whitespace removal: 4 tokens
+        DQUOTE - start    0 - end    0 """
+      VARIABLE - start    1 - end   11 "$startspace"
+        DQUOTE - start   12 - end   12 """
+  END_OF_INPUT - start   13 - end   13 ""
+After pre-parsing - 1 tokens
+      VARIABLE - " bye"
+
+Word with variable starting with space
+hey$startspace after whitespace removal: 3 tokens
+          WORD - start    0 - end    2 "hey"
+      VARIABLE - start    3 - end   13 "$startspace"
+  END_OF_INPUT - start   14 - end   14 ""
+After pre-parsing - 2 tokens
+      VARIABLE - "hey"
+      VARIABLE - "bye"
+
+Word with variable starting with space (quoted)
+"hey$startspace" after whitespace removal: 5 tokens
+        DQUOTE - start    0 - end    0 """
+          WORD - start    1 - end    3 "hey"
+      VARIABLE - start    4 - end   14 "$startspace"
+        DQUOTE - start   15 - end   15 """
+  END_OF_INPUT - start   16 - end   16 ""
+After pre-parsing - 1 tokens
+          WORD - "hey bye"
+
 Redirections?!
 < in > out << heredoc << "quoted" >> append after whitespace removal: 13 tokens
       OPERATOR - start    0 - end    0 "<"
