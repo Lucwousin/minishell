@@ -43,7 +43,6 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 {
 	char	*var_name;
 	char	*var_value;
-	char	*val;
 
 	// TODO: $?
 	var_name = ft_substr(pp->cmd, tok->start + 1, tok->end - tok->start);
@@ -55,12 +54,11 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 		return (true);
 	if (pp->in_q[D])
 		return (dynarr_add(buf, var_value, ft_strlen(var_value)));
-	val = var_value;
-	while (*val)
+	while (*var_value)
 	{
-		if (get_type(val) != WHITE_S && *val != '\n')
+		if (get_type(var_value) != WHITE_S && *var_value != '\n')
 		{
-			if (!dynarr_addone(buf, val))
+			if (!dynarr_addone(buf, var_value))
 				return (false);
 		}
 		else if (buf->length != 0)
@@ -70,9 +68,10 @@ static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 			pp->cur = (t_exp_tok){WORD, ft_strdup(buf->arr)};
 			if (pp->cur.str == NULL || !dynarr_addone(pp->output, &pp->cur))
 				return (false);
+			pp->cur.str = NULL;
 			buf->length = 0;
 		}
-		++val;
+		++var_value;
 	}
 	return (true);
 }
