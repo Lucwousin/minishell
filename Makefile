@@ -25,12 +25,13 @@ SRCS := main.c																\
 		minishell.c															\
 		error.c																\
 		lexer/tokenize.c													\
-		lexer/evaluate.c													\
-		lexer/preparse.c													\
-		lexer/token_utils.c													\
 		lexer/lex/lex_operator.c											\
 		lexer/lex/lex_simple.c												\
 		lexer/lex/lex_variable.c											\
+		lexer/evaluate.c													\
+		lexer/preparse.c													\
+		lexer/preparse/expand_var.c											\
+		lexer/token_utils.c													\
 		parser/parse.c
 SRCP := $(addprefix $(SRCD), $(SRCS))
 

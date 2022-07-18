@@ -39,43 +39,6 @@ static bool	err_clean(t_preparser *pp, uint8_t status, t_dynarr *ex_toks)
 		return (syntax_error(pp->cmd, dynarr_get(pp->tokens, pp->idx)));
 }
 
-static bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
-{
-	char	*var_name;
-	char	*var_value;
-
-	// TODO: $?
-	var_name = ft_substr(pp->cmd, tok->start + 1, tok->end - tok->start);
-	if (var_name == NULL)
-		return (false);
-	var_value = getenv(var_name);
-	free(var_name);
-	if (var_value == NULL)
-		return (true);
-	if (pp->in_q[D])
-		return (dynarr_add(buf, var_value, ft_strlen(var_value)));
-	while (*var_value)
-	{
-		if (get_type(var_value) != WHITE_S && *var_value != '\n')
-		{
-			if (!dynarr_addone(buf, var_value))
-				return (false);
-		}
-		else if (buf->length != 0)
-		{
-			if (!dynarr_addone(buf, ""))
-				return (false);
-			pp->cur = (t_exp_tok){VARIABLE, ft_strdup(buf->arr)};
-			if (pp->cur.str == NULL || !dynarr_addone(pp->output, &pp->cur))
-				return (false);
-			pp->cur.str = NULL;
-			buf->length = 0;
-		}
-		++var_value;
-	}
-	return (true);
-}
-
 static uint8_t	expand(t_preparser *pp, t_dynarr *buf);
 
 static uint8_t	try_concat(t_token *tok, t_preparser *pp, t_dynarr *buf)
@@ -133,13 +96,34 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	return (status);
 }
 
-bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens)
+static t_preparser	init_pp(
+		const char *cmd,
+		t_dynarr *tokens,
+		t_dynarr *exp_tokens,
+		int32_t exit)
+{
+	return ((t_preparser){
+		cmd,
+		tokens,
+		exp_tokens,
+		0,
+		{},
+		{false, false},
+		exit
+	});
+}
+
+bool	preparse(
+		const char *cmd,
+		t_dynarr *tokens,
+		t_dynarr *exp_tokens,
+		int32_t exit)
 {
 	t_preparser	pp;
 	uint8_t		err;
 	t_dynarr	buf;
 
-	pp = ((t_preparser){cmd, tokens, exp_tokens, 0, {}, {false, false}});
+	pp = init_pp(cmd, tokens, exp_tokens, exit);
 	if (!dynarr_create(exp_tokens, tokens->length, sizeof(t_exp_tok)) || \
 		!dynarr_create(&buf, 128, sizeof(char)))
 		return (err_clean(&pp, MALLOC, exp_tokens));
