@@ -15,8 +15,13 @@
 bool	lex_variable(t_lexer *lexer, t_char_type type)
 {
 	if (type == WORD_S)
-		return (consume_char(lexer));
-	if (type == VAR_S)
+	{
+		consume_char(lexer);
+		if (lexer->str[lexer->idx] != '?' || \
+			lexer->idx != lexer->current_token.start + 1)
+			return (true);
+	}
+	else if (type == VAR_S)
 	{
 		if (lexer->idx == lexer->current_token.start)
 			return (consume_char(lexer));
