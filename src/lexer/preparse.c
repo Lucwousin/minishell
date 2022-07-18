@@ -133,7 +133,7 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	return (status);
 }
 
-bool	preparse(t_dynarr *tokens, const char *cmd, t_dynarr *exp_tokens)
+bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens)
 {
 	t_preparser	pp;
 	uint8_t		err;
