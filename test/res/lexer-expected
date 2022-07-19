@@ -526,3 +526,47 @@ after whitespace removal - 6 tokens
         DQUOTE - start    5 - end    5 """
         SQUOTE - start    6 - end    6 "'"
   END_OF_INPUT - start    7 - end    7 ""
+
+Valid variables are $($|?|[A-z_][A-z0-9_]*)
+
+This should be a single word
+$. - 2 tokens
+          WORD - start    0 - end    1 "$."
+  END_OF_INPUT - start    2 - end    2 ""
+after whitespace removal - 2 tokens
+          WORD - start    0 - end    1 "$."
+  END_OF_INPUT - start    2 - end    2 ""
+
+This should be a variable
+$_ - 2 tokens
+      VARIABLE - start    0 - end    1 "$_"
+  END_OF_INPUT - start    2 - end    2 ""
+after whitespace removal - 2 tokens
+      VARIABLE - start    0 - end    1 "$_"
+  END_OF_INPUT - start    2 - end    2 ""
+
+This should be a variable and a word
+$a. - 3 tokens
+      VARIABLE - start    0 - end    1 "$a"
+          WORD - start    2 - end    2 "."
+  END_OF_INPUT - start    3 - end    3 ""
+after whitespace removal - 3 tokens
+      VARIABLE - start    0 - end    1 "$a"
+          WORD - start    2 - end    2 "."
+  END_OF_INPUT - start    3 - end    3 ""
+
+This should be a word
+$1 - 2 tokens
+          WORD - start    0 - end    1 "$1"
+  END_OF_INPUT - start    2 - end    2 ""
+after whitespace removal - 2 tokens
+          WORD - start    0 - end    1 "$1"
+  END_OF_INPUT - start    2 - end    2 ""
+
+This should be a valid variable
+$____________ - 2 tokens
+      VARIABLE - start    0 - end   12 "$____________"
+  END_OF_INPUT - start   13 - end   13 ""
+after whitespace removal - 2 tokens
+      VARIABLE - start    0 - end   12 "$____________"
+  END_OF_INPUT - start   13 - end   13 ""

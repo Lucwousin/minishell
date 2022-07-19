@@ -44,3 +44,5 @@ hey$startspace
 > $abc
 #How many words will this be?
 $abc'$def'$ghi"$def"herlo$abc
+#Exit status!
+$? $?hello

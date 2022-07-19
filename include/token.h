@@ -83,6 +83,16 @@ bool		consume_char(t_lexer *lexer);
  *   when delimiting the token
  */
 bool		switch_state(t_lexer *lexer, t_lex_state new_state);
+/**
+ * Set the scanners' state. This function basically does the same thing as
+ * switch_state, but without delimiting the current token. This is useful to
+ * switch to a new state halfway through parsing something.
+ * 
+ * @param lexer[in/out] the scanner 
+ * @param new_state[in] the new state to switch to
+ * @return Always returns true
+ */
+bool		set_state(t_lexer *lexer, t_lex_state new_state);
 
 /*
  * All functions starting with `lex_` are functions handling next characters

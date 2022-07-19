@@ -57,3 +57,14 @@ cat $$$ $$abc
 #
 #Quotes within quotes, this should keep the "s
 '"yes"'
+#Valid variables are $($|?|[A-z_][A-z0-9_]*)
+#This should be a single word
+$.
+#This should be a variable
+$_
+#This should be a variable and a word
+$a.
+#This should be a word
+$1
+#This should be a valid variable
+$____________

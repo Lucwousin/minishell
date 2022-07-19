@@ -210,3 +210,13 @@ $abc'$def'$ghi"$def"herlo$abc after whitespace removal: 11 tokens
   END_OF_INPUT - start   29 - end   29 ""
 After pre-parsing - 1 tokens
       VARIABLE - "123$def789456herlo123"
+
+Exit status!
+$? $?hello after whitespace removal: 4 tokens
+      VARIABLE - start    0 - end    1 "$?"
+      VARIABLE - start    3 - end    4 "$?"
+          WORD - start    5 - end    9 "hello"
+  END_OF_INPUT - start   10 - end   10 ""
+After pre-parsing - 2 tokens
+      VARIABLE - "0"
+      VARIABLE - "0hello"

@@ -14,7 +14,10 @@
 #include <token.h>
 #include <dynarr.h>
 
-static t_lexerfunc	g_lex[] = {
+/**
+ * Lexer state to handler function
+ */
+static t_lexerfunc			g_lex[] = {
 [DEFAULT] = switch_state,
 [WHITE_S] = lex_simple,
 [WORD_S] = lex_simple,
@@ -24,6 +27,21 @@ static t_lexerfunc	g_lex[] = {
 [PAR_CLOSE_S] = lex_simple_single,
 [OPERATOR_S] = lex_operator,
 [VAR_S] = lex_variable,
+};
+
+/**
+ * Lexer state/char type to token type
+ */
+static const t_tokentype	g_types[] = {
+[DEFAULT] = END_OF_INPUT,
+[WHITE_S] = WHITESPACE,
+[OPERATOR_S] = OPERATOR,
+[WORD_S] = WORD,
+[SQUOTE_S] = SQUOTE,
+[DQUOTE_S] = DQUOTE,
+[PAR_OPEN_S] = PAR_OPEN,
+[PAR_CLOSE_S] = PAR_CLOSE,
+[VAR_S] = VARIABLE
 };
 
 bool	tokenize(t_dynarr *tokens, const char *cmd)
@@ -64,30 +82,26 @@ static bool	delimit_token(t_lexer *lexer)
 
 bool	switch_state(t_lexer *lexer, t_lex_state new_state)
 {
-	static const t_tokentype	types[] = {
-	[DEFAULT] = END_OF_INPUT,
-	[WHITE_S] = WHITESPACE,
-	[OPERATOR_S] = OPERATOR,
-	[WORD_S] = WORD,
-	[SQUOTE_S] = SQUOTE,
-	[DQUOTE_S] = DQUOTE,
-	[PAR_OPEN_S] = PAR_OPEN,
-	[PAR_CLOSE_S] = PAR_CLOSE,
-	[VAR_S] = VARIABLE
-	};
-	bool						very_long_return_value_thanks_norminette;
+	bool	rv;
 
 	if (new_state == DEFAULT || new_state == EOF_S)
-		very_long_return_value_thanks_norminette = delimit_token(lexer);
+		rv = delimit_token(lexer);
 	else
-		very_long_return_value_thanks_norminette = true;
+		rv = true;
 	if (new_state != EOF_S)
 	{
-		lexer->current_token.type = types[new_state];
+		lexer->current_token.type = g_types[new_state];
 		lexer->current_token.start = lexer->idx;
 	}
 	lexer->state = new_state;
-	return (very_long_return_value_thanks_norminette);
+	return (rv);
+}
+
+bool	set_state(t_lexer *lexer, t_lex_state new_state)
+{
+	lexer->state = new_state;
+	lexer->current_token.type = g_types[new_state];
+	return (true);
 }
 
 bool	consume_char(t_lexer *lexer)
