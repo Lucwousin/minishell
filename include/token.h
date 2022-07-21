@@ -17,7 +17,7 @@
 
 # define EOF_CHARS				"\n"
 # define BLANK_CHARS			" \t"
-# define OPERATOR_CHARS			"|<>"
+# define OPERATOR_CHARS			"&|<>"
 # define SINGLE_QUOTE			'\''
 # define DOUBLE_QUOTE			'"'
 # define VAR_CHAR				'$'
@@ -112,7 +112,7 @@ bool		lex_simple_single(t_lexer *lexer, t_char_type type);
  * Expand a variable. Adds a string representation of the variable to buf.
  * This contains handling for variables with spaces in the values:
  *    If a variable contains whitespace and is not quoted, the spaces will get
- *    removed and every word will get added to the expanded token list
+ *    removed and every word will get added to the expanded token nodes
  *    individually.
  * 
  * @param pp[in/out] The preparsers' instance

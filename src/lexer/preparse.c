@@ -23,7 +23,7 @@
 #define D		1
 
 bool			malloc_error(const char *where);
-bool			syntax_error(const char *cmd, t_token *token);
+bool			syntax_error_token(const char *cmd, t_token *token);
 
 static bool	err_clean(t_preparser *pp, uint8_t status, t_dynarr *ex_toks)
 {
@@ -36,7 +36,7 @@ static bool	err_clean(t_preparser *pp, uint8_t status, t_dynarr *ex_toks)
 	if (status == MALLOC)
 		return (malloc_error("preparser"));
 	else
-		return (syntax_error(pp->cmd, dynarr_get(pp->tokens, pp->idx)));
+		return (syntax_error_token(pp->cmd, dynarr_get(pp->tokens, pp->idx)));
 }
 
 static uint8_t	expand(t_preparser *pp, t_dynarr *buf);

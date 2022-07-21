@@ -50,6 +50,7 @@ bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 	char	*var_name;
 	char	*var_value;
 	bool	is_exit_status;
+	bool	retval;
 
 	var_name = ft_substr(pp->cmd, tok->start + 1, tok->end - tok->start);
 	if (var_name == NULL)
@@ -63,6 +64,10 @@ bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 	if (var_value == NULL)
 		return (is_exit_status == false);
 	if (pp->in_q[D])
-		return (dynarr_add(buf, var_value, ft_strlen(var_value)));
-	return (expand_var_words(pp, buf, var_value));
+		retval = dynarr_add(buf, var_value, ft_strlen(var_value));
+	else
+		retval = expand_var_words(pp, buf, var_value);
+	if (is_exit_status)
+		free(var_value);
+	return (retval);
 }

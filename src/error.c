@@ -29,19 +29,38 @@ bool	malloc_error(const char *where)
 	return (false);
 }
 
-bool	syntax_error(const char *cmd, t_token *token)
+void	syntax_error(const char *where)
+{
+	ft_putstr_fd(SYNTAX_MSG_PREFIX, STDERR_FILENO);
+	if (*where == '\n')
+		ft_putstr_fd(NEWLINE_NAME, STDERR_FILENO);
+	else
+		ft_putstr_fd((char *) where, STDERR_FILENO);
+	ft_putstr_fd(SYNTAX_MSG_SUFFIX, STDERR_FILENO);
+}
+
+bool	syntax_error_token(const char *cmd, t_token *token)
 {
 	char	*substr;
 
 	substr = ft_substr(cmd, token->start, token->end - token->start + 1);
 	if (substr == NULL)
 		return (malloc_error("syntax_error"));
-	ft_putstr_fd(SYNTAX_MSG_PREFIX, STDERR_FILENO);
-	if (*substr == '\n')
-		ft_putstr_fd(NEWLINE_NAME, STDERR_FILENO);
-	else
-		ft_putstr_fd(substr, STDERR_FILENO);
-	ft_putstr_fd(SYNTAX_MSG_SUFFIX, STDERR_FILENO);
+	syntax_error(substr);
 	free(substr);
 	return (false);
+}
+
+void	syntax_error_type(t_tokentype type)
+{
+	static const char	*strs[] = {
+	[END_OF_INPUT] = "\n",
+	[PAR_OPEN] = "(",
+	[PAR_CLOSE] = ")",
+	[OR] = "||",
+	[AND] = "&&",
+	[PIPE] = "|",
+	};
+
+	return (syntax_error(strs[type]));
 }

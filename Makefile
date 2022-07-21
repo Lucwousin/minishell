@@ -32,7 +32,12 @@ SRCS := main.c																\
 		lexer/preparse.c													\
 		lexer/preparse/expand_var.c											\
 		lexer/token_utils.c													\
-		parser/parse.c
+		parser/parse.c														\
+		parser/init_node.c													\
+		parser/parse/parse_nodelist.c										\
+		parser/parse/parse_command.c										\
+		parser/parse/parse_pipeline.c										\
+		parser/parse/parse_logic.c
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
@@ -58,7 +63,8 @@ TEST_RESD := $(addprefix $(TEST_DIR), res/)
 
 TEST_SRCD := $(addprefix $(TEST_DIR), $(SRCD))
 TEST_SRCS := lexer.c														\
-			 preparser.c
+			 preparser.c													\
+			 parser.c
 TEST_SRCP := $(addprefix $(TEST_SRCD), $(TEST_SRCS))
 
 TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))

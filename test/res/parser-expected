@@ -1,0 +1,183 @@
+ls
+Type = PARENTHESIS
+  Type = COMMAND
+  argv: "ls" "(null)" 
+  End COMMAND
+End PARENTHESIS
+
+echo broccoli (just command with an argument)
+Type = PARENTHESIS
+  Type = COMMAND
+  argv: "echo" "broccoli" "(null)" 
+  End COMMAND
+End PARENTHESIS
+
+echo "broccoli" | cat (pipeline with command with argument) 
+Type = PARENTHESIS
+  Type = PIPELINE
+    Type = COMMAND
+    argv: "echo" "broccoli" "(null)" 
+    End COMMAND
+    Type = COMMAND
+    argv: "cat" "(null)" 
+    End COMMAND
+  End PIPELINE
+End PARENTHESIS
+
+a || b (a single logic operator)
+Type = PARENTHESIS
+  Type = LOGICAL_EXPRESSION
+  type OR
+    Type = COMMAND
+    argv: "a" "(null)" 
+    End COMMAND
+    Type = COMMAND
+    argv: "b" "(null)" 
+    End COMMAND
+  End LOGICAL_EXPRESSION
+End PARENTHESIS
+
+a && b (a single logic operator, but the other one)
+Type = PARENTHESIS
+  Type = LOGICAL_EXPRESSION
+  type AND
+    Type = COMMAND
+    argv: "a" "(null)" 
+    End COMMAND
+    Type = COMMAND
+    argv: "b" "(null)" 
+    End COMMAND
+  End LOGICAL_EXPRESSION
+End PARENTHESIS
+
+a || b && c (2 logic operators, the or is within the and)
+Type = PARENTHESIS
+  Type = LOGICAL_EXPRESSION
+  type AND
+    Type = LOGICAL_EXPRESSION
+    type OR
+      Type = COMMAND
+      argv: "a" "(null)" 
+      End COMMAND
+      Type = COMMAND
+      argv: "b" "(null)" 
+      End COMMAND
+    End LOGICAL_EXPRESSION
+    Type = COMMAND
+    argv: "c" "(null)" 
+    End COMMAND
+  End LOGICAL_EXPRESSION
+End PARENTHESIS
+
+a || (b && c) (2 logic operators, the and is within the or)
+Type = PARENTHESIS
+  Type = LOGICAL_EXPRESSION
+  type OR
+    Type = COMMAND
+    argv: "a" "(null)" 
+    End COMMAND
+    Type = PARENTHESIS
+      Type = LOGICAL_EXPRESSION
+      type AND
+        Type = COMMAND
+        argv: "b" "(null)" 
+        End COMMAND
+        Type = COMMAND
+        argv: "c" "(null)" 
+        End COMMAND
+      End LOGICAL_EXPRESSION
+    End PARENTHESIS
+  End LOGICAL_EXPRESSION
+End PARENTHESIS
+
+a && b | c (logic operator with pipeline to the right)
+Type = PARENTHESIS
+  Type = LOGICAL_EXPRESSION
+  type AND
+    Type = COMMAND
+    argv: "a" "(null)" 
+    End COMMAND
+    Type = PIPELINE
+      Type = COMMAND
+      argv: "b" "(null)" 
+      End COMMAND
+      Type = COMMAND
+      argv: "c" "(null)" 
+      End COMMAND
+    End PIPELINE
+  End LOGICAL_EXPRESSION
+End PARENTHESIS
+
+nesting lol (lots of parenthesis)
+Type = PARENTHESIS
+  Type = PARENTHESIS
+    Type = PARENTHESIS
+      Type = PARENTHESIS
+        Type = PARENTHESIS
+          Type = PARENTHESIS
+            Type = PARENTHESIS
+              Type = PARENTHESIS
+                Type = PARENTHESIS
+                  Type = PARENTHESIS
+                    Type = PARENTHESIS
+                      Type = PARENTHESIS
+                        Type = PARENTHESIS
+                          Type = PARENTHESIS
+                            Type = PARENTHESIS
+                              Type = PARENTHESIS
+                                Type = PARENTHESIS
+                                  Type = PARENTHESIS
+                                    Type = PARENTHESIS
+                                      Type = PARENTHESIS
+                                        Type = PARENTHESIS
+                                          Type = PARENTHESIS
+                                            Type = PARENTHESIS
+                                              Type = PARENTHESIS
+                                                Type = PARENTHESIS
+                                                  Type = PARENTHESIS
+                                                    Type = PARENTHESIS
+                                                      Type = PARENTHESIS
+                                                        Type = PARENTHESIS
+                                                          Type = PARENTHESIS
+                                                            Type = PARENTHESIS
+                                                              Type = PARENTHESIS
+                                                                Type = PARENTHESIS
+                                                                  Type = PARENTHESIS
+                                                                    Type = COMMAND
+                                                                    argv: "yes" "(null)" 
+                                                                    End COMMAND
+                                                                  End PARENTHESIS
+                                                                End PARENTHESIS
+                                                              End PARENTHESIS
+                                                            End PARENTHESIS
+                                                          End PARENTHESIS
+                                                        End PARENTHESIS
+                                                      End PARENTHESIS
+                                                    End PARENTHESIS
+                                                  End PARENTHESIS
+                                                End PARENTHESIS
+                                              End PARENTHESIS
+                                            End PARENTHESIS
+                                          End PARENTHESIS
+                                        End PARENTHESIS
+                                      End PARENTHESIS
+                                    End PARENTHESIS
+                                  End PARENTHESIS
+                                End PARENTHESIS
+                              End PARENTHESIS
+                            End PARENTHESIS
+                          End PARENTHESIS
+                        End PARENTHESIS
+                      End PARENTHESIS
+                    End PARENTHESIS
+                  End PARENTHESIS
+                End PARENTHESIS
+              End PARENTHESIS
+            End PARENTHESIS
+          End PARENTHESIS
+        End PARENTHESIS
+      End PARENTHESIS
+    End PARENTHESIS
+  End PARENTHESIS
+End PARENTHESIS
+
