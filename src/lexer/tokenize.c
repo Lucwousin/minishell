@@ -68,7 +68,7 @@ bool	tokenize(t_dynarr *tokens, const char *cmd)
 	if (rv && dynarr_finalize(lexer.tokens))
 		return (true);
 	dynarr_delete(tokens);
-	return (rv);
+	return (false);
 }
 
 static bool	delimit_token(t_lexer *lexer)

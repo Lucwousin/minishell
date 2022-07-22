@@ -130,7 +130,7 @@ bool	preparse(
 	while (pp.idx < tokens->length - 1)
 	{
 		buf.length = 0;
-		pp.cur.str = NULL;
+		pp.cur = (t_exp_tok){END_OF_INPUT, NULL};
 		err = expand(&pp, &buf);
 		if (err != SUCCESS)
 			break ;
