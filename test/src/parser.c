@@ -50,6 +50,7 @@ static void	print_cmd(t_cmd_node *node, size_t depth)
 	while (i < node->argv.length)
 		printf("\"%s\" ", *((char **) dynarr_get(&node->argv, i++)));
 	printf("\n");
+	// TODO: Print redirections, test cases with redirections
 }
 
 
@@ -96,17 +97,20 @@ static void	test(char *line)
 	t_dynarr	tokens;
 	t_dynarr	exp_tokens;
 	t_ast_node	*root;
-	size_t		line_len;
+	size_t		i;
 
-	line_len = ft_strlen(line);
-	if (line[line_len - 1] == '\n')
-		line[line_len - 1] = '\0';
+	i = ft_strlen(line);
+	if (line[i - 1] == '\n')
+		line[i - 1] = '\0';
 	tokenize(&tokens, line);
 	evaluate(&tokens);
 	preparse(line, &tokens, &exp_tokens, 0);
 	root = build_ast(&exp_tokens);
 	print_node(root, 0);
 	destroy_node(&root);
+	i = 0;
+	while (i < exp_tokens.length)
+		free(((t_exp_tok *) exp_tokens.arr)[i++].str);
 	dynarr_delete(&exp_tokens);
 	dynarr_delete(&tokens);
 }

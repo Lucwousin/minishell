@@ -56,7 +56,6 @@ t_ast_node	*init_pipe_node(t_ast_node *first)
 		return (free(node), NULL);
 	if (dynarr_addone(&p_node->nodes, &first))
 		return (node);
-	destroy_node(&first);
 	dynarr_delete(&p_node->nodes);
 	free(node);
 	return (NULL);

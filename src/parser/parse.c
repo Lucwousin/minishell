@@ -52,10 +52,15 @@ void	destroy_node(t_ast_node **nodep)
 		destroy_node(&node->node.logic.l);
 		destroy_node(&node->node.logic.r);
 	}
-	else if (node->type == PARENTHESIS)
-		destroy_node(&node->node.paren.contents);
-	else
+	else if (node->type == PIPELINE)
+	{
 		dynarr_foreach(&node->node.pipe.nodes, destroy_node_arg, NULL);
+		dynarr_delete(&node->node.pipe.nodes);
+	}
+	else
+	{
+		destroy_node(&node->node.paren.contents);
+	}
 	free(node);
 	*nodep = NULL;
 }
