@@ -23,6 +23,7 @@
 # define VAR_CHAR				'$'
 # define PAR_OPEN_CHAR			'('
 # define PAR_CLOSE_CHAR			')'
+# define WILDCARD_CHAR			'*'
 
 # define TOKEN_S_QUOTED			128
 # define TOKEN_D_QUOTED			256
@@ -41,6 +42,7 @@ typedef enum e_lexer_state {
 	PAR_OPEN_S,
 	PAR_CLOSE_S,
 	EOF_S,
+	WILDCARD_S
 }	t_lex_state;
 
 typedef t_lex_state	t_char_type;

@@ -78,5 +78,7 @@ t_char_type	get_type(const char *c)
 		return (PAR_OPEN_S);
 	if (*c == PAR_CLOSE_CHAR)
 		return (PAR_CLOSE_S);
+	if (*c == WILDCARD_CHAR)
+		return (WILDCARD_S);
 	return (WORD_S);
 }

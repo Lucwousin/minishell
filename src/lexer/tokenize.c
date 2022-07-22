@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.h>
 #include <token.h>
 #include <dynarr.h>
 
@@ -27,6 +26,7 @@ static t_lexerfunc			g_lex[] = {
 [PAR_CLOSE_S] = lex_simple_single,
 [OPERATOR_S] = lex_operator,
 [VAR_S] = lex_variable,
+[WILDCARD_S] = lex_simple_single
 };
 
 /**
@@ -41,7 +41,8 @@ static const t_tokentype	g_types[] = {
 [DQUOTE_S] = DQUOTE,
 [PAR_OPEN_S] = PAR_OPEN,
 [PAR_CLOSE_S] = PAR_CLOSE,
-[VAR_S] = VARIABLE
+[VAR_S] = VARIABLE,
+[WILDCARD_S] = WILDCARD
 };
 
 bool	tokenize(t_dynarr *tokens, const char *cmd)

@@ -14,7 +14,7 @@
 # define PARSE_H
 
 # include <dynarr.h>
-#include "input.h"
+# include <input.h>
 
 # define PIPE_INIT_SIZE		8
 # define ARGV_INIT_SIZE		8

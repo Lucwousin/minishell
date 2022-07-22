@@ -35,7 +35,8 @@ typedef enum e_tokentype {
 	RED_APP,
 	OR,
 	AND,
-	PIPE
+	PIPE,
+	WILDCARD
 }	t_tokentype;
 
 typedef struct s_token {
