@@ -17,7 +17,7 @@ CC := gcc
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
 CFLAGS += -g
-CFLAGS += -fsanitize=address
+#CFLAGS += -fsanitize=address
 
 # SOURCE FILES
 SRCD := src/
@@ -31,6 +31,7 @@ SRCS := main.c																\
 		lexer/evaluate.c													\
 		lexer/preparse.c													\
 		lexer/preparse/expand_var.c											\
+		lexer/preparse/expand_glob.c										\
 		lexer/token_utils.c													\
 		parser/parse.c														\
 		parser/init_node.c													\
@@ -99,6 +100,7 @@ endif
 #		LINUX SPECIFIC LINKIG
 ifeq ($(shell uname), Linux)
 	LIBS += -lhistory
+	VALGRIND = valgrind --show-reachable=yes --leak-check=full --log-file=$(TESTNAME)-valgrind
 endif
 
 #		RANDOM THINGS
@@ -136,8 +138,8 @@ test: $(TEST_LIBS)
 	@$(foreach test, $(TEST_SRCP), \
 		echo "Running test $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
-		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
+		$(CC) $(test) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
+		< $(TESTNAME) $(VALGRIND) $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
 		rm -f $(TESTNAME)-diff; \
 		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
 		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \

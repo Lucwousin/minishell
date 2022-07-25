@@ -25,6 +25,7 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 	if (*type == WORD
 		|| *type == VARIABLE
 		|| *type == PAR_OPEN
+		|| *type == GLOB
 		|| (*type >= RED_IN && *type <= RED_APP))
 		return (false);
 	return (syntax_error_type(*type), true);

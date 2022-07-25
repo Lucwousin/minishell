@@ -22,7 +22,7 @@ static bool	add_as_word(t_preparser *pp, t_dynarr *buf)
 	if (!dynarr_addone(buf, ""))
 		return (false);
 	pp->cur = (t_exp_tok){VARIABLE, ft_strdup(buf->arr)};
-	if (pp->cur.str == NULL || !dynarr_addone(pp->output, &pp->cur))
+	if (pp->cur.str == NULL || !expand_globs(pp))
 		return (false);
 	pp->cur.str = NULL;
 	buf->length = 0;
@@ -33,6 +33,8 @@ static bool	expand_var_words(t_preparser *pp, t_dynarr *buf, char *var_value)
 {
 	while (*var_value)
 	{
+		if (*var_value == '*' && pp->glob_count < MAX_GLOBS)
+			pp->globs[pp->glob_count++] = buf->length;
 		if (get_type(var_value) == WHITE_S || *var_value == '\n')
 		{
 			if (buf->length != 0 && !add_as_word(pp, buf))

@@ -36,7 +36,7 @@ typedef enum e_tokentype {
 	OR,
 	AND,
 	PIPE,
-	WILDCARD
+	GLOB
 }	t_tokentype;
 
 typedef struct s_token {

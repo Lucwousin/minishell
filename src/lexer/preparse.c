@@ -52,8 +52,8 @@ static uint8_t	try_concat(t_token *tok, t_preparser *pp, t_dynarr *buf)
 		return (expand(pp, buf));
 	}
 	nxt = dynarr_get(pp->tokens, pp->idx);
-	if (tok->type >= WORD && tok->type <= DQUOTE && \
-		nxt->type >= WORD && nxt->type <= DQUOTE)
+	if (((tok->type >= WORD && tok->type <= DQUOTE) || tok->type == GLOB) && \
+		((nxt->type >= WORD && nxt->type <= DQUOTE) || nxt->type == GLOB))
 		if (tok->end == nxt->start - 1)
 			return (expand(pp, buf));
 	if (tok->type != OPERATOR)
@@ -75,6 +75,8 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	t = dynarr_get(pp->tokens, pp->idx++);
 	if (buf->length == 0 && (pp->cur.type < RED_IN || pp->cur.type > RED_APP))
 		pp->cur.type = t->type;
+	if (t->type == GLOB && pp->glob_count < MAX_GLOBS)
+		pp->globs[pp->glob_count++] = buf->length;
 	if (t->type == VARIABLE && !pp->in_q[S] && \
 		pp->cur.type != RED_HD_Q && pp->cur.type != RED_HD)
 	{
@@ -82,7 +84,7 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 			return (MALLOC);
 	}
 	else if (!toggle_quote(pp->in_q, t->type)
-		&& (t->type == WORD || pp->in_q[0] || pp->in_q[1]))
+		&& (t->type == WORD || t->type == GLOB || pp->in_q[0] || pp->in_q[1]))
 		if (!add_token(pp->cmd, buf, t))
 			return (MALLOC);
 	status = try_concat(t, pp, buf);
@@ -109,7 +111,9 @@ static t_preparser	init_pp(
 		0,
 		{},
 		{false, false},
-		exit
+		exit,
+		{},
+		0
 	});
 }
 
@@ -123,10 +127,10 @@ bool	preparse(
 	uint8_t		err;
 	t_dynarr	buf;
 
-	pp = init_pp(cmd, tokens, exp_tokens, exit);
 	if (!dynarr_create(exp_tokens, tokens->length, sizeof(t_exp_tok)) || \
 		!dynarr_create(&buf, 128, sizeof(char)))
 		return (err_clean(&pp, MALLOC, exp_tokens));
+	pp = init_pp(cmd, tokens, exp_tokens, exit);
 	while (pp.idx < tokens->length - 1)
 	{
 		buf.length = 0;
@@ -134,7 +138,7 @@ bool	preparse(
 		err = expand(&pp, &buf);
 		if (err != SUCCESS)
 			break ;
-		if ((pp.cur.str != NULL && dynarr_addone(exp_tokens, &pp.cur))
+		if ((pp.cur.str != NULL && expand_globs(&pp))
 			|| (pp.cur.str == NULL && pp.cur.type == VARIABLE))
 			continue ;
 		err = MALLOC;

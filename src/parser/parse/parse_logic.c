@@ -3,7 +3,7 @@
 /*                                                        ::::::::            */
 /*   parse_logic.c                                      :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: lsinke <lucas@student.codam.nl>              +#+                     */
+/*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/07/20 19:47:42 by lsinke        #+#    #+#                 */
 /*   Updated: 2022/07/20 19:47:42 by lsinke        ########   odam.nl         */

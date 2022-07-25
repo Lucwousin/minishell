@@ -24,7 +24,7 @@ t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 {
 	if (type == PAR_OPEN)
 		return (parse_nodelist(parser, dst, true));
-	else if (type == WORD || type == VARIABLE
+	else if (type == WORD || type == VARIABLE || type == GLOB
 		|| (type >= RED_IN && type <= RED_APP))
 		return (parse_command(parser, dst));
 	if (type == PIPE)

@@ -25,6 +25,8 @@
 # define PAR_CLOSE_CHAR			')'
 # define WILDCARD_CHAR			'*'
 
+# define MAX_GLOBS				64
+
 # define TOKEN_S_QUOTED			128
 # define TOKEN_D_QUOTED			256
 
@@ -63,6 +65,8 @@ typedef struct s_preparser {
 	t_exp_tok	cur;
 	bool		in_q[2];
 	int32_t		exit_status;
+	size_t		globs[MAX_GLOBS];
+	uint8_t		glob_count;
 }	t_preparser;
 
 typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
@@ -124,6 +128,18 @@ bool		lex_simple_single(t_lexer *lexer, t_char_type type);
  * @return true if everything went as planned, false if any allocation failed
  */
 bool		expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf);
+
+/**
+ * Expand globs (file wildcards). The preparser will have stored the offsets
+ * for all wildcards in the current token (pp->cur). Will add all matching files
+ * for the pattern to the token list individually. If there are no matches, just
+ * adds the pattern itself.
+ *
+ * @param pp[in/out] The preparsers' state
+ *
+ * @return true if everything went as planned, false if any allocation failed
+ */
+bool		expand_globs(t_preparser *pp);
 
 /*				UTILS				*/
 /**

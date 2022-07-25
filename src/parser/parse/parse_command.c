@@ -59,7 +59,7 @@ t_tokentype	parse_command(t_parser *parser, t_ast_node **dst)
 			return (finish_node(dst, tok->type));
 		if (tok->type == PAR_OPEN)
 			return (syntax_error_type(PAR_OPEN), -1);
-		if (tok->type == WORD || tok->type == VARIABLE)
+		if (tok->type == WORD || tok->type == VARIABLE || tok->type == GLOB)
 			if (!dynarr_addone(&(*dst)->node.command.argv, &tok->str))
 				return (destroy_node(dst), malloc_error("parse_command"), -1);
 		if (tok->type >= RED_IN && tok->type <= RED_APP)

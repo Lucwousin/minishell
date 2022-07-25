@@ -42,7 +42,7 @@ static const t_tokentype	g_types[] = {
 [PAR_OPEN_S] = PAR_OPEN,
 [PAR_CLOSE_S] = PAR_CLOSE,
 [VAR_S] = VARIABLE,
-[WILDCARD_S] = WILDCARD
+[WILDCARD_S] = GLOB
 };
 
 bool	tokenize(t_dynarr *tokens, const char *cmd)

@@ -23,6 +23,7 @@ static bool	check_syntax_error(t_exp_tok *token)
 	if (type == WORD
 		|| type == VARIABLE
 		|| type == PAR_OPEN
+		|| type == GLOB
 		|| (type >= RED_IN && type <= RED_APP))
 		return (false);
 	return (syntax_error_type(type), true);
