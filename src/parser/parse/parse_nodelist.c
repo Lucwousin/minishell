@@ -12,7 +12,10 @@
 
 #include <parse.h>
 
+#define	NOT_IMPLEMENTED_RED	"Redirections for subshells are not implemented"
+
 bool	malloc_error(const char *where);
+void	syntax_error(const char *where);
 void	syntax_error_type(t_tokentype type);
 
 static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
@@ -37,10 +40,12 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 
 static bool	check_end_syntax(t_tokentype type, bool parenthesis)
 {
-	if (!(type == PAR_CLOSE && !parenthesis) && \
-		!(type == END_OF_INPUT && parenthesis))
-		return (false);
-	return (syntax_error_type(type), true);
+	if ((type == PAR_CLOSE && !parenthesis) || \
+		(type == END_OF_INPUT && parenthesis))
+		return (syntax_error_type(type), true);
+	if (type >= RED_IN && type <= RED_APP)
+		return (syntax_error(NOT_IMPLEMENTED_RED), true);
+	return (false);
 }
 
 static t_tokentype	get_next_type(t_parser *parser, t_tokentype type)
