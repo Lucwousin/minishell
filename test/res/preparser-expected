@@ -154,9 +154,9 @@ What happens if I add more quotes?
 << '"$file"' after whitespace removal: 7 tokens
       OPERATOR - start    0 - end    1 "<<"
         SQUOTE - start    3 - end    3 "'"
-        DQUOTE - start    4 - end    4 """
+          WORD - start    4 - end    4 """
       VARIABLE - start    5 - end    9 "$file"
-        DQUOTE - start   10 - end   10 """
+          WORD - start   10 - end   10 """
         SQUOTE - start   11 - end   11 "'"
   END_OF_INPUT - start   12 - end   12 ""
 After pre-parsing - 1 tokens
@@ -166,9 +166,9 @@ What happens if I add more quotes (with expansion)?
 << "'$file'" after whitespace removal: 7 tokens
       OPERATOR - start    0 - end    1 "<<"
         DQUOTE - start    3 - end    3 """
-        SQUOTE - start    4 - end    4 "'"
+          WORD - start    4 - end    4 "'"
       VARIABLE - start    5 - end    9 "$file"
-        SQUOTE - start   10 - end   10 "'"
+          WORD - start   10 - end   10 "'"
         DQUOTE - start   11 - end   11 """
   END_OF_INPUT - start   12 - end   12 ""
 After pre-parsing - 1 tokens
