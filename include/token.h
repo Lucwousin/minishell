@@ -181,5 +181,19 @@ void		id_operator(const char *cmd, t_token *token);
  * @return The character type the character pointed to by `c` represents
  */
 t_char_type	get_type(const char *c);
+/**
+ * Check in what way the string of this token should be expanded, and do so.
+ *
+ * @param pp[in/out] The preparsers' instance
+ * @param buf[in/out] The string buffer the string should be added to
+ * @param t[in] The token we want to expand.
+ *
+ * If the token represents a variable, and we're not in a single quote or
+ * handling a heredoc delimiter, it will be expanded as a variable.
+ * If the token represents anything else, it will be expanded as a word.
+ *
+ * @return true if everything went as expected, false if an allocation failed
+ */
+bool		expand_tok(t_preparser *pp, t_dynarr *buf, t_token *t);
 
 #endif

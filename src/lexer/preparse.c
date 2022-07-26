@@ -77,19 +77,11 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 		pp->cur.type = t->type;
 	if (t->type == GLOB && pp->glob_count < MAX_GLOBS)
 		pp->globs[pp->glob_count++] = buf->length;
-	if (t->type == VARIABLE && !pp->in_q[S] && \
-		pp->cur.type != RED_HD_Q && pp->cur.type != RED_HD)
-	{
-		if (!expand_var(pp, t, buf))
-			return (MALLOC);
-	}
-	else if (!toggle_quote(pp->in_q, t->type)
-		&& (t->type == WORD || t->type == GLOB || pp->in_q[0] || pp->in_q[1]))
-		if (!add_token(pp->cmd, buf, t))
+	if (!toggle_quote(pp->in_q, t->type))
+		if (!expand_tok(pp, buf, t))
 			return (MALLOC);
 	status = try_concat(t, pp, buf);
-	if (status == SYNTAX || status == MALLOC
-		|| (buf->length == 0 && pp->cur.type == VARIABLE))
+	if (status > SUCCESS || (buf->length == 0 && pp->cur.type == VARIABLE))
 		return (status);
 	if (pp->cur.str == NULL && !dynarr_addone(buf, ""))
 		return (MALLOC);

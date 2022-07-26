@@ -80,6 +80,9 @@ static bool	remove_whitespace(t_dynarr *tokens, const t_tokentype *quoted)
 		cur = dynarr_get(tokens, idx);
 		if (quoted[idx] != WHITESPACE && is_not_invalid_quote(idx, quoted))
 		{
+			if (quoted[idx] & (TOKEN_S_QUOTED | TOKEN_D_QUOTED)
+				&& cur->type != VARIABLE)
+				cur->type = WORD;
 			if (len != idx)
 				dynarr_set(tokens, len, cur);
 			len++;
