@@ -20,7 +20,11 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 	if (paren)
 		++parser->idx;
 	if (parser->idx >= parser->tokens->length)
-		return (syntax_error_type(END_OF_INPUT), true);
+	{
+		if (paren)
+			syntax_error_type(END_OF_INPUT);
+		return (true);
+	}
 	*type = ((t_exp_tok *) dynarr_get(parser->tokens, parser->idx))->type;
 	if (*type == WORD
 		|| *type == VARIABLE
@@ -54,14 +58,11 @@ t_tokentype	parse_nodelist(t_parser *parser, t_ast_node **dst, bool paren)
 	t_ast_node	*sub;
 	t_tokentype	next_type;
 
-	t_exp_tok	*arr = parser->tokens->arr;
-	if (arr == NULL)
-		return -1;
+	if (check_start_syntax(parser, paren, &next_type))
+		return (-1);
 	*dst = init_paren_node();
 	if (*dst == NULL)
 		return (malloc_error("parse_nodelist"), -1);
-	if (check_start_syntax(parser, paren, &next_type))
-		return (destroy_node(dst), -1);
 	while (parser->idx < parser->tokens->length)
 	{
 		next_type = parse_node(parser, next_type, &sub);

@@ -32,6 +32,7 @@ SRCS := main.c																\
 		lexer/preparse.c													\
 		lexer/preparse/expand_var.c											\
 		lexer/preparse/expand_glob.c										\
+		lexer/preparse/preparse_utils.c										\
 		lexer/token_utils.c													\
 		parser/parse.c														\
 		parser/init_node.c													\

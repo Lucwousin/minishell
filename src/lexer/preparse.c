@@ -52,8 +52,7 @@ static uint8_t	try_concat(t_token *tok, t_preparser *pp, t_dynarr *buf)
 		return (expand(pp, buf));
 	}
 	nxt = dynarr_get(pp->tokens, pp->idx);
-	if (((tok->type >= WORD && tok->type <= DQUOTE) || tok->type == GLOB) && \
-		((nxt->type >= WORD && nxt->type <= DQUOTE) || nxt->type == GLOB))
+	if (is_word_type(tok->type) && is_word_type(nxt->type))
 		if (tok->end == nxt->start - 1)
 			return (expand(pp, buf));
 	if (tok->type != OPERATOR)
@@ -73,7 +72,9 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	uint8_t	status;
 
 	t = dynarr_get(pp->tokens, pp->idx++);
-	if (buf->length == 0 && (pp->cur.type < RED_IN || pp->cur.type > RED_APP))
+	if (buf->length == 0
+		&& (pp->cur.type < RED_IN || pp->cur.type > RED_APP)
+		&& (t->type != DQUOTE && t->type != SQUOTE))
 		pp->cur.type = t->type;
 	if (t->type == GLOB && pp->glob_count < MAX_GLOBS)
 		pp->globs[pp->glob_count++] = buf->length;
@@ -81,7 +82,8 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 		if (!expand_tok(pp, buf, t))
 			return (MALLOC);
 	status = try_concat(t, pp, buf);
-	if (status > SUCCESS || (buf->length == 0 && pp->cur.type == VARIABLE))
+	if (status > SUCCESS || \
+		(buf->length == 0 && pp->cur.type == VARIABLE && !pp->in_q[D]))
 		return (status);
 	if (pp->cur.str == NULL && !dynarr_addone(buf, ""))
 		return (MALLOC);

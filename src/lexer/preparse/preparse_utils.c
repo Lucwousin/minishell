@@ -40,3 +40,8 @@ bool	expand_tok(t_preparser *pp, t_dynarr *buf, t_token *t)
 		return (add_token(pp->cmd, buf, t));
 	return (true);
 }
+
+bool	is_word_type(t_tokentype type)
+{
+	return ((type >= WORD && type <= DQUOTE) || type == GLOB);
+}

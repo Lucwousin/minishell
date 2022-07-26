@@ -195,5 +195,11 @@ t_char_type	get_type(const char *c);
  * @return true if everything went as expected, false if an allocation failed
  */
 bool		expand_tok(t_preparser *pp, t_dynarr *buf, t_token *t);
+/**
+ * Check if a type is a simple "word" type
+ *
+ * @return true if the type is WORD, VARIABLE, DQUOTE, SQUOTE or GLOB
+ */
+bool		is_word_type(t_tokentype type);
 
 #endif
