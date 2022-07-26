@@ -3,10 +3,10 @@
 /*                                                        ::::::::            */
 /*   parser.c                                           :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: lucas <lucas@student.codam.nl>               +#+                     */
+/*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/20 20:16:06 by lucas         #+#    #+#                 */
-/*   Updated: 2022/07/20 20:16:06 by lucas         ########   odam.nl         */
+/*   Created: 2022/07/20 20:16:06 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/20 20:16:06 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,14 @@ static const char	*g_ast_typenames[] = {
 [LOGICAL_EXPRESSION] = "LOGICAL_EXPRESSION",
 [PARENTHESIS] = "PARENTHESIS",
 [PIPELINE] = "PIPELINE",
+};
+
+static const char	*g_red_typenames[] = {
+[RED_IN] = "< %s ",
+[RED_HD] = "<< %s ",
+[RED_HD_Q] = "<< \"%s\" ",
+[RED_APP] = ">> %s ",
+[RED_OUT] = "> %s "
 };
 
 static void	set_var(char *line)
@@ -38,56 +46,66 @@ static void	set_var(char *line)
 	save[save_idx++] = line;
 }
 
+static void	indent(size_t depth)
+{
+	while (depth--)
+		printf("  ");
+}
+
 static void	print_cmd(t_cmd_node *node, size_t depth)
 {
 	size_t	i;
+	t_redir	*r;
 
-	i = 0;
-	while (i++ < depth)
-		printf("  ");
+	indent(depth + 1);
 	printf("argv: ");
 	i = 0;
 	while (i < node->argv.length)
 		printf("\"%s\" ", *((char **) dynarr_get(&node->argv, i++)));
 	printf("\n");
-	// TODO: Print redirections, test cases with redirections
+	indent(depth + 1);
+	printf("redir: ");
+	i = 0;
+	while (i < node->redirs.length)
+	{
+		r = dynarr_get(&node->redirs, i++);
+		printf(g_red_typenames[r->type], r->str);
+	}
+	printf("\n");
 }
-
 
 static void	print_node(t_ast_node *node, size_t depth)
 {
 	size_t	i;
 
-	i = 0;
-	while (i++ < depth)
-		printf("  ");
-	printf("Type = %s\n", g_ast_typenames[node->type]);
+	indent(depth);
+	printf("%s\n", g_ast_typenames[node->type]);
 	if (node->type == COMMAND)
 		print_cmd(&node->node.command, depth);
 	else if (node->type == PARENTHESIS)
 		print_node(node->node.paren.contents, depth + 1);
 	else if (node->type == LOGICAL_EXPRESSION)
 	{
-		i = 0;
-		while (i++ < depth)
-			printf("  ");
+		indent(depth + 1);
 		if (node->node.logic.type == OR)
-			printf("type OR\n");
+			printf("OR\n");
 		else
-			printf("type AND\n");
-		print_node(node->node.logic.l, depth + 1);
-		print_node(node->node.logic.r, depth + 1);
+			printf("AND\n");
+		indent(depth + 1);
+		printf("Left:\n");
+		print_node(node->node.logic.l, depth + 2);
+		indent(depth + 1);
+		printf("Right:\n");
+		print_node(node->node.logic.r, depth + 2);
 	}
 	else
 	{
 		i = 0;
 		while (i < node->node.pipe.nodes.length)
-			print_node(*((t_ast_node **) dynarr_get(&node->node.pipe.nodes, i++)), depth + 1);
+			print_node((*(t_ast_node **) dynarr_get(&node->node.pipe.nodes, i++)), depth + 1);
 	}
-	i = 0;
-	while (i++ < depth)
-		printf("  ");
-	printf("End %s\n", g_ast_typenames[node->type]);
+	indent(depth);
+	printf("%s END\n", g_ast_typenames[node->type]);
 	if (depth == 0)
 		printf("\n");
 }
