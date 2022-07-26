@@ -12,7 +12,7 @@
 
 #include <parse.h>
 
-#define	NOT_IMPLEMENTED_RED	"Redirections for subshells are not implemented"
+#define NOT_IMPLEMENTED_RED	"Redirections for subshells are not implemented"
 
 bool	malloc_error(const char *where);
 void	syntax_error(const char *where);
