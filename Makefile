@@ -36,6 +36,7 @@ SRCS := main.c																\
 		lexer/token_utils.c													\
 		parser/parse.c														\
 		parser/init_node.c													\
+		parser/destroy_node.c												\
 		parser/parse/parse_nodelist.c										\
 		parser/parse/parse_command.c										\
 		parser/parse/parse_pipeline.c										\
