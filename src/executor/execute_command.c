@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   execute_command.c                                  :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/27 14:44:02 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/27 14:44:02 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
-#include <stdio.h>
-#include <dirent.h>
+#include <execute.h>
 
-int	main(int argc, char **argv, char **envp)
+void	execute_command(t_ast_node *node)
 {
-	while (*argv != NULL)
-		printf("%s\n", *argv++);
-	minishell(argc, argv, envp);
+
 }

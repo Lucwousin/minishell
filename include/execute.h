@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   execute.h                                          :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
+/*   Created: 2022/07/27 14:48:14 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/07/27 14:48:14 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
-#include <stdio.h>
-#include <dirent.h>
+#include <parse.h>
 
-int	main(int argc, char **argv, char **envp)
-{
-	while (*argv != NULL)
-		printf("%s\n", *argv++);
-	minishell(argc, argv, envp);
-}
+#ifndef EXECUTE_H
+# define EXECUTE_H
+
+void	execute(t_ast_node *root_node, int32_t *exit);
+
+void	execute_command(t_ast_node *node);
+
+#endif

@@ -40,7 +40,12 @@ SRCS := main.c																\
 		parser/parse/parse_nodelist.c										\
 		parser/parse/parse_command.c										\
 		parser/parse/parse_pipeline.c										\
-		parser/parse/parse_logic.c
+		parser/parse/parse_logic.c											\
+		executor/execute.c													\
+		executor/execute_command.c											\
+		executor/execute_pipeline.c											\
+		executor/execute_parenthesis.c										\
+		executor/execute_logic.c
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
@@ -53,7 +58,8 @@ INCD := include/
 INCS := minishell.h															\
 		input.h																\
 		token.h																\
-		parse.h
+		parse.h																\
+		execute.h
 INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
