@@ -12,7 +12,10 @@
 
 #include <minishell.h>
 
+t_global	g_globals;
+
 int	main(int argc, char **argv, char **envp)
 {
+	g_globals = (t_global){0};
 	minishell(argc, argv, envp);
 }

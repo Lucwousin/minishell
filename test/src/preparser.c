@@ -14,6 +14,7 @@
 #include <token.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <minishell.h>
 
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
@@ -34,6 +35,8 @@ static const char	*g_tokenstr[] = {
 [AND] = "AND",
 [PIPE] = "PIPE",
 };
+
+t_global	g_globals = {69};
 
 static void	set_var(char *line)
 {

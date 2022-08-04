@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <minishell.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -19,7 +20,7 @@ static const char	*get_exit_str(void)
 	int32_t		exit_status;
 	uint8_t		i;
 
-	exit_status = 69; // TODO: Add actual global and stuff
+	exit_status = g_globals.exit_status;
 	i = 12;
 	val[--i] = '\0';
 	while (exit_status != 0)
@@ -27,7 +28,7 @@ static const char	*get_exit_str(void)
 		val[--i] = "0123456789"[exit_status % 10];
 		exit_status /= 10;
 	}
-	if (exit_status < 0) // TODO: Get exit from global again for this
+	if (g_globals.exit_status < 0)
 		val[--i] = '-';
 	return (val + i);
 }

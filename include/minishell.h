@@ -11,12 +11,18 @@
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
+# define MINISHELL_H
 
 # include <stdbool.h>
 # include <stdint.h>
 
-# define MINISHELL_H
 # define PROMPT "minishell> "
+
+typedef struct s_g {
+	int32_t	exit_status;
+}	t_global;
+
+extern t_global	g_globals;
 
 void	minishell(int argc, char **argv, char **envp);
 

@@ -14,6 +14,7 @@
 #include <get_next_line.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <minishell.h>
 
 static const char	*g_ast_typenames[] = {
 [COMMAND] = "COMMAND",
@@ -29,6 +30,8 @@ static const char	*g_red_typenames[] = {
 [RED_APP] = ">> %s ",
 [RED_OUT] = "> %s "
 };
+
+t_global	g_globals = {69};
 
 static void	set_var(char *line)
 {
