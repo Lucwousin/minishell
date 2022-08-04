@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <parse.h>
+#include <redir.h>
 
 bool	malloc_error(const char *where);
 void	syntax_error_type(t_tokentype type);
@@ -19,8 +20,11 @@ static bool	add_redir(t_cmd_node *cmd, t_exp_tok *tok)
 {
 	t_redir	red;
 
-	red.str = tok->str;
 	red.type = tok->type;
+	red.str = tok->str;
+	if (red.type == RED_HD || red.type == RED_HD_Q)
+		if (!create_heredoc(&red.str, red.type == RED_HD))
+			return (false);
 	if (!dynarr_addone(&cmd->redirs, &red))
 		return (malloc_error("add_redir"));
 	return (true);

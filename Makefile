@@ -40,7 +40,10 @@ SRCS := main.c																\
 		parser/parse/parse_nodelist.c										\
 		parser/parse/parse_command.c										\
 		parser/parse/parse_pipeline.c										\
-		parser/parse/parse_logic.c
+		parser/parse/parse_logic.c											\
+		redirect/create_heredoc.c											\
+		redirect/read_heredoc.c
+
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
 # OBJECT FILES
