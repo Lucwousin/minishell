@@ -90,16 +90,16 @@ t_ast_node	*build_ast(t_dynarr *tokens);
  */
 t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst);
 /**
- * Parse a node nodes. This is not really a nodes, because it only ever contains
- * one type of node. The root node is a node nodes, and so are parenthesis.
+ * Parse a node list. This is not really a list, because it only ever contains
+ * one type of node. The root node is a node list, and so are parenthesis.
  *
  * A node nodes can contain any one of the following node types:
- *   * Another node nodes (parenthesis)
+ *   * Another node list (parenthesis)
  *   * A command
  *   * A pipeline
  *   * A logical operator
  *
- * If the node nodes is not the root node, it will be terminated by END_OF_INPUT
+ * If the node list is the root node, it will be terminated by END_OF_INPUT
  * If it was not the root node (parenthesis) it will be terminated by PAR_CLOSE
  * A syntax error will print the error message, and set *dst to NULL
  */
@@ -115,7 +115,7 @@ t_tokentype	parse_nodelist(t_parser *parser, t_ast_node **dst, bool paren);
  */
 t_tokentype	parse_command(t_parser *parser, t_ast_node **dst);
 /**
- * Parse a pipeline. Pipelines are lists of commands.
+ * Parse a pipeline. Pipelines are lists of ast nodes that are NOT pipes.
  *
  * Because the pipe operator is to the right of the first command, *dst will
  * already contain a command node. This will be replaced with a pointer to the
