@@ -122,7 +122,7 @@ static void	test(char *line)
 		line[i - 1] = '\0';
 	tokenize(&tokens, line);
 	evaluate(&tokens);
-	preparse(line, &tokens, &exp_tokens, 0);
+	preparse(line, &tokens, &exp_tokens);
 	root = build_ast(&exp_tokens);
 	print_node(root, 0);
 	destroy_node(&root);

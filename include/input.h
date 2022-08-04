@@ -80,10 +80,6 @@ bool	evaluate(t_dynarr *tokens);
  * @return true if nothing went wrong, false in the case of a syntax error or
  * allocation failure
  */
-bool	preparse(
-			const char *cmd,
-			t_dynarr *tokens,
-			t_dynarr *exp_tokens,
-			int32_t exit);
+bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens);
 
 #endif //INPUT_H

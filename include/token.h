@@ -64,7 +64,6 @@ typedef struct s_preparser {
 	size_t		idx;
 	t_exp_tok	cur;
 	bool		in_q[2];
-	int32_t		exit_status;
 	size_t		globs[MAX_GLOBS];
 	uint8_t		glob_count;
 }	t_preparser;

@@ -12,8 +12,8 @@
 
 #include <token.h>
 #include <libft.h>
+#include <environ.h>
 
-#define QUESTION_MARK_STR	"?"
 #define S					0
 #define D					1
 
@@ -29,47 +29,40 @@ static bool	add_as_word(t_preparser *pp, t_dynarr *buf)
 	return (true);
 }
 
-static bool	expand_var_words(t_preparser *pp, t_dynarr *buf, char *var_value)
+static bool	expand_var_words(t_preparser *pp, t_dynarr *buf, const char *var)
 {
-	while (*var_value)
+	while (*var)
 	{
-		if (*var_value == '*' && pp->glob_count < MAX_GLOBS)
+		if (*var == '*' && pp->glob_count < MAX_GLOBS)
 			pp->globs[pp->glob_count++] = buf->length;
-		if (get_type(var_value) == WHITE_S || *var_value == '\n')
+		if (get_type(var) == WHITE_S || *var == '\n')
 		{
 			if (buf->length != 0 && !add_as_word(pp, buf))
 				return (false);
 		}
-		else if (!dynarr_addone(buf, var_value))
+		else if (!dynarr_addone(buf, var))
 			return (false);
-		++var_value;
+		++var;
 	}
 	return (true);
 }
 
 bool	expand_var(t_preparser *pp, t_token *tok, t_dynarr *buf)
 {
-	char	*var_name;
-	char	*var_value;
-	bool	is_exit_status;
-	bool	retval;
+	char		*var_name;
+	const char	*var_value;
+	bool		retval;
 
 	var_name = ft_substr(pp->cmd, tok->start + 1, tok->end - tok->start);
 	if (var_name == NULL)
 		return (false);
-	is_exit_status = ft_strncmp(var_name, QUESTION_MARK_STR, 2) == 0;
-	if (is_exit_status)
-		var_value = ft_itoa(pp->exit_status);
-	else
-		var_value = getenv(var_name);
+	var_value = get_variable(var_name);
 	free(var_name);
 	if (var_value == NULL)
-		return (is_exit_status == false);
+		return (true);
 	if (pp->in_q[D])
 		retval = dynarr_add(buf, var_value, ft_strlen(var_value));
 	else
 		retval = expand_var_words(pp, buf, var_value);
-	if (is_exit_status)
-		free(var_value);
 	return (retval);
 }

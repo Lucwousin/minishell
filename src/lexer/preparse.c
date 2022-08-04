@@ -92,30 +92,12 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 	return (status);
 }
 
-static t_preparser	init_pp(
-		const char *cmd,
-		t_dynarr *tokens,
-		t_dynarr *exp_tokens,
-		int32_t exit)
+static t_preparser	init_pp(const char *cmd, t_dynarr *tokens, t_dynarr *etoks)
 {
-	return ((t_preparser){
-		cmd,
-		tokens,
-		exp_tokens,
-		0,
-		{},
-		{false, false},
-		exit,
-		{},
-		0
-	});
+	return ((t_preparser){.cmd = cmd, .tokens = tokens, .output = etoks});
 }
 
-bool	preparse(
-		const char *cmd,
-		t_dynarr *tokens,
-		t_dynarr *exp_tokens,
-		int32_t exit)
+bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens)
 {
 	t_preparser	pp;
 	uint8_t		err;
@@ -124,7 +106,7 @@ bool	preparse(
 	if (!dynarr_create(exp_tokens, tokens->length, sizeof(t_exp_tok)) || \
 		!dynarr_create(&buf, 128, sizeof(char)))
 		return (err_clean(&pp, MALLOC, exp_tokens));
-	pp = init_pp(cmd, tokens, exp_tokens, exit);
+	pp = init_pp(cmd, tokens, exp_tokens);
 	while (pp.idx < tokens->length - 1)
 	{
 		buf.length = 0;

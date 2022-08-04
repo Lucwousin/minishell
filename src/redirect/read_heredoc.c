@@ -11,10 +11,11 @@
 /* ************************************************************************** */
 
 #include <redir.h>
+#include <environ.h>
+#include <get_next_line.h>
 #include <stdint.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
-#include <get_next_line.h>
 #include <stdio.h>
 
 #define GNL_NULL_ERR	"Error reading stdin for heredoc:"
@@ -49,21 +50,20 @@ static size_t	get_var_length(char *str)
 
 static bool	write_variable(int32_t fd, char **linep)
 {
-	char	*line;
-	char	*var_name;
-	char	*var_value;
-	size_t	len;
+	char		*line;
+	char		*var_name;
+	const char	*var_value;
+	size_t		len;
 
 	line = *linep;
 	len = get_var_length(++line);
 	if (len == 0)
 		return (*linep = line, write(fd, "$", 1));
-	// todo: exit status
 	var_name = ft_substr(line, 0, len);
 	if (!var_name)
 		return (false);
 	*linep = line + len;
-	var_value = getenv(var_name);
+	var_value = get_variable(var_name);
 	free(var_name);
 	if (var_value == NULL)
 		return (true);

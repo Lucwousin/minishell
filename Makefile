@@ -42,7 +42,8 @@ SRCS := main.c																\
 		parser/parse/parse_pipeline.c										\
 		parser/parse/parse_logic.c											\
 		redirect/create_heredoc.c											\
-		redirect/read_heredoc.c
+		redirect/read_heredoc.c												\
+		environ/get_variable.c
 
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
@@ -56,7 +57,8 @@ INCD := include/
 INCS := minishell.h															\
 		input.h																\
 		token.h																\
-		parse.h
+		parse.h																\
+		environ.h
 INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
