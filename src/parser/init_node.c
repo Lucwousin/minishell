@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <parse.h>
+#include <redir.h>
 #include <stdlib.h>
 
 t_ast_node	*init_cmd_node(void)
@@ -23,7 +24,7 @@ t_ast_node	*init_cmd_node(void)
 		return (NULL);
 	node->type = COMMAND;
 	c_node = &node->node.command;
-	if (!dynarr_create(&c_node->argv, ARGV_INIT_SIZE, sizeof(char **)))
+	if (!dynarr_create(&c_node->argv, ARGV_INIT_SIZE, sizeof(char *)))
 		return (free(node), NULL);
 	if (!dynarr_create(&c_node->redirs, REDIR_INIT_SIZE, sizeof(t_redir)))
 		return (dynarr_delete(&c_node->argv), free(node), NULL);
@@ -69,7 +70,7 @@ t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left)
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
 		return (destroy_node(&left), NULL);
-	node->type = LOGICAL_EXPRESSION;
+	node->type = LOGIC;
 	l_node = &node->node.logic;
 	l_node->type = type;
 	l_node->l = left;

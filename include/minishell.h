@@ -19,11 +19,11 @@
 # define PROMPT "minishell> "
 
 typedef struct s_g {
-	int32_t	exit_status;
+	uint8_t	exit;
 }	t_global;
 
 extern t_global	g_globals;
 
-void	minishell(int argc, char **argv, char **envp);
+void	minishell(int argc, char **argv);
 
 #endif

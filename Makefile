@@ -43,7 +43,17 @@ SRCS := main.c																\
 		parser/parse/parse_logic.c											\
 		redirect/create_heredoc.c											\
 		redirect/read_heredoc.c												\
-		environ/get_variable.c
+		redirect/redirect.c													\
+		environ/get_variable.c												\
+		executor/execute.c													\
+		executor/fork_utils.c												\
+		executor/execute_subshell.c											\
+		executor/execute_command.c											\
+		executor/execute_binary.c											\
+		executor/execute_logic.c											\
+		executor/builtins/builtins.c										\
+		executor/builtins/builtin_echo.c									\
+		executor/builtins/builtin_exit.c
 
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
@@ -58,6 +68,9 @@ INCS := minishell.h															\
 		input.h																\
 		token.h																\
 		parse.h																\
+		execute.h															\
+		redir.h																\
+		builtins.h															\
 		environ.h
 INCP := $(addprefix $(INCD), $(INCS))
 

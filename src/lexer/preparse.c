@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 
 #include <token.h>
+#include <libft.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "libft.h"
 
 #define SUCCESS	0
 #define MALLOC	1

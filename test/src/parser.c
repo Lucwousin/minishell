@@ -15,10 +15,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <minishell.h>
+#include "redir.h"
 
 static const char	*g_ast_typenames[] = {
 [COMMAND] = "COMMAND",
-[LOGICAL_EXPRESSION] = "LOGICAL_EXPRESSION",
+[LOGIC] = "LOGIC",
 [PARENTHESIS] = "PARENTHESIS",
 [PIPELINE] = "PIPELINE",
 };
@@ -87,7 +88,7 @@ static void	print_node(t_ast_node *node, size_t depth)
 		print_cmd(&node->node.command, depth);
 	else if (node->type == PARENTHESIS)
 		print_node(node->node.paren.contents, depth + 1);
-	else if (node->type == LOGICAL_EXPRESSION)
+	else if (node->type == LOGIC)
 	{
 		indent(depth + 1);
 		if (node->node.logic.type == OR)

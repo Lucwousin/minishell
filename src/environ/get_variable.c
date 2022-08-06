@@ -16,20 +16,20 @@
 
 static const char	*get_exit_str(void)
 {
-	static char	val[12];
+	static char	val[4];
 	int32_t		exit_status;
 	uint8_t		i;
 
-	exit_status = g_globals.exit_status;
-	i = 12;
+	exit_status = g_globals.exit;
+	i = 4;
 	val[--i] = '\0';
-	while (exit_status != 0)
+	while (true)
 	{
 		val[--i] = "0123456789"[exit_status % 10];
 		exit_status /= 10;
+		if (exit_status == 0)
+			break ;
 	}
-	if (g_globals.exit_status < 0)
-		val[--i] = '-';
 	return (val + i);
 }
 

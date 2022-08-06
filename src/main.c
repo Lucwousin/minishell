@@ -14,8 +14,7 @@
 
 t_global	g_globals;
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv)
 {
-	g_globals = (t_global){0};
-	minishell(argc, argv, envp);
+	minishell(argc, argv);
 }

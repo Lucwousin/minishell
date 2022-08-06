@@ -30,7 +30,7 @@ PARENTHESIS END
 
 a || b (a single logic operator)
 PARENTHESIS
-  LOGICAL_EXPRESSION
+  LOGIC
     OR
     Left:
       COMMAND
@@ -42,12 +42,12 @@ PARENTHESIS
         argv: "b" "(null)" 
         redir: 
       COMMAND END
-  LOGICAL_EXPRESSION END
+  LOGIC END
 PARENTHESIS END
 
 a && b (a single logic operator, but the other one)
 PARENTHESIS
-  LOGICAL_EXPRESSION
+  LOGIC
     AND
     Left:
       COMMAND
@@ -59,15 +59,15 @@ PARENTHESIS
         argv: "b" "(null)" 
         redir: 
       COMMAND END
-  LOGICAL_EXPRESSION END
+  LOGIC END
 PARENTHESIS END
 
 a || b && c (2 logic operators, the or is within the and)
 PARENTHESIS
-  LOGICAL_EXPRESSION
+  LOGIC
     AND
     Left:
-      LOGICAL_EXPRESSION
+      LOGIC
         OR
         Left:
           COMMAND
@@ -79,18 +79,18 @@ PARENTHESIS
             argv: "b" "(null)" 
             redir: 
           COMMAND END
-      LOGICAL_EXPRESSION END
+      LOGIC END
     Right:
       COMMAND
         argv: "c" "(null)" 
         redir: 
       COMMAND END
-  LOGICAL_EXPRESSION END
+  LOGIC END
 PARENTHESIS END
 
 a || (b && c) (2 logic operators, the and is within the or)
 PARENTHESIS
-  LOGICAL_EXPRESSION
+  LOGIC
     OR
     Left:
       COMMAND
@@ -99,7 +99,7 @@ PARENTHESIS
       COMMAND END
     Right:
       PARENTHESIS
-        LOGICAL_EXPRESSION
+        LOGIC
           AND
           Left:
             COMMAND
@@ -111,14 +111,14 @@ PARENTHESIS
               argv: "c" "(null)" 
               redir: 
             COMMAND END
-        LOGICAL_EXPRESSION END
+        LOGIC END
       PARENTHESIS END
-  LOGICAL_EXPRESSION END
+  LOGIC END
 PARENTHESIS END
 
 a && b | c (logic operator with pipeline to the right)
 PARENTHESIS
-  LOGICAL_EXPRESSION
+  LOGIC
     AND
     Left:
       COMMAND
@@ -136,7 +136,7 @@ PARENTHESIS
           redir: 
         COMMAND END
       PIPELINE END
-  LOGICAL_EXPRESSION END
+  LOGIC END
 PARENTHESIS END
 
 nesting lol (lots of parenthesis)
@@ -211,5 +211,79 @@ PARENTHESIS
       PARENTHESIS END
     PARENTHESIS END
   PARENTHESIS END
+PARENTHESIS END
+
+a && b || c && d --- someone probably made a mistake
+PARENTHESIS
+  LOGIC
+    AND
+    Left:
+      LOGIC
+        OR
+        Left:
+          LOGIC
+            AND
+            Left:
+              COMMAND
+                argv: "a" "(null)" 
+                redir: 
+              COMMAND END
+            Right:
+              COMMAND
+                argv: "b" "(null)" 
+                redir: 
+              COMMAND END
+          LOGIC END
+        Right:
+          COMMAND
+            argv: "c" "(null)" 
+            redir: 
+          COMMAND END
+      LOGIC END
+    Right:
+      COMMAND
+        argv: "d" "(null)" 
+        redir: 
+      COMMAND END
+  LOGIC END
+PARENTHESIS END
+
+(a && b) || (c && d) --- they fixed their mistake
+PARENTHESIS
+  LOGIC
+    OR
+    Left:
+      PARENTHESIS
+        LOGIC
+          AND
+          Left:
+            COMMAND
+              argv: "a" "(null)" 
+              redir: 
+            COMMAND END
+          Right:
+            COMMAND
+              argv: "b" "(null)" 
+              redir: 
+            COMMAND END
+        LOGIC END
+      PARENTHESIS END
+    Right:
+      PARENTHESIS
+        LOGIC
+          AND
+          Left:
+            COMMAND
+              argv: "c" "(null)" 
+              redir: 
+            COMMAND END
+          Right:
+            COMMAND
+              argv: "d" "(null)" 
+              redir: 
+            COMMAND END
+        LOGIC END
+      PARENTHESIS END
+  LOGIC END
 PARENTHESIS END
 

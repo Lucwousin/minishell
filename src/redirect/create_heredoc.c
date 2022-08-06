@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 
 #include <redir.h>
-#include <stddef.h>
 #include <libft.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define HEX_CHARS		"0123456789abcdef"
 #define PREFIX			"/tmp/ms_"

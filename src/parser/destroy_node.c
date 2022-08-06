@@ -55,7 +55,7 @@ static void	destroy_parenthesis(t_ast_node *node)
 
 static void	(*g_destroylut[])(t_ast_node *) = {
 [COMMAND] = destroy_command,
-[LOGICAL_EXPRESSION] = destroy_logic,
+[LOGIC] = destroy_logic,
 [PIPELINE] = destroy_pipeline,
 [PARENTHESIS] = destroy_parenthesis
 };

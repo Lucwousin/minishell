@@ -16,39 +16,48 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <stdlib.h>
-#include "token.h"
+#include <parse.h>
+#include <signal.h>
+#include "execute.h"
 
-static void	do_something_with_input(char *input)
+bool			malloc_error(const char *where);
+
+static void	do_something_with_input(const char *input)
 {
 	t_dynarr	tokens;
-	//t_exp_token	*expanded;
-	
-	tokenize(&tokens, input);
-	//expanded = expand(&tokens, input);
-	//for (int i = 0; expanded[i].type != END_OF_INPUT; i++)
-	//	printf("%s\n", expanded[i].str);
+	t_dynarr	expanded_tokens;
+	t_ast_node	*task;
 
-	// Lexer
-	// Parser
-	// Executor
-	// This will probably be fed a struct used for ~~everything~~?
-	// At least the env params, a pointer we can put the exit code
-	// Probably dup'd file descriptors for stdin, stdout and stderr (do we need to handle 2> or &>?)
-	// I still think the pid's of child processes should probably be the global, so we can kill them
-	// if we receive Ctrl+C
-	// We probably need bool in the struct for whether or not we need to exit as well (or we can just clean up in the function handling that, probably)
-
+	if (!tokenize(&tokens, input))
+		return ((void) malloc_error("tokenize"));
+	if (!evaluate(&tokens))
+		return (malloc_error("evaluate"), dynarr_delete(&tokens));
+	if (!preparse(input, &tokens, &expanded_tokens))
+		return (dynarr_delete(&tokens));
+	dynarr_delete(&tokens);
+	task = build_ast(&expanded_tokens);
+	if (task != NULL)
+	{
+		execute(task);
+		destroy_node(&task);
+	}
+	size_t i = 0;
+	while (i < expanded_tokens.length)
+		free(((t_exp_tok *) expanded_tokens.arr)[i++].str);
+	dynarr_delete(&expanded_tokens);
 }
 
-void	minishell(int argc, char **argv, char **envp)
+static void ign()
+{
+}
+
+void	minishell(int argc, char **argv)
 {
 	char	*input;
 
+	signal(SIGINT, ign);
 	(void) argc;
 	(void) argv;
-	(void) envp; // We are going to need this in the executor (execve needs it as param)
-	// Init state struct, dup stdin stdout stderr?
-	// Init signal handlers
 	while (true)
 	{
 		input = readline(PROMPT);

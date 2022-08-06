@@ -16,3 +16,7 @@ a || (b && c)
 a && b | c
 #nesting lol (lots of parenthesis)
 (((((((((((((((((((((((((((((((((yes)))))))))))))))))))))))))))))))))
+#a && b || c && d --- someone probably made a mistake
+a && b || c && d
+#(a && b) || (c && d) --- they fixed their mistake
+(a && b) || (c && d)

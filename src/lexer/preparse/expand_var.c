@@ -14,8 +14,8 @@
 #include <libft.h>
 #include <environ.h>
 
-#define S					0
-#define D					1
+#define S	0
+#define D	1
 
 static bool	add_as_word(t_preparser *pp, t_dynarr *buf)
 {

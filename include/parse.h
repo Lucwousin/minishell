@@ -22,7 +22,7 @@
 
 typedef enum e_ast_type {
 	COMMAND,
-	LOGICAL_EXPRESSION,
+	LOGIC,
 	PARENTHESIS,
 	PIPELINE,
 }	t_ast_type;
@@ -33,11 +33,6 @@ typedef struct s_cmd_node	t_cmd_node;
 typedef struct s_logic_node	t_logic_node;
 typedef struct s_paren_node	t_paren_node;
 typedef struct s_pipe_node	t_pipe_node;
-
-typedef struct s_redirection {
-	t_tokentype	type;
-	char		*str;
-}	t_redir;
 
 struct s_ast_node {
 	t_ast_type	type;

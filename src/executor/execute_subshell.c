@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   redir.h                                            :+:    :+:            */
+/*   execute_subshell.c                                 :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/04 14:58:10 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/08/04 14:58:10 by lsinke        ########   odam.nl         */
+/*   Created: 2022/08/05 19:32:37 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/08/05 19:32:37 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REDIR_H
-# define REDIR_H
+#include <execute.h>
 
-# include <input.h>
-# include <stdbool.h>
+uint8_t	execute_subshell(t_paren_node *node, bool can_exit)
+{
+	uint8_t	status;
 
-typedef struct s_redirection {
-	t_tokentype	type;
-	char		*str;
-}	t_redir;
-
-bool	redirect(t_redir *redir, int32_t fds[2]);
-bool	create_heredoc(char **dst, bool expand);
-bool	read_heredoc(char *file, char *delim, bool expand);
-
-#endif //REDIR_H
+	if (!can_exit)
+		if (fork_and_wait(&status))
+			return (status);
+	exit(execute_node(node->contents, true));
+}
