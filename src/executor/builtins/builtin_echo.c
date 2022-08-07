@@ -24,7 +24,7 @@ uint8_t	builtin_echo(t_cmd_node *cmd)
 
 	i = 1;
 	argv = cmd->argv.arr;
-	print_newline = ft_strncmp(argv[i], FLAG_N, 3);
+	print_newline = cmd->argv.length == 2 || ft_strncmp(argv[i], FLAG_N, 3);
 	if (!print_newline)
 		++i;
 	while (argv[i])
@@ -35,5 +35,5 @@ uint8_t	builtin_echo(t_cmd_node *cmd)
 	}
 	if (print_newline)
 		ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
+	return (EXIT_SUCCESS);
 }
