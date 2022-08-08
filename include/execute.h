@@ -35,7 +35,7 @@ typedef struct s_pipeline {
  * 
  * @return EXIT_SUCCESS if execution succeeded, EXIT_FAILURE if not
  */
-uint8_t	execute(t_ast_node *root_node);
+uint8_t			execute(t_ast_node *root_node);
 
 /**
  * Execute an AST node. Forwards execution on to the correct function.
@@ -46,12 +46,12 @@ uint8_t	execute(t_ast_node *root_node);
  *
  * @return EXIT_SUCCESS if execution should continue, EXIT_FAILURE if not
  */
-uint8_t	execute_node(t_ast_node *node, bool must_exit);
+uint8_t			execute_node(t_ast_node *node, bool must_exit);
 
-uint8_t	execute_subshell(t_paren_node *node, bool must_exit);
-uint8_t	execute_command(t_cmd_node *cmd, bool must_exit);
-uint8_t	execute_pipeline(t_pipe_node *node, bool must_exit);
-uint8_t	execute_logic(t_logic_node *node, bool must_exit);
+uint8_t			execute_subshell(t_paren_node *node, bool must_exit);
+uint8_t			execute_command(t_cmd_node *cmd, bool must_exit);
+uint8_t			execute_pipeline(t_pipe_node *node, bool must_exit);
+uint8_t			execute_logic(t_logic_node *node, bool must_exit);
 
 /**
  * Execute an executable binary. Searches the PATH for the binary, or tries to
@@ -66,7 +66,7 @@ noreturn void	execute_binary(t_cmd_node *cmd);
  *
  * @return EXIT_FAILURE if an error occurred, EXIT_SUCCESS on success
  */
-uint8_t	wait_for(pid_t pid);
+uint8_t			wait_for(pid_t pid);
 
 /**
  * Wait for multiple child processes, and set the exit global to the last
@@ -78,7 +78,7 @@ uint8_t	wait_for(pid_t pid);
  *
  * @return EXIT_FAILURE if an error occurred, EXIT_SUCCESS on success
  */
-uint8_t	wait_pids(pid_t *pids, size_t len);
+uint8_t			wait_pids(pid_t *pids, size_t len);
 
 /**
  * Fork the current process, and wait for the child.
@@ -88,20 +88,20 @@ uint8_t	wait_pids(pid_t *pids, size_t len);
  * @return `false' in the child process
  *         `true' in the parent process and on error
  */
-bool	fork_and_wait(uint8_t	*status);
+bool			fork_and_wait(uint8_t	*status);
 
 /**
  * Duplicate the file descriptors STDIN/STDOUT are currently pointing at.
  * 
  * @return `true' if everything went ok, `false' if an error occurred
  */
-bool	dup_stdio(int32_t dst[2]);
+bool			dup_stdio(int32_t dst[2]);
 
 /**
  * Make the STDIN/STDOUT file descriptors point to the same files as the ones
  * in `fds'
  */
-bool	redir_stdio(int32_t fds[2]);
+bool			redir_stdio(int32_t fds[2]);
 
 /**
  * If must_exit is true, exit with the last exit code. If must_exit is false,

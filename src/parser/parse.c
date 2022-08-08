@@ -16,7 +16,7 @@
 
 bool	general_error(const char *where);
 
-uint8_t		error_status(t_ast_node **node, char *where, uint8_t status)
+uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 {
 	if (status == ERROR && where != NULL)
 		perror(where);

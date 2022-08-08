@@ -73,7 +73,7 @@ typedef struct s_parser {
  * @param dst[out] A pointer to where the root AST node should be stored.
  * @return EXIT_SUCCESS if everything went okay, EXIT_FAILURE on error.
  */
-uint8_t	parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst);
+uint8_t		parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst);
 
 /**
  * Parse all expanded tokens in tokens to an AST tree representing the command
@@ -84,7 +84,7 @@ uint8_t	parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst);
  * 
  * @return EXIT_SUCCESS if everything went ok, EXIT_FAILURE on error 
  */
-uint8_t	build_ast(t_dynarr *tokens, t_ast_node **dst);
+uint8_t		build_ast(t_dynarr *tokens, t_ast_node **dst);
 
 /**
  * Parse a single AST node. Explanations for possibilities are below.

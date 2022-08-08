@@ -27,7 +27,7 @@ static bool	do_redirs(t_dynarr *redirs, int32_t orig[2], bool builtin)
 	while (i < redirs->length)
 	{
 		if (redirect(((t_redir *) redirs->arr) + i++, fds) || !builtin)
-			continue;
+			continue ;
 		if (fds[0] != -1)
 			close(fds[0]);
 		if (fds[1] != -1)

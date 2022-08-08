@@ -20,7 +20,7 @@
 #define PREFIX_L		8
 #define NAME_TOO_LONG	"Heredoc delimiter is too long! Can't generate filename"
 
-bool general_error(const char *where);
+bool	general_error(const char *where);
 
 static void	add_pointer(char *name, uint64_t pointer)
 {

@@ -16,6 +16,16 @@
 
 #define FLAG_N	"-n"
 
+static bool	should_print_newline(char **argv, size_t len, size_t *i)
+{
+	if (len == 2)
+		return (true);
+	if (ft_strncmp(argv[*i], FLAG_N, 3) != 0)
+		return (true);
+	*i = *i + 1;
+	return (false);
+}
+
 uint8_t	builtin_echo(t_cmd_node *cmd)
 {
 	size_t	i;
@@ -24,9 +34,7 @@ uint8_t	builtin_echo(t_cmd_node *cmd)
 
 	i = 1;
 	argv = cmd->argv.arr;
-	print_newline = cmd->argv.length == 2 || ft_strncmp(argv[i], FLAG_N, 3);
-	if (!print_newline)
-		++i;
+	print_newline = should_print_newline(argv, cmd->argv.length, &i);
 	while (argv[i])
 	{
 		ft_putstr_fd(argv[i++], STDOUT_FILENO);
