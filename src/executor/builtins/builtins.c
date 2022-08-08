@@ -30,7 +30,7 @@ static const t_builtinfun	g_builtin_lut[] = {
 [ENV] = builtin_echo,
 [EXIT] = builtin_exit,
 [EXPORT] = builtin_echo,
-[PWD] = builtin_echo,
+[PWD] = builtin_pwd,
 [UNSET] = builtin_echo,
 };
 

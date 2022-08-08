@@ -81,6 +81,8 @@ uint8_t		builtin_echo(t_cmd_node *cmd);
  */
 uint8_t		builtin_exit(t_cmd_node *cmd);
 
+uint8_t		builtin_pwd(t_cmd_node *cmd);
+
 /**
  * Print a message on stderr and exit with status
  */
