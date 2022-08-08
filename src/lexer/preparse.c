@@ -16,27 +16,41 @@
 #include <stdlib.h>
 
 #define SUCCESS	0
-#define MALLOC	1
+#define ERROR	1
 #define SYNTAX	2
 
 #define S		0
 #define D		1
 
-bool			malloc_error(const char *where);
-bool			syntax_error_token(const char *cmd, t_token *token);
+bool	general_error(const char *where);
+void	syntax_error(const char *where);
 
-static bool	err_clean(t_preparser *pp, uint8_t status, t_dynarr *ex_toks)
+bool	syntax_error_token(const char *cmd, t_token *token)
+{
+	char	*substr;
+
+	substr = ft_substr(cmd, token->start, token->end - token->start + 1);
+	if (substr == NULL)
+		return (general_error("syntax_error"));
+	syntax_error(substr);
+	free(substr);
+	return (false);
+}
+
+static uint8_t	err_clean(t_preparser *pp, uint8_t status)
 {
 	t_exp_tok	*arr;
 
-	arr = ex_toks->arr;
-	while (ex_toks->length--)
-		free(arr[ex_toks->length].str);
-	dynarr_delete(ex_toks);
-	if (status == MALLOC)
-		return (malloc_error("preparser"));
+	arr = pp->output->arr;
+	while (pp->output->length--)
+		free(arr[pp->output->length].str);
+	dynarr_delete(pp->output);
+	if (status == ERROR)
+		general_error("preparser");
 	else
-		return (syntax_error_token(pp->cmd, dynarr_get(pp->tokens, pp->idx)));
+		syntax_error_token(pp->cmd, dynarr_get(pp->tokens, pp->idx));
+	dynarr_delete(pp->tokens);
+	return (status);
 }
 
 static uint8_t	expand(t_preparser *pp, t_dynarr *buf);
@@ -80,48 +94,45 @@ static uint8_t	expand(t_preparser *pp, t_dynarr *buf)
 		pp->globs[pp->glob_count++] = buf->length;
 	if (!toggle_quote(pp->in_q, t->type))
 		if (!expand_tok(pp, buf, t))
-			return (MALLOC);
+			return (ERROR);
 	status = try_concat(t, pp, buf);
 	if (status > SUCCESS || \
 		(buf->length == 0 && pp->cur.type == VARIABLE && !pp->in_q[D]))
 		return (status);
 	if (pp->cur.str == NULL && !dynarr_addone(buf, ""))
-		return (MALLOC);
+		return (ERROR);
 	if (pp->cur.str == NULL)
 		pp->cur.str = ft_strdup(buf->arr);
 	return (status);
 }
 
-static t_preparser	init_pp(const char *cmd, t_dynarr *tokens, t_dynarr *etoks)
-{
-	return ((t_preparser){.cmd = cmd, .tokens = tokens, .output = etoks});
-}
-
-bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens)
+uint8_t	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens)
 {
 	t_preparser	pp;
-	uint8_t		err;
+	uint8_t		status;
 	t_dynarr	buf;
 
 	if (!dynarr_create(exp_tokens, tokens->length, sizeof(t_exp_tok)) || \
 		!dynarr_create(&buf, 128, sizeof(char)))
-		return (err_clean(&pp, MALLOC, exp_tokens));
-	pp = init_pp(cmd, tokens, exp_tokens);
+		return (err_clean(&pp, ERROR));
+	pp = ((t_preparser){.cmd = cmd, .tokens = tokens, .output = exp_tokens});
 	while (pp.idx < tokens->length - 1)
 	{
 		buf.length = 0;
 		pp.cur = (t_exp_tok){END_OF_INPUT, NULL};
-		err = expand(&pp, &buf);
-		if (err != SUCCESS)
+		status = expand(&pp, &buf);
+		if (status != SUCCESS)
 			break ;
 		if ((pp.cur.str != NULL && expand_globs(&pp))
 			|| (pp.cur.str == NULL && pp.cur.type == VARIABLE))
 			continue ;
-		err = MALLOC;
+		status = ERROR;
 		break ;
 	}
 	dynarr_delete(&buf);
-	if (err != SUCCESS || !dynarr_finalize(exp_tokens))
-		return (err_clean(&pp, err, exp_tokens));
-	return (true);
+	if (status != SUCCESS)
+		err_clean(&pp, status);
+	else
+		dynarr_delete(tokens);
+	return (status);
 }

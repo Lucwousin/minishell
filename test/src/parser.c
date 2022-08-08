@@ -116,25 +116,21 @@ static void	print_node(t_ast_node *node, size_t depth)
 
 static void	test(char *line)
 {
-	t_dynarr	tokens;
 	t_dynarr	exp_tokens;
-	t_ast_node	*root;
+	t_ast_node	*root = NULL;
 	size_t		i;
 
 	i = ft_strlen(line);
 	if (line[i - 1] == '\n')
 		line[i - 1] = '\0';
-	tokenize(&tokens, line);
-	evaluate(&tokens);
-	preparse(line, &tokens, &exp_tokens);
-	root = build_ast(&exp_tokens);
+	if (parse_input(line, &exp_tokens, &root))
+		return ((void) printf("Parsing failed for %s\n", line));
 	print_node(root, 0);
 	destroy_node(&root);
 	i = 0;
 	while (i < exp_tokens.length)
 		free(((t_exp_tok *) exp_tokens.arr)[i++].str);
 	dynarr_delete(&exp_tokens);
-	dynarr_delete(&tokens);
 }
 
 int	main(void)

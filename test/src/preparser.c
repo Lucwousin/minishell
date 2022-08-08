@@ -86,7 +86,7 @@ static void	test(char *line)
 	evaluate(&tokens);
 	printf("%s after whitespace removal: %lu tokens\n", line, tokens.length);
 	dynarr_foreach(&tokens, print_token, line);
-	if (!preparse(line, &tokens, &exp_tokens))
+	if (preparse(line, &tokens, &exp_tokens))
 		printf("Syntax error!\n");
 	else
 	{
@@ -94,7 +94,6 @@ static void	test(char *line)
 		dynarr_foreach(&exp_tokens, print_exp_token, NULL);
 		dynarr_delete(&exp_tokens);
 	}
-	dynarr_delete(&tokens);
 }
 
 int	main(void)

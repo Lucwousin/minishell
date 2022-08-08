@@ -11,53 +11,55 @@
 /* ************************************************************************** */
 
 #include <builtins.h>
-#include <execute.h>
 #include <redir.h>
-#include <stdlib.h>
 #include <unistd.h>
 
-static bool	do_redirs(t_redir *redirs, size_t len, int32_t fds[2], bool builtin)
+static bool	do_redirs(t_dynarr *redirs, int32_t orig[2], bool builtin)
 {
 	size_t	i;
+	int32_t	fds[2];
 
-	fds[0] = STDIN_FILENO;
-	fds[1] = STDOUT_FILENO;
+	if (builtin && !dup_stdio(orig))
+		return (false);
+	fds[0] = -1;
+	fds[1] = -1;
 	i = 0;
-	while (i < len)
+	while (i < redirs->length)
 	{
-		if (!redirect(redirs + i++, fds) && builtin)
-		{
-			if (fds[0] != -1 && fds[0] != STDIN_FILENO)
-				close(fds[0]);
-			if (fds[1] != -1 && fds[1] != STDOUT_FILENO)
-				close(fds[0]);
-			return (false);
-		}
+		if (redirect(((t_redir *) redirs->arr) + i++, fds) || !builtin)
+			continue;
+		if (fds[0] != -1)
+			close(fds[0]);
+		if (fds[1] != -1)
+			close(fds[0]);
+		return (false);
 	}
-	if (fds[0] != -1 && dup2(fds[0], STDIN_FILENO) == -1 && builtin)
-		return (false);
-	if (fds[1] != -1 && dup2(fds[1], STDOUT_FILENO) == -1 && builtin)
-		return (false);
-	return (true);
+	if (redir_stdio(fds) || !builtin)
+		return (true);
+	redir_stdio(orig);
+	return (false);
 }
 
-uint8_t	execute_command(t_cmd_node *cmd, bool can_exit)
+uint8_t	execute_command(t_cmd_node *cmd, bool must_exit)
 {
 	t_builtin	builtin;
-	int32_t		fds[2];
 	uint8_t		status;
+	int32_t		orig[2];
 
 	builtin = identify_command(cmd->argv.arr);
-	if (builtin == NONE && !can_exit)
+	if (builtin == NONE && !must_exit)
 	{
 		if (fork_and_wait(&status))
 			return (status);
-		can_exit = true;
+		must_exit = true;
 	}
-	if (!do_redirs(cmd->redirs.arr, cmd->redirs.length, fds, builtin != NONE))
-		return (finish_leaf(EXIT_FAILURE, can_exit));
-	if (builtin != NONE)
-		return (finish_leaf(execute_builtin(builtin, cmd), can_exit));
-	execute_binary(cmd);
-	return (69);
+	if (cmd->redirs.length > 0)
+		if (!do_redirs(&cmd->redirs, orig, builtin != NONE))
+			return (try_exit(EXIT_FAILURE, must_exit));
+	if (builtin == NONE)
+		execute_binary(cmd);
+	status = execute_builtin(builtin, cmd);
+	if (cmd->redirs.length > 0)
+		redir_stdio(orig);
+	return (try_exit(status, must_exit));
 }

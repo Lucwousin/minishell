@@ -13,10 +13,10 @@
 #ifndef INPUT_H
 # define INPUT_H
 
+# include <dynarr.h>
 # include <stdbool.h>
 # include <stddef.h>
 # include <stdint.h>
-# include <dynarr.h>
 
 typedef enum e_tokentype {
 	END_OF_INPUT = 0,
@@ -58,7 +58,7 @@ typedef struct s_expanded_token {
  * 
  * @return true if nothing went wrong, false if an allocation failed
  */
-bool	tokenize(t_dynarr *tokens, const char *cmd);
+uint8_t	tokenize(t_dynarr *tokens, const char *cmd);
 
 /**
  * Remove all unnecessary whitespace and unclosed quotes
@@ -67,7 +67,7 @@ bool	tokenize(t_dynarr *tokens, const char *cmd);
  *
  * @return true if nothing went wrong, false if an allocation failed
  */
-bool	evaluate(t_dynarr *tokens);
+uint8_t	evaluate(t_dynarr *tokens);
 
 /**
  * Join all adjacent words, remove quotes, expand variables, combine redirects
@@ -80,6 +80,6 @@ bool	evaluate(t_dynarr *tokens);
  * @return true if nothing went wrong, false in the case of a syntax error or
  * allocation failure
  */
-bool	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens);
+uint8_t	preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens);
 
 #endif //INPUT_H

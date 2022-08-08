@@ -11,26 +11,25 @@
 /* ************************************************************************** */
 
 #include <execute.h>
-#include <minishell.h>
-#include <unistd.h>
 
 static const t_executor	g_executors[] = {
 [COMMAND] = (t_executor const) execute_command,
 [LOGIC] = (t_executor const) execute_logic,
-[PARENTHESIS] = (t_executor const) execute_subshell
+[PARENTHESIS] = (t_executor const) execute_subshell,
+[PIPELINE] = (t_executor const) execute_pipeline
 };
 
-uint8_t	execute_node(t_ast_node *node, bool can_exit)
+uint8_t	execute_node(t_ast_node *node, bool must_exit)
 {
-	return (g_executors[node->type](&node->node, can_exit));
+	return (g_executors[node->type](&node->node, must_exit));
 }
 
-void	execute(t_ast_node *root_node)
+uint8_t	execute(t_ast_node *root_node)
 {
 	t_paren_node	*root;
 
 	root = &root_node->node.paren;
 	if (root->contents == NULL)
-		return ;
-	g_globals.exit = execute_node(root->contents, false);
+		return (EXIT_SUCCESS);
+	return (execute_node(root->contents, false));
 }

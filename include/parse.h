@@ -13,12 +13,15 @@
 #ifndef PARSE_H
 # define PARSE_H
 
-# include <dynarr.h>
 # include <input.h>
 
 # define PIPE_INIT_SIZE		8
 # define ARGV_INIT_SIZE		8
 # define REDIR_INIT_SIZE	4
+
+# define SUCCESS			0
+# define ERROR				1
+# define SYNTAX				2
 
 typedef enum e_ast_type {
 	COMMAND,
@@ -60,7 +63,28 @@ typedef struct s_parser {
 	t_dynarr	*tokens;
 }	t_parser;
 
-t_ast_node	*build_ast(t_dynarr *tokens);
+/**
+ * Parse the command line input.
+ * 
+ * @param input[in] The command line 
+ * @param ex_toks[in/out] A pointer where the expanded tokens will be stored.
+ *        If any error occurred, this will be cleaned up. Otherwise, this should
+ *        be cleaned up after executing the commands.
+ * @param dst[out] A pointer to where the root AST node should be stored.
+ * @return EXIT_SUCCESS if everything went okay, EXIT_FAILURE on error.
+ */
+uint8_t	parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst);
+
+/**
+ * Parse all expanded tokens in tokens to an AST tree representing the command
+ * line we have to execute.
+ * 
+ * @param tokens[in] The expanded tokens, made by preparse
+ * @param dst[out] A pointer where the root node will be stored.
+ * 
+ * @return EXIT_SUCCESS if everything went ok, EXIT_FAILURE on error 
+ */
+uint8_t	build_ast(t_dynarr *tokens, t_ast_node **dst);
 
 /**
  * Parse a single AST node. Explanations for possibilities are below.
@@ -100,7 +124,7 @@ t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst);
  */
 t_tokentype	parse_nodelist(t_parser *parser, t_ast_node **dst, bool paren);
 /**
- * Parse a command node. Command nodes have a nodes of redirections, and a nodes
+ * Parse a command node. Command nodes have a list of redirections, and a list
  * of arguments.
  *
  * The definition of a command in tokens, is n * (WORD || REDIR)
@@ -112,17 +136,44 @@ t_tokentype	parse_command(t_parser *parser, t_ast_node **dst);
 /**
  * Parse a pipeline. Pipelines are lists of ast nodes that are NOT pipes.
  *
- * Because the pipe operator is to the right of the first command, *dst will
- * already contain a command node. This will be replaced with a pointer to the
- * new pipeline node, which has the command in its' nodes.
+ * Because the pipe operator is to the right of the first node, *dst will
+ * already contain a node. This will be replaced with a pointer to the
+ * new pipeline node, which has the node in its' nodes.
  */
 t_tokentype	parse_pipeline(t_parser *parser, t_ast_node **dst);
+/**
+ * Parse a logical expression. Logical expression contain a lhs and a rhs sub
+ * node.
+ * 
+ * Because the logical expression is to the right of the first node, *dst will
+ * already contain a node. This will be replaced with a pointer to the new
+ * logical expression node, which contains the node as it's left hand side.
+ */
 t_tokentype	parse_logic(t_parser *parser, t_ast_node **dst, t_tokentype type);
 
+/**
+ * Functions to allocate and initialize new AST nodes
+ */
 t_ast_node	*init_cmd_node(void);
 t_ast_node	*init_paren_node(void);
 t_ast_node	*init_pipe_node(t_ast_node *first);
 t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left);
+
+/**
+ * Recursively destroy a node, and all it's children
+ */
 void		destroy_node(t_ast_node **nodep);
+
+/**
+ * Set the exit status to `status', prints an error message (if necessary),
+ * destroys `dst', and returns `-1' (The error return value for all `parse_*'
+ * functions.
+ * 
+ * @param node[in/out] The node we want to destroy (or NULL)
+ * @param where[in] An optional error message, only gets printed on ERROR
+ * @param status[in] The exit to set.
+ * @return -1
+ */
+uint8_t		error_status(t_ast_node **node, char *where, uint8_t status);
 
 #endif //PARSE_H

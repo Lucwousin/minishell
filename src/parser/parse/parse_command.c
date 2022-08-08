@@ -13,8 +13,14 @@
 #include <parse.h>
 #include <redir.h>
 
-bool	malloc_error(const char *where);
+bool	general_error(const char *where);
 void	syntax_error_type(t_tokentype type);
+
+static uint8_t	syntax_err(t_ast_node **dst, t_tokentype type)
+{
+	syntax_error_type(type);
+	return (error_status(dst, NULL, SYNTAX));
+}
 
 static bool	add_redir(t_cmd_node *cmd, t_exp_tok *tok)
 {
@@ -26,7 +32,7 @@ static bool	add_redir(t_cmd_node *cmd, t_exp_tok *tok)
 		if (!create_heredoc(&red.str, red.type == RED_HD))
 			return (false);
 	if (!dynarr_addone(&cmd->redirs, &red))
-		return (malloc_error("add_redir"));
+		return (general_error("add_redir"));
 	return (true);
 }
 
@@ -41,10 +47,8 @@ static t_tokentype	finish_node(t_ast_node **dst, t_tokentype type)
 	t_cmd_node			*c_node;
 
 	c_node = &(*dst)->node.command;
-	if (!dynarr_addone(&c_node->argv, &null) || \
-		!dynarr_finalize(&c_node->argv) || \
-		!dynarr_finalize(&c_node->redirs))
-		return (destroy_node(dst), malloc_error("finish_node (command)"));
+	if (!dynarr_addone(&c_node->argv, &null))
+		return (error_status(dst, "finish_node (command)", ERROR));
 	return (type);
 }
 
@@ -54,7 +58,7 @@ t_tokentype	parse_command(t_parser *parser, t_ast_node **dst)
 
 	*dst = init_cmd_node();
 	if (*dst == NULL)
-		return (malloc_error("parse_command"), -1);
+		return (error_status(NULL, "parse_cmd", ERROR));
 	tok = NULL;
 	while (parser->idx < parser->tokens->length)
 	{
@@ -62,13 +66,13 @@ t_tokentype	parse_command(t_parser *parser, t_ast_node **dst)
 		if (is_terminating_type(tok->type))
 			return (finish_node(dst, tok->type));
 		if (tok->type == PAR_OPEN)
-			return (syntax_error_type(PAR_OPEN), -1);
+			return (syntax_err(dst, PAR_OPEN));
 		if (tok->type == WORD || tok->type == VARIABLE || tok->type == GLOB)
 			if (!dynarr_addone(&(*dst)->node.command.argv, &tok->str))
-				return (destroy_node(dst), malloc_error("parse_command"), -1);
+				return (error_status(dst, "parse_cmd", ERROR));
 		if (tok->type >= RED_IN && tok->type <= RED_APP)
 			if (!add_redir(&(*dst)->node.command, tok))
-				return (destroy_node(dst), -1);
+				return (error_status(dst, NULL, 0));
 		++parser->idx;
 	}
 	return (finish_node(dst, END_OF_INPUT));

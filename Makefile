@@ -49,8 +49,9 @@ SRCS := main.c																\
 		executor/fork_utils.c												\
 		executor/execute_subshell.c											\
 		executor/execute_command.c											\
-		executor/execute_binary.c											\
+		executor/execute_pipeline.c											\
 		executor/execute_logic.c											\
+		executor/execute_binary.c											\
 		executor/builtins/builtins.c										\
 		executor/builtins/builtin_echo.c									\
 		executor/builtins/builtin_exit.c
@@ -92,7 +93,7 @@ TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
 TEST_LIB_OBJS := $(filter-out $(OBJD)main.o, $(OBJP))
 
 TEST_LIBS += $(TEST_LIB)
-TEST_LIBS += $(LIBFT_L)
+TEST_LIBS += $(LIBS)
 
 # LIBRARIES
 
@@ -154,11 +155,11 @@ fclean:
 re: fclean
 	@$(MAKE)
 
-test: $(TEST_LIBS)
+test: $(TEST_LIB)
 	@$(foreach test, $(TEST_SRCP), \
 		echo "Running test $(test)"; \
 		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(test) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
+		$(CC) $(test) $(LIBS) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
 		< $(TESTNAME) $(VALGRIND) $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
 		rm -f $(TESTNAME)-diff; \
 		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \

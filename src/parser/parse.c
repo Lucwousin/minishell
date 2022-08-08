@@ -11,6 +11,21 @@
 /* ************************************************************************** */
 
 #include <parse.h>
+#include <stdio.h>
+#include <minishell.h>
+
+bool	general_error(const char *where);
+
+uint8_t		error_status(t_ast_node **node, char *where, uint8_t status)
+{
+	if (status == ERROR && where != NULL)
+		perror(where);
+	if (node != NULL)
+		destroy_node(node);
+	if (status != SUCCESS)
+		g_globals.exit = status;
+	return (-1);
+}
 
 t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 {
@@ -27,12 +42,16 @@ t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 		return (-1);
 }
 
-t_ast_node	*build_ast(t_dynarr *tokens)
+uint8_t	build_ast(t_dynarr *tokens, t_ast_node **dst)
 {
 	t_parser	parser;
-	t_ast_node	*node;
+	uint8_t		status;
 
 	parser = ((t_parser){0, tokens});
-	parse_nodelist(&parser, &node, false);
-	return (node);
+	status = SUCCESS;
+	if (tokens->length == 0)
+		dynarr_delete(tokens);
+	else
+		status = parse_nodelist(&parser, dst, false);
+	return (status);
 }

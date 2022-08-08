@@ -12,7 +12,7 @@
 
 #include <parse.h>
 
-bool	malloc_error(const char *where);
+bool	general_error(const char *where);
 void	syntax_error_type(t_tokentype type);
 
 static bool	check_start_syntax(t_parser *parser, t_tokentype *type)
@@ -48,19 +48,22 @@ t_tokentype	parse_logic(t_parser *parser, t_ast_node **dst, t_tokentype type)
 
 	*dst = init_logic_node(type, *dst);
 	if (*dst == NULL)
-		return (malloc_error("parse_logic"), -1);
+		return (error_status(NULL, "parse_logic", ERROR));
 	if (check_start_syntax(parser, &next_type))
-		return (destroy_node(dst), -1);
+		return (error_status(dst, NULL, SYNTAX));
 	while (parser->idx < parser->tokens->length)
 	{
 		next_type = parse_node(parser, next_type, &r);
 		if (r == NULL)
-			return (destroy_node(dst), -1);
+			return (error_status(dst, NULL, 0));
 		if (is_terminating_type(next_type))
 			break ;
 	}
 	(*dst)->node.logic.r = r;
 	if (next_type == PAR_OPEN)
-		return (syntax_error_type(next_type), destroy_node(dst), -1);
+	{
+		syntax_error_type(next_type);
+		return (error_status(dst, NULL, SYNTAX));
+	}
 	return (next_type);
 }

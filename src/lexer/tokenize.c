@@ -13,6 +13,9 @@
 #include <token.h>
 #include <dynarr.h>
 
+#define SUCCESS	0
+#define ERROR	1
+
 /**
  * Lexer state to handler function
  */
@@ -45,31 +48,21 @@ static const t_tokentype	g_types[] = {
 [WILDCARD_S] = GLOB
 };
 
-bool	tokenize(t_dynarr *tokens, const char *cmd)
+uint8_t	tokenize(t_dynarr *tokens, const char *cmd)
 {
 	t_lexer	lexer;
-	bool	rv;
 
-	lexer.state = DEFAULT;
-	lexer.current_token.type = END_OF_INPUT;
-	lexer.current_token.start = 0;
-	lexer.tokens = tokens;
-	lexer.str = cmd;
-	lexer.idx = 0;
-	rv = true;
+	lexer = (t_lexer){.tokens = tokens, .str = cmd};
 	if (!dynarr_create(lexer.tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
-		return (false);
+		return (ERROR);
 	while (lexer.state != EOF_S)
 	{
 		if (g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
 			continue ;
-		rv = false;
-		break ;
+		dynarr_delete(tokens);
+		return (ERROR);
 	}
-	if (rv && dynarr_finalize(lexer.tokens))
-		return (true);
-	dynarr_delete(tokens);
-	return (false);
+	return (SUCCESS);
 }
 
 static bool	delimit_token(t_lexer *lexer)

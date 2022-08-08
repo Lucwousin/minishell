@@ -12,18 +12,17 @@
 
 #include <input.h>
 #include <libft.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
 
-#define MALLOC_MSG_PREFIX	"Minishell: Allocation failed in "
+#define ERROR_MSG_PREFIX	"Minishell: Error in "
 #define SYNTAX_MSG_PREFIX	"Minishell: Syntax error near unexpected token `"
 #define SYNTAX_MSG_SUFFIX	"'\n"
 #define NEWLINE_NAME		"newline"
 
-bool	malloc_error(const char *where)
+bool	general_error(const char *where)
 {
-	ft_putstr_fd(MALLOC_MSG_PREFIX, STDERR_FILENO);
+	ft_putstr_fd(ERROR_MSG_PREFIX, STDERR_FILENO);
 	ft_putstr_fd((char *) where, STDERR_FILENO);
 	perror(where);
 	return (false);
@@ -37,18 +36,6 @@ void	syntax_error(const char *where)
 	else
 		ft_putstr_fd((char *) where, STDERR_FILENO);
 	ft_putstr_fd(SYNTAX_MSG_SUFFIX, STDERR_FILENO);
-}
-
-bool	syntax_error_token(const char *cmd, t_token *token)
-{
-	char	*substr;
-
-	substr = ft_substr(cmd, token->start, token->end - token->start + 1);
-	if (substr == NULL)
-		return (malloc_error("syntax_error"));
-	syntax_error(substr);
-	free(substr);
-	return (false);
 }
 
 void	syntax_error_type(t_tokentype type)

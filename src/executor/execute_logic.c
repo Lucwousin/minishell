@@ -12,13 +12,22 @@
 
 #include <execute.h>
 
-uint8_t	execute_logic(t_logic_node *node, bool can_exit)
+static bool	should_exe_next(t_tokentype type, uint8_t status)
+{
+	if (status != EXIT_SUCCESS)
+		return (false);
+	if (type == OR)
+		return (g_globals.exit != 0);
+	else
+		return (g_globals.exit == 0);
+}
+
+uint8_t	execute_logic(t_logic_node *node, bool must_exit)
 {
 	uint8_t	status;
 
 	status = execute_node(node->l, false);
-	if ((node->type == OR && status) || \
-		(node->type == AND && !status))
-		status = execute_node(node->r, can_exit);
-	return (finish_leaf(status, can_exit));
+	if (should_exe_next(node->type, status))
+		status = execute_node(node->r, must_exit);
+	return (try_exit(status, must_exit));
 }

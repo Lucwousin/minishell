@@ -14,10 +14,7 @@
 #include <minishell.h>
 #include <libft.h>
 #include <stdlib.h>
-#include <stdio.h>
 
-#define EXIT_ARGS	1
-#define EXIT_NUMS	2
 #define PRE_EXIT	"exit: "
 #define ERR_ARGS	"too many arguments"
 #define ERR_NUMS	": numeric argument required"
@@ -52,11 +49,11 @@ uint8_t	builtin_exit(t_cmd_node *cmd)
 	char	*arg;
 
 	if (cmd->argv.length > 3)
-		return (builtin_err(PRE_EXIT, NULL, ERR_ARGS, EXIT_ARGS));
+		return (builtin_err(PRE_EXIT, NULL, ERR_ARGS, ERROR));
 	if (cmd->argv.length == 2)
 		exit(g_globals.exit);
-	arg = *((char **) dynarr_get(&cmd->argv, 1));
-	if (!parse_status(arg, &status))
-		exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, EXIT_NUMS));
-	exit(status);
+	arg = ((char **) cmd->argv.arr)[1];
+	if (parse_status(arg, &status))
+		exit(status);
+	exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, SYNTAX));
 }

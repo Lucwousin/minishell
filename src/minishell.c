@@ -20,31 +20,41 @@
 #include <signal.h>
 #include "execute.h"
 
-bool			malloc_error(const char *where);
+bool general_error(const char *where);
 
-static void	do_something_with_input(const char *input)
+uint8_t	parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst)
 {
+	uint8_t		status;
 	t_dynarr	tokens;
-	t_dynarr	expanded_tokens;
+
+	status = tokenize(&tokens, input);
+	if (status != EXIT_SUCCESS && !general_error("tokenize"))
+		return (status);
+	status = evaluate(&tokens);
+	if (status != EXIT_SUCCESS && !general_error("evaluate"))
+		return (status);
+	status = preparse(input, &tokens, ex_toks);
+	if (status != EXIT_SUCCESS)
+		return (status);
+	return (build_ast(ex_toks, dst));
+}
+
+static uint8_t	handle_input(const char *input)
+{
+	uint8_t		status;
+	t_dynarr	ex_toks;
 	t_ast_node	*task;
 
-	if (!tokenize(&tokens, input))
-		return ((void) malloc_error("tokenize"));
-	if (!evaluate(&tokens))
-		return (malloc_error("evaluate"), dynarr_delete(&tokens));
-	if (!preparse(input, &tokens, &expanded_tokens))
-		return (dynarr_delete(&tokens));
-	dynarr_delete(&tokens);
-	task = build_ast(&expanded_tokens);
-	if (task != NULL)
-	{
-		execute(task);
-		destroy_node(&task);
-	}
-	size_t i = 0;
-	while (i < expanded_tokens.length)
-		free(((t_exp_tok *) expanded_tokens.arr)[i++].str);
-	dynarr_delete(&expanded_tokens);
+	task = NULL;
+	status = parse_input(input, &ex_toks, &task);
+	if (status != EXIT_SUCCESS || task == NULL)
+		return (status);
+	status = execute(task);
+	destroy_node(&task);
+	for (size_t i = 0; i < ex_toks.length; ++i)
+		free(((t_exp_tok *) ex_toks.arr)[i].str);
+	dynarr_delete(&ex_toks);
+	return (status);
 }
 
 static void ign()
@@ -65,7 +75,7 @@ void	minishell(int argc, char **argv)
 			break ;
 		if	(*input)
 			add_history(input);
-		do_something_with_input(input);
+		handle_input(input);
 		free(input);
 	}
 }

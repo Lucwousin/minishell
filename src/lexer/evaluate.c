@@ -92,15 +92,21 @@ static bool	remove_whitespace(t_dynarr *tokens, const t_tokentype *quoted)
 	return (dynarr_grow(tokens, len));
 }
 
-bool	evaluate(t_dynarr *tokens)
+uint8_t	evaluate(t_dynarr *tokens)
 {
 	t_tokentype	*shallow;
 	bool		rv;
 
 	shallow = shallow_representation(tokens);
 	if (shallow == NULL)
-		return (false);
+		return (EXIT_FAILURE);
 	add_quoted_bit(shallow);
 	rv = remove_whitespace(tokens, shallow);
-	return (free(shallow), rv);
+	if (rv == false)
+		dynarr_delete(tokens);
+	free(shallow);
+	if (rv)
+		return (EXIT_SUCCESS);
+	else
+		return (EXIT_FAILURE);
 }

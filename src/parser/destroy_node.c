@@ -67,4 +67,5 @@ void	destroy_node(t_ast_node **nodep)
 	g_destroylut[(*nodep)->type](*nodep);
 	free(*nodep);
 	*nodep = NULL;
+	return ;
 }

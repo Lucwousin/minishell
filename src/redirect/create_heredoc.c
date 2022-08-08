@@ -20,7 +20,7 @@
 #define PREFIX_L		8
 #define NAME_TOO_LONG	"Heredoc delimiter is too long! Can't generate filename"
 
-bool	malloc_error(const char *where);
+bool general_error(const char *where);
 
 static void	add_pointer(char *name, uint64_t pointer)
 {
@@ -48,7 +48,7 @@ static bool	create_name(char *delim, char **dst)
 		return (ft_putendl_fd(NAME_TOO_LONG, STDERR_FILENO), false);
 	name = ft_calloc(name_len, sizeof(char));
 	if (name == NULL)
-		return (malloc_error("heredoc create_name"));
+		return (general_error("heredoc create_name"));
 	ft_memcpy(name, PREFIX, PREFIX_L);
 	ft_memcpy(name + PREFIX_L, delim, delim_len);
 	add_pointer(name + PREFIX_L + delim_len, (uint64_t) delim);
@@ -69,7 +69,7 @@ bool	create_heredoc(char **dst, bool expand)
 	if (pid < 0)
 		return (free(delim), false);
 	if (pid == 0)
-		exit(read_heredoc(*dst, delim, expand));
+		return (read_heredoc(*dst, delim, expand));
 	waitpid(pid, &status, 0);
 	return (true);
 }

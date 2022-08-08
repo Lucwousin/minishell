@@ -69,7 +69,10 @@ t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left)
 
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
-		return (destroy_node(&left), NULL);
+	{
+		destroy_node(&left);
+		return (NULL);
+	}
 	node->type = LOGIC;
 	l_node = &node->node.logic;
 	l_node->type = type;

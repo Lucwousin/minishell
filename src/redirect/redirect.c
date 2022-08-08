@@ -18,9 +18,11 @@
 #define DEST	0
 #define FLAG	1
 #define MODE	2
-#define CLOSE_ERR	"Something went wrong trying to close a previous redir:"
-#define OPEN_ERR	"Something went wrong trying to open a file for redir:"
+#define CLOSE_ERR	"Something went wrong trying to close a file"
+#define OPEN_ERR	"Something went wrong trying to open a file"
 #define UNLINK_ERR	"Unlinking heredoc failed? This should never happen?"
+#define STDIN_ERR	"Redirecting to stdin failed"
+#define STDOUT_ERR	"Redirecting to stdout failed"
 
 static const int32_t	g_redir_opts[][3] = {
 [RED_IN - RED_IN] = {STDIN_FILENO, O_RDONLY, 0},
@@ -41,7 +43,7 @@ bool	redirect(t_redir *redir, int32_t fds[2])
 	const int32_t	*opts;
 
 	opts = g_redir_opts[redir->type - RED_IN];
-	if (fds[opts[DEST]] != opts[DEST] && fds[opts[DEST]] != -1)
+	if (fds[opts[DEST]] != -1)
 		if (close(fds[opts[DEST]]) == -1)
 			error(CLOSE_ERR);
 	fds[opts[DEST]] = open(redir->str, opts[FLAG], opts[MODE]);
@@ -51,4 +53,40 @@ bool	redirect(t_redir *redir, int32_t fds[2])
 		if (unlink(redir->str) == -1)
 			error(UNLINK_ERR);
 	return (true);
+}
+
+bool	dup_stdio(int32_t dst[2])
+{
+	dst[STDIN_FILENO] = dup(STDIN_FILENO);
+	dst[STDOUT_FILENO] = dup(STDOUT_FILENO);
+	if (dst[STDIN_FILENO] != -1 && dst[STDOUT_FILENO] != -1)
+		return (true);
+	perror("duplicating original stdin/out failed");
+	if (dst[STDIN_FILENO] != -1)
+		close(dst[STDIN_FILENO]);
+	if (dst[STDOUT_FILENO] != -1)
+		close(dst[STDOUT_FILENO]);
+	return (false);
+}
+
+bool	redir_stdio(int32_t fds[2])
+{
+	static const char	*err[2] = {STDIN_ERR, STDOUT_ERR};
+	uint8_t				d;
+
+	d = STDERR_FILENO;
+	while (d-- > STDIN_FILENO)
+	{
+		if (fds[d] < 0)
+			continue ;
+		if (dup2(fds[d], d) < 0)
+			perror(err[d]);
+		if (close(fds[d]) != 0)
+			perror(err[d]);
+		else
+			fds[d] = -1;
+	}
+	if (fds[0] == -1 && fds[1] == -1)
+		return (true);
+	return (false);
 }

@@ -12,11 +12,11 @@
 
 #include <execute.h>
 
-uint8_t	execute_subshell(t_paren_node *node, bool can_exit)
+uint8_t	execute_subshell(t_paren_node *node, bool must_exit)
 {
 	uint8_t	status;
 
-	if (!can_exit)
+	if (!must_exit)
 		if (fork_and_wait(&status))
 			return (status);
 	exit(execute_node(node->contents, true));

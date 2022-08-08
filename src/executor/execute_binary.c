@@ -15,12 +15,13 @@
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdnoreturn.h>
 
 #define ERR_MES	"Error during execution"
 
 extern char	**environ;
 
-static void	exit_(uint8_t status)
+static noreturn void	exit_(uint8_t status)
 {
 	if (errno != 0)
 		perror(ERR_MES);
@@ -56,7 +57,7 @@ static char	*find_executable(char *name)
 	return (cur);
 }
 
-void	execute_binary(t_cmd_node *cmd)
+noreturn void	execute_binary(t_cmd_node *cmd)
 {
 	char	*path;
 

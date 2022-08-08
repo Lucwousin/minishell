@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <builtins.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <unistd.h>
 #include <libft.h>
 
@@ -64,10 +62,15 @@ t_builtin	identify_command(char **argv)
 
 uint8_t	execute_builtin(t_builtin builtin, t_cmd_node *cmd)
 {
+	uint8_t	status;
+
+	status = EXIT_SUCCESS;
 	if (builtin == EXIT)
-		return (builtin_exit(cmd));
+		status = builtin_exit(cmd);
 	if (builtin == ECHO)
-		return (builtin_echo(cmd));
-	(void) builtin, (void) cmd;
-	return (69);
+		status = (builtin_echo(cmd));
+	g_globals.exit = status;
+	if (status != EXIT_SUCCESS && (builtin == EXIT || builtin == EXPORT))
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }

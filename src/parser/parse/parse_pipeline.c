@@ -12,8 +12,14 @@
 
 #include <parse.h>
 
-bool	malloc_error(const char *where);
+bool	general_error(const char *where);
 void	syntax_error_type(t_tokentype type);
+
+static uint8_t	syntax_err(t_ast_node **dst, t_tokentype type)
+{
+	syntax_error_type(type);
+	return (error_status(dst, NULL, SYNTAX));
+}
 
 static bool	check_syntax_error(t_exp_tok *token)
 {
@@ -35,7 +41,7 @@ static t_tokentype	finish_node(t_ast_node **dst, t_tokentype type)
 
 	p_node = &(*dst)->node.pipe;
 	if (!dynarr_finalize(&p_node->nodes))
-		return (destroy_node(dst), malloc_error("finish_node (pipe)"));
+		return (error_status(dst, "finish_node (pipe)", ERROR));
 	return (type);
 }
 
@@ -47,20 +53,20 @@ t_tokentype	parse_pipeline(t_parser *parser, t_ast_node **dst)
 
 	*dst = init_pipe_node(*dst);
 	if (*dst == NULL)
-		return (malloc_error("parse_pipeline"), -1);
+		return (error_status(NULL, "parse_pipeline", ERROR));
 	next_type = PIPE;
 	while (next_type == PIPE)
 	{
 		if (parser->idx == parser->tokens->length - 1)
-			return (destroy_node(dst), syntax_error_type(END_OF_INPUT), -1);
+			return (syntax_err(dst, END_OF_INPUT));
 		tok = dynarr_get(parser->tokens, ++parser->idx);
 		if (check_syntax_error(tok))
-			return (destroy_node(dst), -1);
+			return (error_status(dst, NULL, SYNTAX));
 		next_type = parse_node(parser, tok->type, &sub);
 		if (sub == NULL)
-			return (destroy_node(dst), -1);
+			return (error_status(dst, NULL, 0));
 		if (!dynarr_addone(&(*dst)->node.pipe.nodes, &sub))
-			return (malloc_error("parse_pipeline"), -1);
+			return (error_status(dst, "parse_pipeline", ERROR));
 	}
 	return (finish_node(dst, next_type));
 }

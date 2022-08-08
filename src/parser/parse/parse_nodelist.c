@@ -14,7 +14,7 @@
 
 #define NOT_IMPLEMENTED_RED	"Redirections for subshells are not implemented"
 
-bool	malloc_error(const char *where);
+bool	general_error(const char *where);
 void	syntax_error(const char *where);
 void	syntax_error_type(t_tokentype type);
 
@@ -60,25 +60,25 @@ static t_tokentype	get_next_type(t_parser *parser, t_tokentype type)
 
 t_tokentype	parse_nodelist(t_parser *parser, t_ast_node **dst, bool paren)
 {
-	t_ast_node	*sub;
+	t_ast_node	**sub;
 	t_tokentype	next_type;
 
 	if (check_start_syntax(parser, paren, &next_type))
-		return (-1);
+		return (error_status(NULL, NULL, SYNTAX));
 	*dst = init_paren_node();
 	if (*dst == NULL)
-		return (malloc_error("parse_nodelist"), -1);
+		return (error_status(NULL, "parse subshell", ERROR));
+	sub = &(*dst)->node.paren.contents;
 	while (parser->idx < parser->tokens->length)
 	{
-		next_type = parse_node(parser, next_type, &sub);
-		if (sub == NULL)
-			return (destroy_node(dst), -1);
+		next_type = parse_node(parser, next_type, sub);
+		if (*sub == NULL)
+			return (error_status(dst, NULL, 0));
 		if (check_end_syntax(next_type, paren))
-			return (destroy_node(dst), -1);
+			return (error_status(dst, NULL, SYNTAX));
 		if (next_type == PAR_CLOSE || next_type == END_OF_INPUT)
 			break ;
 	}
-	(*dst)->node.paren.contents = sub;
 	next_type = get_next_type(parser, next_type);
 	return (next_type);
 }
