@@ -53,6 +53,7 @@ SRCS := main.c																\
 		executor/execute_logic.c											\
 		executor/execute_binary.c											\
 		executor/builtins/builtins.c										\
+		executor/builtins/builtin_cd.c										\
 		executor/builtins/builtin_echo.c									\
 		executor/builtins/builtin_exit.c
 

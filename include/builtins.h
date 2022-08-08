@@ -26,6 +26,8 @@ typedef enum e_builtin {
 	EXIT
 }	t_builtin;
 
+typedef uint8_t	(*t_builtinfun)(t_cmd_node *);
+
 /**
  * Check if the name (first argument) of a command corresponds to a builtin
  *
@@ -42,10 +44,28 @@ t_builtin	identify_command(char **argv);
  * @param builtin[in] The builtin to execute
  * @param cmd[in] The command node to execute
  *
- * @return The exit status code.
+ * @return EXIT_FAILURE on error, EXIT_SUCCESS otherwise
  */
 uint8_t		execute_builtin(t_builtin builtin, t_cmd_node *cmd);
 
+/**
+ * Change the current working directory. Only works with a relative or absolute
+ * path.
+ * 
+ * @param cmd[in] The command node to execute
+ * 
+ * @return The exit status
+ */
+uint8_t		builtin_cd(t_cmd_node *cmd);
+/**
+ * Print a message on the standard output, with spaces between all arguments
+ * and a newline on the end (if the flag `-n' was not given)
+ *
+ * @param cmd[in] The command node to execute
+ *
+ * @return Always returns 0
+ */
+uint8_t		builtin_echo(t_cmd_node *cmd);
 /**
  * Exits the current shell environment.
  *
@@ -60,15 +80,6 @@ uint8_t		execute_builtin(t_builtin builtin, t_cmd_node *cmd);
  * @return Only returns 1 if too many arguments were given, otherwise exits.
  */
 uint8_t		builtin_exit(t_cmd_node *cmd);
-/**
- * Print a message on the standard output, with spaces between all arguments
- * and a newline on the end (if the flag `-n' was not given)
- *
- * @param cmd[in] The command node to execute
- *
- * @return Always returns 0
- */
-uint8_t		builtin_echo(t_cmd_node *cmd);
 
 /**
  * Print a message on stderr and exit with status

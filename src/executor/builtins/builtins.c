@@ -14,14 +14,24 @@
 #include <unistd.h>
 #include <libft.h>
 
-static const char	*g_builtin_names[] = {
-[ECHO] = "ECHO",
+static const char			*g_builtin_names[] = {
 [CD] = "CD",
-[PWD] = "PWD",
-[EXPORT] = "EXPORT",
-[UNSET] = "UNSET",
+[ECHO] = "ECHO",
 [ENV] = "ENV",
 [EXIT] = "EXIT",
+[EXPORT] = "EXPORT",
+[PWD] = "PWD",
+[UNSET] = "UNSET",
+};
+
+static const t_builtinfun	g_builtin_lut[] = {
+[CD] = builtin_cd,
+[ECHO] = builtin_echo,
+[ENV] = builtin_echo,
+[EXIT] = builtin_exit,
+[EXPORT] = builtin_echo,
+[PWD] = builtin_echo,
+[UNSET] = builtin_echo,
 };
 
 uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
@@ -62,15 +72,9 @@ t_builtin	identify_command(char **argv)
 
 uint8_t	execute_builtin(t_builtin builtin, t_cmd_node *cmd)
 {
-	uint8_t	status;
-
-	status = EXIT_SUCCESS;
-	if (builtin == EXIT)
-		status = builtin_exit(cmd);
-	if (builtin == ECHO)
-		status = (builtin_echo(cmd));
-	g_globals.exit = status;
-	if (status != EXIT_SUCCESS && (builtin == EXIT || builtin == EXPORT))
+	g_globals.exit = g_builtin_lut[builtin](cmd);
+	if (g_globals.exit != EXIT_SUCCESS
+		&& (builtin == EXIT || builtin == EXPORT))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
