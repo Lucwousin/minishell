@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <redir.h>
 #include <environ.h>
+#include <redir.h>
 #include <get_next_line.h>
-#include <stdint.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -28,43 +27,21 @@ static bool	exit_error(int32_t fd, const char *msg)
 	return (false);
 }
 
-static size_t	get_var_length(char *str)
-{
-	size_t	len;
-
-	len = 0;
-	if (*str == '\0')
-		return (len);
-	if (*str == '?' || *str == '$')
-		return (1);
-	if (!ft_isalpha(*str) && *str != '_')
-		return (0);
-	while (str[++len])
-	{
-		if (ft_isalnum(str[len]) || str[len] == '_')
-			continue ;
-		return (len);
-	}
-	return (len);
-}
-
 static bool	write_variable(int32_t fd, char **linep)
 {
 	char		*line;
-	char		*var_name;
+	char		*var_end;
 	const char	*var_value;
-	size_t		len;
 
-	line = *linep;
-	len = get_var_length(++line);
-	if (len == 0)
-		return (*linep = line, write(fd, "$", 1));
-	var_name = ft_substr(line, 0, len);
-	if (!var_name)
-		return (false);
-	*linep = line + len;
-	var_value = get_variable(var_name);
-	free(var_name);
+	line = (*linep) + 1;
+	if (*line == '?' || *line == '$')
+		var_end = line + 1;
+	else
+		var_end = var_name_end(line);
+	*linep = var_end;
+	if (var_end == line)
+		return (write(fd, "$", 1));
+	var_value = get_variable_value(line, var_end - line);
 	if (var_value == NULL)
 		return (true);
 	return (write(fd, var_value, ft_strlen(var_value)) >= 0);

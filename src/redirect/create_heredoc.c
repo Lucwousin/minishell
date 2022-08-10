@@ -69,7 +69,7 @@ bool	create_heredoc(char **dst, bool expand)
 	if (pid < 0)
 		return (free(delim), false);
 	if (pid == 0)
-		return (read_heredoc(*dst, delim, expand));
+		exit(read_heredoc(*dst, delim, expand));
 	waitpid(pid, &status, 0);
 	return (true);
 }

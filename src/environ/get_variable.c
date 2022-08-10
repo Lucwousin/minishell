@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include <minishell.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <libft.h>
+#include <environ.h>
 
 static const char	*get_exit_str(void)
 {
@@ -33,9 +33,33 @@ static const char	*get_exit_str(void)
 	return (val + i);
 }
 
+const char	**find_variable(const char *var, size_t len)
+{
+	const char		**env;
+
+	env = g_globals.vars.arr;
+	while (*env)
+	{
+		if (ft_strncmp(*env, var, len) == 0 && (*env)[len] == '=')
+			return (env);
+		++env;
+	}
+	return (NULL);
+}
+
+const char	*get_variable_value(const char *var, size_t len)
+{
+	const char	**varp;
+
+	varp = find_variable(var, len);
+	if (varp == NULL)
+		return (NULL);
+	return (*varp + len + 1);
+}
+
 const char	*get_variable(const char *name)
 {
 	if (*name == '?')
 		return (get_exit_str());
-	return (getenv(name));
+	return (get_variable_value(name, ft_strlen(name)));
 }

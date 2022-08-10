@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <execute.h>
+#include <environ.h>
 #include <libft.h>
 #include <errno.h>
 #include <stdio.h>
@@ -18,8 +19,6 @@
 #include <stdnoreturn.h>
 
 #define ERR_MES	"Error during execution"
-
-extern char	**environ;
 
 static noreturn void	exit_(uint8_t status)
 {
@@ -39,7 +38,7 @@ static char	*find_executable(char *name)
 	name = ft_strjoin("/", name);
 	if (!name)
 		return (NULL);
-	path = ft_split(getenv("PATH"), ':');
+	path = ft_split(get_variable("PATH"), ':');
 	if (path == NULL)
 		return (free(name), NULL);
 	path_c = path;
@@ -67,7 +66,7 @@ noreturn void	execute_binary(t_cmd_node *cmd)
 	path = find_executable(*((char **) dynarr_get(&cmd->argv, 0)));
 	if (path == NULL)
 		exit_(127);
-	execve(path, cmd->argv.arr, environ);
+	execve(path, cmd->argv.arr, g_globals.vars.arr);
 	free(path);
 	exit_(126);
 }

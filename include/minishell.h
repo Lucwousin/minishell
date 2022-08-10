@@ -13,17 +13,19 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <dynarr.h>
 # include <stdbool.h>
 # include <stdint.h>
 
 # define PROMPT "minishell> "
 
-typedef struct s_g {
-	uint8_t	exit;
-}	t_global;
+typedef struct s_shell_environment {
+	uint8_t		exit;
+	t_dynarr	vars;
+}	t_sh_env;
 
-extern t_global	g_globals;
+extern t_sh_env	g_globals;
 
-void	minishell(int argc, char **argv);
+uint8_t	minishell(int argc, char **argv);
 
 #endif

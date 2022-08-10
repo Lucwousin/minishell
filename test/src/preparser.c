@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <minishell.h>
+#include <environ.h>
 
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
@@ -36,23 +37,7 @@ static const char	*g_tokenstr[] = {
 [PIPE] = "PIPE",
 };
 
-t_global	g_globals = {69};
-
-static void	set_var(char *line)
-{
-	static const char	*save[100];
-	static int			save_idx;
-
-	if (line == NULL)
-	{
-		while (save_idx--)
-			free((char *) save[save_idx]);
-		return ;
-	}
-	line[ft_strlen(line) - 1] = '\0';
-	putenv(line);
-	save[save_idx++] = line;
-}
+t_sh_env	g_globals = {.exit = 0};
 
 static void	print_token(void *tokenp, void *str)
 {
@@ -81,7 +66,6 @@ static void	test(char *line)
 	t_dynarr	tokens;
 	t_dynarr	exp_tokens;
 
-	line[ft_strlen(line) - 1] = '\0';
 	tokenize(&tokens, line);
 	evaluate(&tokens);
 	printf("%s after whitespace removal: %lu tokens\n", line, tokens.length);
@@ -100,18 +84,20 @@ int	main(void)
 {
 	char	*line;
 
+	init_environment();
 	while (true)
 	{
 		line = get_next_line(STDIN_FILENO);
 		if (line == NULL)
 			break ;
+		line[ft_strlen(line) - 1] = '\0';
 		if (*line == '%')
-			set_var(ft_strdup(line + 1));
+			set_variable(line + 1, var_name_end(line + 1));
 		else if (*line != '#')
 			test(line);
 		else
-			printf("\n%s", line + 1);
+			printf("\n%s\n", line + 1);
 		free(line);
 	}
-	set_var(NULL);
+	clean_environment();
 }

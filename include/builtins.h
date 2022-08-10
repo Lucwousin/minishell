@@ -58,6 +58,8 @@ uint8_t		execute_builtin(t_builtin builtin, t_cmd_node *cmd);
  */
 uint8_t		builtin_cd(t_cmd_node *cmd);
 /**
+ * (This is a "special" builtin)
+ *
  * Print a message on the standard output, with spaces between all arguments
  * and a newline on the end (if the flag `-n' was not given)
  *
@@ -80,7 +82,32 @@ uint8_t		builtin_echo(t_cmd_node *cmd);
  * @return Only returns 1 if too many arguments were given, otherwise exits.
  */
 uint8_t		builtin_exit(t_cmd_node *cmd);
-
+/**
+ * (This is a "special" builtin)
+ *
+ * Export a shell variable to the environment variables of child processes
+ *
+ * This is kind of a weird requirement for this project. We don't need to
+ * implement shell variables - just environment variables - but it's possible
+ * to mark not-yet-assigned variables as exported in bash. The only way to
+ * assign variables using _this_ shell is by using the export command and
+ * actually entering key=value pairs. That's why I decided to not implement
+ * this - it just doesn't make sense.
+ *
+ * @param cmd[in] The command node to execute
+ *
+ * @return Returns SUCCESS if everything went alright, ERROR if an error
+ * occurred, or a invalid variable name is given.
+ */
+uint8_t		builtin_export(t_cmd_node *cmd);
+/**
+ * Get the current working directory
+ *
+ * @param cmd[in] The command node to execute
+ *
+ * @return Returns SUCCESS if everything went alright, ERROR if an error
+ * occurred
+ */
 uint8_t		builtin_pwd(t_cmd_node *cmd);
 
 /**

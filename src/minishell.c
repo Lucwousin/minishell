@@ -10,15 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dynarr.h>
 #include <minishell.h>
+#include <environ.h>
+#include <execute.h>
+#include <parse.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stdlib.h>
-#include <parse.h>
 #include <signal.h>
-#include "execute.h"
 
 bool general_error(const char *where);
 
@@ -61,10 +60,12 @@ static void ign()
 {
 }
 
-void	minishell(int argc, char **argv)
+uint8_t	minishell(int argc, char **argv)
 {
 	char	*input;
 
+	if (init_environment() == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	signal(SIGINT, ign);
 	(void) argc;
 	(void) argv;
@@ -78,4 +79,6 @@ void	minishell(int argc, char **argv)
 		handle_input(input);
 		free(input);
 	}
+	clean_environment();
+	return (EXIT_SUCCESS);
 }

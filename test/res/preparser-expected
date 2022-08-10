@@ -218,5 +218,5 @@ $? $?hello after whitespace removal: 4 tokens
           WORD - start    5 - end    9 "hello"
   END_OF_INPUT - start   10 - end   10 ""
 After pre-parsing - 2 tokens
-      VARIABLE - "69"
-      VARIABLE - "69hello"
+      VARIABLE - "0"
+      VARIABLE - "0hello"

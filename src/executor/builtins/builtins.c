@@ -29,7 +29,7 @@ static const t_builtinfun	g_builtin_lut[] = {
 [ECHO] = builtin_echo,
 [ENV] = builtin_echo,
 [EXIT] = builtin_exit,
-[EXPORT] = builtin_echo,
+[EXPORT] = builtin_export,
 [PWD] = builtin_pwd,
 [UNSET] = builtin_echo,
 };
@@ -74,7 +74,7 @@ uint8_t	execute_builtin(t_builtin builtin, t_cmd_node *cmd)
 {
 	g_globals.exit = g_builtin_lut[builtin](cmd);
 	if (g_globals.exit != EXIT_SUCCESS
-		&& (builtin == EXIT || builtin == EXPORT))
+		&& (builtin == EXIT || builtin == EXPORT || builtin == UNSET))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

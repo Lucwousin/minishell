@@ -24,6 +24,10 @@ SRCD := src/
 SRCS := main.c																\
 		minishell.c															\
 		error.c																\
+		environ/environment.c												\
+		environ/get_variable.c												\
+		environ/set_variable.c												\
+		environ/variable_utils.c											\
 		lexer/tokenize.c													\
 		lexer/lex/lex_operator.c											\
 		lexer/lex/lex_simple.c												\
@@ -44,7 +48,6 @@ SRCS := main.c																\
 		redirect/create_heredoc.c											\
 		redirect/read_heredoc.c												\
 		redirect/redirect.c													\
-		environ/get_variable.c												\
 		executor/execute.c													\
 		executor/fork_utils.c												\
 		executor/execute_subshell.c											\
@@ -56,6 +59,7 @@ SRCS := main.c																\
 		executor/builtins/builtin_cd.c										\
 		executor/builtins/builtin_echo.c									\
 		executor/builtins/builtin_exit.c									\
+		executor/builtins/builtin_export.c									\
 		executor/builtins/builtin_pwd.c										
 
 SRCP := $(addprefix $(SRCD), $(SRCS))

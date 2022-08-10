@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <get_next_line.h>
-#include <dynarr.h>
 #include <token.h>
 #include <stdio.h>
 #include <unistd.h>

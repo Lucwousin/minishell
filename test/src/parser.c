@@ -15,7 +15,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <minishell.h>
-#include "redir.h"
+#include <redir.h>
+#include <environ.h>
 
 static const char	*g_ast_typenames[] = {
 [COMMAND] = "COMMAND",
@@ -32,23 +33,7 @@ static const char	*g_red_typenames[] = {
 [RED_OUT] = "> %s "
 };
 
-t_global	g_globals = {69};
-
-static void	set_var(char *line)
-{
-	static const char	*save[100];
-	static int			save_idx;
-
-	if (line == NULL)
-	{
-		while (save_idx--)
-			free((char *) save[save_idx]);
-		return ;
-	}
-	line[ft_strlen(line) - 1] = '\0';
-	putenv(line);
-	save[save_idx++] = line;
-}
+t_sh_env	g_globals = {.exit = 0};
 
 static void	indent(size_t depth)
 {
@@ -120,9 +105,6 @@ static void	test(char *line)
 	t_ast_node	*root = NULL;
 	size_t		i;
 
-	i = ft_strlen(line);
-	if (line[i - 1] == '\n')
-		line[i - 1] = '\0';
 	if (parse_input(line, &exp_tokens, &root))
 		return ((void) printf("Parsing failed for %s\n", line));
 	print_node(root, 0);
@@ -137,18 +119,20 @@ int	main(void)
 {
 	char	*line;
 
+	init_environment();
 	while (true)
 	{
 		line = get_next_line(STDIN_FILENO);
 		if (line == NULL)
 			break ;
+		line[ft_strlen(line) - 1] = '\0';
 		if (*line == '%')
-			set_var(ft_strdup(line + 1));
+			set_variable(line, var_name_end(line));
 		else if (*line != '#')
 			test(line);
 		else
-			printf("%s", line + 1);
+			printf("%s\n", line + 1);
 		free(line);
 	}
-	set_var(NULL);
+	clean_environment();
 }

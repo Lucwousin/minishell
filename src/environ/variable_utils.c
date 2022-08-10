@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   variable_utils.c                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/07 21:39:14 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/07 21:39:14 by lsinke        ########   odam.nl         */
+/*   Created: 2022/08/09 19:32:37 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/08/09 19:32:37 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include <libft.h>
 
-t_sh_env	g_globals;
-
-int	main(int argc, char **argv)
+char	*var_name_end(const char *str)
 {
-	return (minishell(argc, argv));
+	if (!ft_isdigit(*str))
+		while (ft_isalnum(*str) || *str == '_')
+			++str;
+	return ((char *)str);
 }
