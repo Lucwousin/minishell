@@ -69,6 +69,19 @@ uint8_t		builtin_cd(t_cmd_node *cmd);
  */
 uint8_t		builtin_echo(t_cmd_node *cmd);
 /**
+ * Print all environment variables.
+ *
+ * This is not normally a builtin, so I don't really get why we have to make it
+ * especially as it's pretty much the same as no-args export (semi-undefined).
+ *
+ * All options/arguments are ignored.
+ *
+ * @param cmd[in] The command node to execute
+ *
+ * @return Always returns 0
+ */
+uint8_t		builtin_env(t_cmd_node *cmd);
+/**
  * Exits the current shell environment.
  *
  * Can take an optional argument of the exit status, if none is given, exits

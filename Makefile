@@ -58,6 +58,7 @@ SRCS := main.c																\
 		executor/builtins/builtins.c										\
 		executor/builtins/builtin_cd.c										\
 		executor/builtins/builtin_echo.c									\
+		executor/builtins/builtin_env.c										\
 		executor/builtins/builtin_exit.c									\
 		executor/builtins/builtin_export.c									\
 		executor/builtins/builtin_unset.c									\
