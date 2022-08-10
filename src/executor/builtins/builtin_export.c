@@ -19,8 +19,8 @@
 
 #define PRE_EXPORT	"export: "
 #define ERR_INVAL	": not a valid identifier"
-#define WARN_NOIMPL	"export without value exports a shell variable,"\
-					" which are not implemented. ignoring"
+#define WARN_IMPL1	"export without value exports a shell variable, "
+#define WARN_IMPL2	"which are not implemented. ignoring"
 
 static void	sort_strings(char **strs, size_t len)
 {
@@ -91,7 +91,7 @@ static uint8_t	try_set_env(char *var)
 	name_end = var_name_end(var);
 	if (*name_end == '\0')
 	{
-		ft_putendl_fd(PRE_EXPORT WARN_NOIMPL, STDERR_FILENO);
+		ft_putendl_fd(PRE_EXPORT WARN_IMPL1 WARN_IMPL2, STDERR_FILENO);
 		return (SUCCESS);
 	}
 	if (*name_end == '=' && var != name_end)

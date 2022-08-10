@@ -62,7 +62,9 @@ uint8_t	init_environment(void)
 
 void	clean_environment(void)
 {
-	char	**env = g_globals.vars.arr;
+	char	**env;
+
+	env = g_globals.vars.arr;
 	while (*env)
 		free(*env++);
 	dynarr_delete(&g_globals.vars);

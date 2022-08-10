@@ -19,7 +19,7 @@
 #include <readline/history.h>
 #include <signal.h>
 
-bool general_error(const char *where);
+bool	general_error(const char *where);
 
 uint8_t	parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst)
 {
@@ -56,7 +56,7 @@ static uint8_t	handle_input(const char *input)
 	return (status);
 }
 
-static void ign()
+static void	ign(void)
 {
 }
 
@@ -74,7 +74,7 @@ uint8_t	minishell(int argc, char **argv)
 		input = readline(PROMPT);
 		if (!input)
 			break ;
-		if	(*input)
+		if (*input)
 			add_history(input);
 		handle_input(input);
 		free(input);

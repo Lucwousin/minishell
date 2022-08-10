@@ -14,7 +14,7 @@
 #include <minishell.h>
 #include <stdio.h>
 
-uint8_t		builtin_env(t_cmd_node *cmd)
+uint8_t	builtin_env(t_cmd_node *cmd)
 {
 	const char	**env;
 
