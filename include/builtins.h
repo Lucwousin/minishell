@@ -109,6 +109,18 @@ uint8_t		builtin_export(t_cmd_node *cmd);
  * occurred
  */
 uint8_t		builtin_pwd(t_cmd_node *cmd);
+/**
+ * (This is a "special" builtin)
+ *
+ * Unset a shell/environment variable. As shell variables are not implemented
+ * this only applies to environment variables.
+ *
+ * @param cmd[in] The command node to execute
+ *
+ * @return SUCCESS on success, ERROR if at least one name could not be unset.
+ *         Because we do not have readonly variables, always returns SUCCESS
+ */
+uint8_t		builtin_unset(t_cmd_node *cmd);
 
 /**
  * Print a message on stderr and exit with status

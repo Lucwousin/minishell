@@ -31,7 +31,7 @@ static const t_builtinfun	g_builtin_lut[] = {
 [EXIT] = builtin_exit,
 [EXPORT] = builtin_export,
 [PWD] = builtin_pwd,
-[UNSET] = builtin_echo,
+[UNSET] = builtin_unset,
 };
 
 uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)

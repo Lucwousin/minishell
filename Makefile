@@ -60,7 +60,8 @@ SRCS := main.c																\
 		executor/builtins/builtin_echo.c									\
 		executor/builtins/builtin_exit.c									\
 		executor/builtins/builtin_export.c									\
-		executor/builtins/builtin_pwd.c										
+		executor/builtins/builtin_unset.c									\
+		executor/builtins/builtin_pwd.c
 
 SRCP := $(addprefix $(SRCD), $(SRCS))
 

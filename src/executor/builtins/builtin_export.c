@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 #define PRE_EXPORT	"export: "
-#define ERR_INVAL	"not a valid identifier"
+#define ERR_INVAL	": not a valid identifier"
 #define WARN_NOIMPL	"export without value exports a shell variable,"\
 					" which are not implemented. ignoring"
 
@@ -111,7 +111,7 @@ uint8_t	builtin_export(t_cmd_node *cmd)
 		return (export_print(g_globals.vars.arr, g_globals.vars.length - 1));
 	status = SUCCESS;
 	args = cmd->argv.arr;
-	while (*(++args) && status == SUCCESS)
-		status = try_set_env(*args);
+	while (*(++args))
+		status |= try_set_env(*args);
 	return (status);
 }
