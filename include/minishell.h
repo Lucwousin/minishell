@@ -28,4 +28,6 @@ extern t_sh_env	g_globals;
 
 uint8_t	minishell(int argc, char **argv);
 
+uint8_t	handle_input(const char *input);
+
 #endif

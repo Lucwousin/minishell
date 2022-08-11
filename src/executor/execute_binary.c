@@ -60,9 +60,10 @@ noreturn void	execute_binary(t_cmd_node *cmd)
 {
 	char	*path;
 
+	// TODO: maybe $_ ? Not sure
 	errno = 0;
-	if (cmd->argv.length == 0)
-		exit_(0);
+	if (cmd->argv.length == 1)
+		exit_(SUCCESS);
 	path = find_executable(*((char **) dynarr_get(&cmd->argv, 0)));
 	if (path == NULL)
 		exit_(127);

@@ -19,7 +19,7 @@
 #define FLAG	1
 #define MODE	2
 #define CLOSE_ERR	"Something went wrong trying to close a file"
-#define OPEN_ERR	"Something went wrong trying to open a file"
+#define ERR_OPEN	"Something went wrong trying to open a file"
 #define UNLINK_ERR	"Unlinking heredoc failed? This should never happen?"
 #define STDIN_ERR	"Redirecting to stdin failed"
 #define STDOUT_ERR	"Redirecting to stdout failed"
@@ -48,7 +48,7 @@ bool	redirect(t_redir *redir, int32_t fds[2])
 			error(CLOSE_ERR);
 	fds[opts[DEST]] = open(redir->str, opts[FLAG], opts[MODE]);
 	if (fds[opts[DEST]] == -1)
-		return (error(OPEN_ERR));
+		return (error(ERR_OPEN));
 	if (redir->type == RED_HD || redir->type == RED_HD_Q)
 		if (unlink(redir->str) == -1)
 			error(UNLINK_ERR);

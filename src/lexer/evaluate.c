@@ -11,7 +11,9 @@
 /* ************************************************************************** */
 
 #include <token.h>
+#include <minishell.h>
 #include <libft.h>
+#include <stdio.h>
 
 static t_tokentype	*shallow_representation(t_dynarr *tokens)
 {
@@ -20,7 +22,10 @@ static t_tokentype	*shallow_representation(t_dynarr *tokens)
 
 	shallow_copy = ft_calloc(tokens->length, sizeof(t_tokentype));
 	if (shallow_copy == NULL)
+	{
+		perror("evaluate");
 		return (NULL);
+	}
 	i = 0;
 	while (i < tokens->length)
 	{
@@ -99,14 +104,18 @@ uint8_t	evaluate(t_dynarr *tokens)
 
 	shallow = shallow_representation(tokens);
 	if (shallow == NULL)
+	{
+		dynarr_delete(tokens);
 		return (EXIT_FAILURE);
+	}
 	add_quoted_bit(shallow);
 	rv = remove_whitespace(tokens, shallow);
-	if (rv == false)
-		dynarr_delete(tokens);
 	free(shallow);
-	if (rv)
-		return (EXIT_SUCCESS);
-	else
-		return (EXIT_FAILURE);
+	if (rv == false)
+	{
+		dynarr_delete(tokens);
+		perror("evaluate");
+		return (EXIT_FAILURE); // TODO: cleaner error
+	}
+	return (EXIT_SUCCESS);
 }

@@ -29,15 +29,6 @@ typedef struct s_pipeline {
 }	t_pipeline;
 
 /**
- * Execute the abstract syntax tree.
- *
- * @param root_node[in] The root node of the tree
- * 
- * @return EXIT_SUCCESS if execution succeeded, EXIT_FAILURE if not
- */
-uint8_t			execute(t_ast_node *root_node);
-
-/**
  * Execute an AST node. Forwards execution on to the correct function.
  *
  * @param node[in] The node to execute

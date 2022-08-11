@@ -17,6 +17,9 @@
 #include <minishell.h>
 #include <environ.h>
 
+#define EVAL_MSG	"%s - %lu tokens after whitespace removal\n"
+#define EXPAND_MSG	"%lu tokens after expansion/concatenation\n"
+
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
 [WHITESPACE] = "WHITESPACE",
@@ -58,26 +61,35 @@ static void	print_exp_token(void *p, void *ign)
 	(void) ign;
 	t = p;
 	printf("%14s - \"%s\"\n", g_tokenstr[t->type], t->str);
-	free(t->str);
+}
+
+static void	hook(t_in_handler *handler)
+{
+	if (handler->state == EVALUATE)
+	{
+		printf(EVAL_MSG, handler->input, handler->tokens.length);
+		dynarr_foreach(&handler->tokens, print_token, (void *)handler->input);
+	}
+	else
+	{
+		printf(EXPAND_MSG, handler->expanded_tokens.length);
+		dynarr_foreach(&handler->expanded_tokens, print_exp_token, NULL);
+	}
 }
 
 static void	test(char *line)
 {
-	t_dynarr	tokens;
-	t_dynarr	exp_tokens;
+	t_in_handler	handler;
+	uint8_t			status;
 
-	tokenize(&tokens, line);
-	evaluate(&tokens);
-	printf("%s after whitespace removal: %lu tokens\n", line, tokens.length);
-	dynarr_foreach(&tokens, print_token, line);
-	if (preparse(line, &tokens, &exp_tokens))
-		printf("Syntax error!\n");
+	init_handler(&handler, line);
+	handler.hooks[EVALUATE] = hook;
+	handler.hooks[PREPARSE] = hook;
+	status = handle_input_target(&handler, PREPARSE);
+	if (status != EXIT_SUCCESS)
+		printf("handle input exited with status %u for %s\n", status, line);
 	else
-	{
-		printf("After pre-parsing - %lu tokens\n", exp_tokens.length);
-		dynarr_foreach(&exp_tokens, print_exp_token, NULL);
-		dynarr_delete(&exp_tokens);
-	}
+		clean_handler(&handler, status);
 }
 
 int	main(void)

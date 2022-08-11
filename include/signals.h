@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   redir.h                                            :+:    :+:            */
+/*   signal.h                                           :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/04 14:58:10 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/08/04 14:58:10 by lsinke        ########   odam.nl         */
+/*   Created: 2022/08/10 18:31:22 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/08/10 18:31:22 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REDIR_H
-# define REDIR_H
+#ifndef SIGNALS_H
+# define SIGNALS_H
 
-# include <input.h>
-# include <stdnoreturn.h>
+# include <stdint.h>
 
-typedef struct s_redirection {
-	t_tokentype	type;
-	char		*str;
-}	t_redir;
+//TODO: this but better
+uint8_t	signal_readline(void);
+uint8_t	signal_catch_int(void);
 
-bool			redirect(t_redir *redir, int32_t fds[2]);
-bool			create_heredoc(char **dst, bool expand);
-noreturn void	read_heredoc(char *file, char *delim, bool expand);
-
-#endif //REDIR_H
+#endif

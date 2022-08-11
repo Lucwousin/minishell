@@ -23,68 +23,10 @@
 # define ERROR				1
 # define SYNTAX				2
 
-typedef enum e_ast_type {
-	COMMAND,
-	LOGIC,
-	PARENTHESIS,
-	PIPELINE,
-}	t_ast_type;
-
-typedef struct s_ast_node	t_ast_node;
-
-typedef struct s_cmd_node	t_cmd_node;
-typedef struct s_logic_node	t_logic_node;
-typedef struct s_paren_node	t_paren_node;
-typedef struct s_pipe_node	t_pipe_node;
-
-struct s_ast_node {
-	t_ast_type	type;
-	union u_node {
-		struct s_cmd_node {
-			t_dynarr	argv;
-			t_dynarr	redirs;
-		}	command;
-		struct s_logic_node {
-			t_tokentype	type;
-			t_ast_node	*l;
-			t_ast_node	*r;
-		}	logic;
-		struct s_paren_node {
-			t_ast_node	*contents;
-		}	paren;
-		struct s_pipe_node {
-			t_dynarr	nodes;
-		}	pipe;
-	}	node;
-};
-
 typedef struct s_parser {
 	size_t		idx;
 	t_dynarr	*tokens;
 }	t_parser;
-
-/**
- * Parse the command line input.
- * 
- * @param input[in] The command line 
- * @param ex_toks[in/out] A pointer where the expanded tokens will be stored.
- *        If any error occurred, this will be cleaned up. Otherwise, this should
- *        be cleaned up after executing the commands.
- * @param dst[out] A pointer to where the root AST node should be stored.
- * @return EXIT_SUCCESS if everything went okay, EXIT_FAILURE on error.
- */
-uint8_t		parse_input(const char *input, t_dynarr *ex_toks, t_ast_node **dst);
-
-/**
- * Parse all expanded tokens in tokens to an AST tree representing the command
- * line we have to execute.
- * 
- * @param tokens[in] The expanded tokens, made by preparse
- * @param dst[out] A pointer where the root node will be stored.
- * 
- * @return EXIT_SUCCESS if everything went ok, EXIT_FAILURE on error 
- */
-uint8_t		build_ast(t_dynarr *tokens, t_ast_node **dst);
 
 /**
  * Parse a single AST node. Explanations for possibilities are below.

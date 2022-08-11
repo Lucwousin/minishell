@@ -10,10 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <minishell.h>
 #include <redir.h>
 #include <libft.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 #define HEX_CHARS		"0123456789abcdef"
 #define PREFIX			"/tmp/ms_"
@@ -69,7 +71,13 @@ bool	create_heredoc(char **dst, bool expand)
 	if (pid < 0)
 		return (free(delim), false);
 	if (pid == 0)
-		exit(read_heredoc(*dst, delim, expand));
+		read_heredoc(*dst, delim, expand);
 	waitpid(pid, &status, 0);
-	return (true);
+	if (WIFEXITED(status))
+		g_globals.exit = WEXITSTATUS(status);
+	if (WIFSIGNALED(status))
+		g_globals.exit = WTERMSIG(status) + 0x80;
+	if (g_globals.exit == SIGINT + 0x80)
+		ft_putchar_fd('\n', STDOUT_FILENO);
+	return (g_globals.exit == EXIT_SUCCESS);
 }

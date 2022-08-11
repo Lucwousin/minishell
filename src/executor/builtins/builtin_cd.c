@@ -30,6 +30,7 @@ static uint8_t	error(char *what, char *arg, bool fail)
 	return (ERROR);
 }
 
+// TODO: $PWD $OLD_PWD
 uint8_t	builtin_cd(t_cmd_node *cmd)
 {
 	char	*path;

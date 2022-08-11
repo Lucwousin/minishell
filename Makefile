@@ -23,7 +23,9 @@ CFLAGS += -g
 SRCD := src/
 SRCS := main.c																\
 		minishell.c															\
+		handle_input.c														\
 		error.c																\
+		signal.c															\
 		environ/environment.c												\
 		environ/get_variable.c												\
 		environ/set_variable.c												\
@@ -80,7 +82,8 @@ INCS := minishell.h															\
 		execute.h															\
 		redir.h																\
 		builtins.h															\
-		environ.h
+		environ.h															\
+		signals.h
 INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)

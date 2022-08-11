@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <input.h>
 #include <token.h>
 #include <libft.h>
-#include <stdint.h>
-#include <stdlib.h>
 
 #define SUCCESS	0
 #define ERROR	1

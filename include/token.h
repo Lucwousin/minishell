@@ -30,7 +30,6 @@
 # define TOKEN_S_QUOTED			128
 # define TOKEN_D_QUOTED			256
 
-# include <dynarr.h>
 # include <input.h>
 
 typedef enum e_lexer_state {
@@ -48,6 +47,12 @@ typedef enum e_lexer_state {
 }	t_lex_state;
 
 typedef t_lex_state	t_char_type;
+
+typedef struct s_token {
+	t_tokentype	type;
+	size_t		start;
+	size_t		end;
+}	t_token;
 
 typedef struct s_lexer {
 	t_lex_state	state;
@@ -68,7 +73,7 @@ typedef struct s_preparser {
 	uint8_t		glob_count;
 }	t_preparser;
 
-typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
+typedef bool	(*t_lexerfunc)(t_lexer *, t_char_type);
 
 /*				SCANNER				*/
 /**

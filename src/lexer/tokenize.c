@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <input.h>
 #include <token.h>
-#include <dynarr.h>
+#include <stdio.h>
 
 #define SUCCESS	0
 #define ERROR	1
@@ -54,11 +55,12 @@ uint8_t	tokenize(t_dynarr *tokens, const char *cmd)
 
 	lexer = (t_lexer){.tokens = tokens, .str = cmd};
 	if (!dynarr_create(lexer.tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
-		return (ERROR);
+		return (perror("tokenize"), ERROR); // TODO: cleaner error shit
 	while (lexer.state != EOF_S)
 	{
 		if (g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
 			continue ;
+		perror("tokenize");
 		dynarr_delete(tokens);
 		return (ERROR);
 	}

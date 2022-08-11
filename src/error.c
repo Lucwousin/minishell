@@ -23,7 +23,6 @@
 bool	general_error(const char *where)
 {
 	ft_putstr_fd(ERROR_MSG_PREFIX, STDERR_FILENO);
-	ft_putstr_fd((char *) where, STDERR_FILENO);
 	perror(where);
 	return (false);
 }

@@ -101,18 +101,18 @@ static void	print_node(t_ast_node *node, size_t depth)
 
 static void	test(char *line)
 {
-	t_dynarr	exp_tokens;
-	t_ast_node	*root = NULL;
-	size_t		i;
+	t_in_handler	handler;
+	uint8_t			status;
 
-	if (parse_input(line, &exp_tokens, &root))
-		return ((void) printf("Parsing failed for %s\n", line));
-	print_node(root, 0);
-	destroy_node(&root);
-	i = 0;
-	while (i < exp_tokens.length)
-		free(((t_exp_tok *) exp_tokens.arr)[i++].str);
-	dynarr_delete(&exp_tokens);
+	init_handler(&handler, line);
+	status = handle_input_target(&handler, PARSE);
+	if (status != EXIT_SUCCESS)
+		printf("handle input exited with status %u for %s", status, line);
+	else
+	{
+		print_node(handler.root_node, 0);
+		clean_handler(&handler, status);
+	}
 }
 
 int	main(void)

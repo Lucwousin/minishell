@@ -45,13 +45,7 @@ t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 uint8_t	build_ast(t_dynarr *tokens, t_ast_node **dst)
 {
 	t_parser	parser;
-	uint8_t		status;
 
 	parser = ((t_parser){0, tokens});
-	status = SUCCESS;
-	if (tokens->length == 0)
-		dynarr_delete(tokens);
-	else
-		status = parse_nodelist(&parser, dst, false);
-	return (status);
+	return (parse_nodelist(&parser, dst, false));
 }

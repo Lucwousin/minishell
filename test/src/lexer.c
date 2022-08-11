@@ -14,6 +14,9 @@
 #include <token.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <minishell.h>
+
+t_sh_env	g_globals = {.exit = 0};
 
 static const char	*g_tokenstr[] = {
 [END_OF_INPUT] = "END_OF_INPUT",
@@ -39,18 +42,29 @@ static void	print_token(void *tokenp, void *str)
 	free(substr);
 }
 
+static void	hook(t_in_handler *h)
+{
+	if (h->state == TOKENIZE)
+		printf("%s - %lu tokens\n", h->input, h->tokens.length);
+	else
+		printf("after whitespace removal - %lu tokens\n", h->tokens.length);
+	dynarr_foreach(&h->tokens, print_token, (void *) h->input);
+}
+
 static void	test(char *line)
 {
-	t_dynarr	output;
+	t_in_handler	handler;
+	uint8_t			status;
 
 	line[ft_strlen(line) - 1] = '\0';
-	tokenize(&output, line);
-	printf("%s - %lu tokens\n", line, output.length);
-	dynarr_foreach(&output, print_token, line);
-	evaluate(&output);
-	printf("after whitespace removal - %lu tokens\n", output.length);
-	dynarr_foreach(&output, print_token, line);
-	dynarr_delete(&output);
+	init_handler(&handler, line);
+	handler.hooks[TOKENIZE] = hook;
+	handler.hooks[EVALUATE] = hook;
+	status = handle_input_target(&handler, EVALUATE);
+	if (status != SUCCESS)
+		printf("handle input exited with status %u for %s\n", status, line);
+	else
+		clean_handler(&handler, status);
 }
 
 int	main(void)
