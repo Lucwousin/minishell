@@ -73,7 +73,7 @@ typedef struct s_preparser {
 	uint8_t		glob_count;
 }	t_preparser;
 
-typedef bool	(*t_lexerfunc)(t_lexer *, t_char_type);
+typedef bool		(*t_lexerfunc)(t_lexer *, t_char_type);
 
 /*				SCANNER				*/
 /**

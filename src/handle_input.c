@@ -13,6 +13,7 @@
 #include <minishell.h>
 #include <input.h>
 #include <libft.h>
+#include <stdio.h>
 
 // So parse.h does not need to be included
 void	destroy_node(t_ast_node **nodep);
@@ -50,20 +51,20 @@ uint8_t	handle_input_target(t_in_handler *h, t_hstate target)
 {
 	uint8_t	status;
 
-	g_globals.exit = SUCCESS;
+	g_globals.interrupted = false;
 	while (h->state <= target)
 	{
 		if (h->state == TOKENIZE)
 			status = tokenize(&h->tokens, h->input);
 		else if (h->state == EVALUATE)
 			status = evaluate(&h->tokens);
-		else if (h->state == PREPARSE)
+		else if (h->state == PREPARSE) // TODO: expand variables just before executing
 			status = preparse(h->input, &h->tokens, &h->expanded_tokens);
 		else if (h->state == PARSE)
 			status = build_ast(&h->expanded_tokens, &h->root_node);
 		else if (h->state == EXECUTE)
 			status = execute(h->root_node);
-		if (g_globals.exit > 0x80 || status != SUCCESS)
+		if (g_globals.interrupted || status != SUCCESS)
 			break ;
 		if (h->hooks[h->state] != NULL)
 			h->hooks[h->state](h);
@@ -79,7 +80,9 @@ uint8_t	handle_input(const char *input)
 
 	init_handler(&handler, input);
 	status = handle_input_target(&handler, EXECUTE);
-	if (status != SUCCESS && g_globals.exit < 0x80)
+	if (status != SUCCESS && g_globals.exit == 0)
 		g_globals.exit = status;
+	if (g_globals.interrupted)
+		printf("\n");
 	return (clean_handler(&handler, status));
 }

@@ -17,7 +17,12 @@
 # include <stdint.h>
 
 # define SUCCESS	0
-# define FAILURE	1
+# define ERROR		1
+# define SYNTAX		2
+
+/*
+ * This file contains prototypes and typedefs for the lex/expand/parse/exe stack
+ */
 
 typedef enum e_tokentype {
 	END_OF_INPUT = 0,
@@ -85,8 +90,7 @@ struct s_ast_node {
 };
 
 typedef struct s_in_handler	t_in_handler;
-typedef void	(*t_h_hook)(t_in_handler *);
-
+typedef void				(*t_h_hook)(t_in_handler *);
 
 struct s_in_handler {
 	const char	*input;

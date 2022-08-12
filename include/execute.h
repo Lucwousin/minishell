@@ -14,12 +14,25 @@
 # define EXECUTE_H
 
 # include <minishell.h>
-# include <parse.h>
+# include <input.h>
 # include <stdlib.h>
 # include <stdnoreturn.h>
 
+/*
+ * The definition of an executor function.
+ * Takes a pointer to the node type, and a boolean signifying we're in a fork.
+ */
 typedef uint8_t	(*t_executor)(union u_node *, bool);
 
+/*
+ * A pipeline data structure. Used in execute_pipeline
+ *
+ * `orig' are copies of the original stdin and stdout
+ * `pipe' is a place to create pipes
+ * `idx'  is the index of the current node we're laying pipe for
+ * `len'  is the total number of nodes inside this pipeline
+ * `pids' is where the process id of every piped node is stored
+ */
 typedef struct s_pipeline {
 	int32_t	orig[2];
 	int32_t	pipe[2];

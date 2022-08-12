@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <execute.h>
+#include <signals.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -19,12 +20,18 @@ uint8_t	wait_for(pid_t pid)
 {
 	int32_t	status_loc;
 
+	if (signal_ignore_interrupt() != 0)
+		return (EXIT_FAILURE);
 	if (waitpid(pid, &status_loc, 0) == -1)
 		return (perror("waitpid"), EXIT_FAILURE);
 	if (WIFEXITED(status_loc))
 		g_globals.exit = WEXITSTATUS(status_loc);
 	if (WIFSIGNALED(status_loc))
 		g_globals.exit = 0x80 + WTERMSIG(status_loc);
+	if (g_globals.exit == 0x80 + SIGINT)
+		g_globals.interrupted = true;
+	if (signal_standard_interrupt() != 0)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -48,27 +55,20 @@ bool	fork_and_wait(uint8_t *status)
 
 uint8_t	wait_pids(pid_t *pids, size_t len)
 {
-	int32_t	status;
+	uint8_t	status;
 	size_t	i;
-	uint8_t	err;
 
 	i = 0;
-	err = EXIT_SUCCESS;
+	status = EXIT_SUCCESS;
 	while (i < len)
 	{
 		if (pids[i] == -1)
-			return (g_globals.exit = EXIT_FAILURE);
-		if (waitpid(pids[i++], &status, 0) < 0)
-		{
-			perror("waitpid");
-			g_globals.exit = EXIT_FAILURE;
-			err = EXIT_FAILURE;
-			continue ;
-		}
-		if (WIFEXITED(status))
-			g_globals.exit = WEXITSTATUS(status);
-		if (WIFSIGNALED(status))
-			g_globals.exit = 0x80 + WTERMSIG(status);
+			status = EXIT_FAILURE;
+		else
+			status = wait_for(pids[i]);
+		if (status != EXIT_SUCCESS && g_globals.exit == EXIT_SUCCESS)
+			g_globals.exit = status;
+		++i;
 	}
-	return (err);
+	return (status);
 }

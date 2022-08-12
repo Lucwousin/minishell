@@ -19,10 +19,6 @@
 # define ARGV_INIT_SIZE		8
 # define REDIR_INIT_SIZE	4
 
-# define SUCCESS			0
-# define ERROR				1
-# define SYNTAX				2
-
 typedef struct s_parser {
 	size_t		idx;
 	t_dynarr	*tokens;

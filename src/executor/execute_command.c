@@ -12,6 +12,7 @@
 
 #include <builtins.h>
 #include <redir.h>
+#include <signals.h>
 #include <unistd.h>
 
 static bool	do_redirs(t_dynarr *redirs, int32_t orig[2], bool builtin)
@@ -53,6 +54,8 @@ uint8_t	execute_command(t_cmd_node *cmd, bool must_exit)
 			return (status);
 		must_exit = true;
 	}
+	if (must_exit && reset_signals() != SUCCESS)
+		exit(EXIT_FAILURE);
 	if (cmd->redirs.length > 0)
 		if (!do_redirs(&cmd->redirs, orig, builtin != NONE))
 			return (try_exit(EXIT_FAILURE, must_exit));

@@ -25,11 +25,12 @@ SRCS := main.c																\
 		minishell.c															\
 		handle_input.c														\
 		error.c																\
-		signal.c															\
 		environ/environment.c												\
 		environ/get_variable.c												\
 		environ/set_variable.c												\
 		environ/variable_utils.c											\
+		signals/signal.c													\
+		signals/rl_signal.c													\
 		lexer/tokenize.c													\
 		lexer/lex/lex_operator.c											\
 		lexer/lex/lex_simple.c												\

@@ -12,10 +12,9 @@
 
 #include <minishell.h>
 #include <redir.h>
+#include <signals.h>
 #include <libft.h>
 #include <unistd.h>
-#include <sys/wait.h>
-#include <signal.h>
 
 #define HEX_CHARS		"0123456789abcdef"
 #define PREFIX			"/tmp/ms_"
@@ -23,6 +22,9 @@
 #define NAME_TOO_LONG	"Heredoc delimiter is too long! Can't generate filename"
 
 bool	general_error(const char *where);
+
+// Prototype so we don't need to include execute.h (and input.h etc)
+uint8_t	wait_for(pid_t pid);
 
 static void	add_pointer(char *name, uint64_t pointer)
 {
@@ -62,22 +64,23 @@ bool	create_heredoc(char **dst, bool expand)
 {
 	char	*delim;
 	pid_t	pid;
-	int32_t	status;
+	uint8_t	last_exit;
 
 	delim = *dst;
 	if (!create_name(delim, dst))
 		return (false);
 	pid = fork();
-	if (pid < 0)
-		return (free(delim), false);
 	if (pid == 0)
 		read_heredoc(*dst, delim, expand);
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		g_globals.exit = WEXITSTATUS(status);
-	if (WIFSIGNALED(status))
-		g_globals.exit = WTERMSIG(status) + 0x80;
-	if (g_globals.exit == SIGINT + 0x80)
-		ft_putchar_fd('\n', STDOUT_FILENO);
-	return (g_globals.exit == EXIT_SUCCESS);
+	free(delim);
+	if (pid < 0)
+		return (false);
+	last_exit = g_globals.exit;
+	if (wait_for(pid) != EXIT_SUCCESS || g_globals.exit != 0)
+	{
+		unlink(*dst);
+		return (false);
+	}
+	g_globals.exit = last_exit;
+	return (true);
 }

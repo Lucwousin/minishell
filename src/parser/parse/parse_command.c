@@ -26,11 +26,11 @@ static bool	add_redir(t_cmd_node *cmd, t_exp_tok *tok)
 {
 	t_redir	red;
 
+	if (tok->type == RED_HD || tok->type == RED_HD_Q)
+		if (!create_heredoc(&tok->str, tok->type == RED_HD))
+			return (false);
 	red.type = tok->type;
 	red.str = tok->str;
-	if (red.type == RED_HD || red.type == RED_HD_Q)
-		if (!create_heredoc(&red.str, red.type == RED_HD))
-			return (false);
 	if (!dynarr_addone(&cmd->redirs, &red))
 		return (general_error("add_redir"));
 	return (true);
