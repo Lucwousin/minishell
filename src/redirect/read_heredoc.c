@@ -74,6 +74,7 @@ static bool	get_lines(t_dynarr *doc, char *delim, size_t delim_len)
 	}
 	if (line == NULL && !g_globals.interrupted)
 		warn_eof(delim, delim_len);
+	free(line);
 	return (true);
 }
 
