@@ -16,16 +16,18 @@
 
 static uint8_t	try_unset(char *str)
 {
-	t_dynarr	*env;
 	const char	**environ;
 	const char	**varp;
+	t_dynarr	*env;
+	size_t		to_move;
 
 	varp = find_variable(str, ft_strlen(str));
 	if (varp == NULL)
 		return (SUCCESS);
 	env = &g_globals.vars;
 	environ = env->arr;
-	ft_memmove(varp, varp + 1, env->length - (varp - environ + 1));
+	to_move = env->length - (varp - environ + 1);
+	ft_memmove(varp, varp + 1, to_move * sizeof(char *));
 	env->length--;
 	return (SUCCESS);
 }
