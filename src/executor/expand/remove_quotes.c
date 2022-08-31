@@ -39,8 +39,8 @@ static bool	add_words(t_wordlist *dst, t_wordlist *cur, t_dynarr *buf)
 
 	if (flag(cur->flags, HAS_GLOB))
 		return (dst == cur || set_from_buf(dst, cur, buf));
-	len = ft_strlen(cur->word + quote) - quote;
-	if (len != 0 && !dynarr_add(buf, cur->word + quote, len))
+	len = ft_strlen(cur->word + quote);
+	if (len != 0 && !dynarr_add(buf, cur->word + quote, len - quote))
 		return (false);
 	next = cur->next;
 	if (dst != cur)
