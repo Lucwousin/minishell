@@ -23,7 +23,7 @@ static void	standard_interrupt(int32_t sig)
 uint8_t	signal_standard_interrupt(void)
 {
 	const struct sigaction	action = (struct sigaction){\
-		{standard_interrupt}, 0, 0
+		.sa_handler = standard_interrupt
 	};
 
 	if (sigaction(SIGINT, &action, NULL) == 0)
