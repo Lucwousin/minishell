@@ -86,7 +86,6 @@ static uint8_t	export_print(char **environ, size_t len)
 static uint8_t	try_set_env(char *var)
 {
 	char	*name_end;
-	char	*name;
 
 	name_end = var_name_end(var);
 	if (*name_end == '\0')
@@ -96,9 +95,7 @@ static uint8_t	try_set_env(char *var)
 	}
 	if (*name_end == '=' && var != name_end)
 		return (set_variable(var, name_end));
-	name = ft_substr(var, 0, ft_max((int)(name_end - var), 1));
-	builtin_err(PRE_EXPORT, name, ERR_INVAL, ERROR);
-	free(name);
+	builtin_err(PRE_EXPORT, var, ERR_INVAL, ERROR);
 	return (ERROR);
 }
 
