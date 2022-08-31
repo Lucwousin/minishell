@@ -18,42 +18,57 @@
 #include <unistd.h>
 #include <stdnoreturn.h>
 
-#define ERR_MES	"Error during execution"
-
-static noreturn void	exit_(uint8_t status)
+static noreturn void	exit_(char *arg, uint8_t status)
 {
-	if (errno != 0)
-		perror(ERR_MES);
+	if (status != 0)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		if (errno)
+			perror(arg);
+		else if (status == 127)
+		{
+			ft_putstr_fd(arg, STDERR_FILENO);
+			ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		}
+	}
 	exit(status);
+}
+
+static char	*search_path(char *name)
+{
+	char	**path;
+	char	**p;
+	char	*result;
+
+	path = ft_split(get_variable("PATH"), ':');
+	if (path == NULL)
+		return (NULL);
+	p = (char **) path;
+	while (*p)
+	{
+		result = ft_strjoin(*p, name);
+		if (result == NULL || access(result, X_OK) == 0)
+			break ;
+		free(result);
+		result = NULL;
+		++p;
+	}
+	ft_free_mult((void **) path);
+	return (result);
 }
 
 static char	*find_executable(char *name)
 {
-	char	**path;
-	char	**path_c;
-	char	*cur;
+	char	*result;
 
 	if (ft_strchr(name, '/') != NULL)
 		return (ft_strdup(name));
 	name = ft_strjoin("/", name);
 	if (!name)
 		return (NULL);
-	path = ft_split(get_variable("PATH"), ':');
-	if (path == NULL)
-		return (free(name), NULL);
-	path_c = path;
-	while (*path)
-	{
-		cur = ft_strjoin(*path, name);
-		if (cur == NULL || access(cur, X_OK) == 0)
-			break ;
-		free(cur);
-		cur = NULL;
-		path++;
-	}
+	result = search_path(name);
 	free(name);
-	ft_free_mult((void **) path_c);
-	return (cur);
+	return (result);
 }
 
 noreturn void	execute_binary(char **argv)
@@ -62,11 +77,11 @@ noreturn void	execute_binary(char **argv)
 
 	errno = 0;
 	if (*argv == NULL)
-		exit_(SUCCESS);
+		exit_(NULL, SUCCESS);
 	path = find_executable(argv[0]);
 	if (path == NULL)
-		exit_(127);
+		exit_(argv[0], 127);
 	execve(path, argv, g_globals.vars.arr);
 	free(path);
-	exit_(126);
+	exit_(argv[0], 126);
 }
