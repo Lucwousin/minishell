@@ -71,7 +71,7 @@ static bool \
 	m_e->next = e->next;
 	e->next = NULL;
 	if (s->next != NULL)
-		destroy_wordlist(s->next);
+		destroy_wordlist(s);
 	free(s->word);
 	*s = *m->next;
 	free(m->next);
