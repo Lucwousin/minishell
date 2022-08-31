@@ -1,27 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   lex_simple.c                                       :+:    :+:            */
+/*   glob_utils.c                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/07/11 23:40:51 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/07/11 23:40:51 by lsinke        ########   odam.nl         */
+/*   Created: 2022/08/31 14:40:29 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/08/31 14:40:29 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <token.h>
+#include <stdbool.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-bool	lex_simple(t_lexer *lexer, t_char_type type)
+bool	open_cwd(DIR **dst)
 {
-	if (type == lexer->state)
-		return (consume_char(lexer));
-	return (switch_state(lexer, DEFAULT));
-}
+	char	*cwd;
 
-bool	lex_simple_single(t_lexer *lexer, t_char_type type)
-{
-	(void) type;
-	consume_char(lexer);
-	return (switch_state(lexer, DEFAULT));
+	cwd = getcwd(NULL, 0);
+	if (cwd != NULL)
+	{
+		*dst = opendir(cwd);
+		free(cwd);
+		if (*dst != NULL)
+			return (true);
+	}
+	perror("open_cwd");
+	return (false);
 }

@@ -13,7 +13,7 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-# include <execute.h>
+# include <ms_types.h>
 
 typedef enum e_builtin {
 	NONE,
@@ -26,7 +26,7 @@ typedef enum e_builtin {
 	EXIT
 }	t_builtin;
 
-typedef uint8_t	(*t_builtinfun)(t_cmd_node *);
+typedef uint8_t	(*t_builtinfun)(char **);
 
 /**
  * Check if the name (first argument) of a command corresponds to a builtin
@@ -46,7 +46,7 @@ t_builtin	identify_command(char **argv);
  *
  * @return EXIT_FAILURE on error, EXIT_SUCCESS otherwise
  */
-uint8_t		execute_builtin(t_builtin builtin, t_cmd_node *cmd);
+uint8_t		execute_builtin(t_builtin builtin, char **argv);
 
 /**
  * Change the current working directory. Only works with a relative or absolute
@@ -56,7 +56,7 @@ uint8_t		execute_builtin(t_builtin builtin, t_cmd_node *cmd);
  * 
  * @return The exit status
  */
-uint8_t		builtin_cd(t_cmd_node *cmd);
+uint8_t		builtin_cd(char **argv);
 /**
  * (This is a "special" builtin)
  *
@@ -67,7 +67,7 @@ uint8_t		builtin_cd(t_cmd_node *cmd);
  *
  * @return Always returns 0
  */
-uint8_t		builtin_echo(t_cmd_node *cmd);
+uint8_t		builtin_echo(char **argv);
 /**
  * Print all environment variables.
  *
@@ -80,7 +80,7 @@ uint8_t		builtin_echo(t_cmd_node *cmd);
  *
  * @return Always returns 0
  */
-uint8_t		builtin_env(t_cmd_node *cmd);
+uint8_t		builtin_env(char **argv);
 /**
  * Exits the current shell environment.
  *
@@ -94,7 +94,7 @@ uint8_t		builtin_env(t_cmd_node *cmd);
  *
  * @return Only returns 1 if too many arguments were given, otherwise exits.
  */
-uint8_t		builtin_exit(t_cmd_node *cmd);
+uint8_t		builtin_exit(char **argv);
 /**
  * (This is a "special" builtin)
  *
@@ -112,7 +112,7 @@ uint8_t		builtin_exit(t_cmd_node *cmd);
  * @return Returns SUCCESS if everything went alright, ERROR if an error
  * occurred, or a invalid variable name is given.
  */
-uint8_t		builtin_export(t_cmd_node *cmd);
+uint8_t		builtin_export(char **argv);
 /**
  * Get the current working directory
  *
@@ -121,7 +121,7 @@ uint8_t		builtin_export(t_cmd_node *cmd);
  * @return Returns SUCCESS if everything went alright, ERROR if an error
  * occurred
  */
-uint8_t		builtin_pwd(t_cmd_node *cmd);
+uint8_t		builtin_pwd(char **argv);
 /**
  * (This is a "special" builtin)
  *
@@ -133,7 +133,7 @@ uint8_t		builtin_pwd(t_cmd_node *cmd);
  * @return SUCCESS on success, ERROR if at least one name could not be unset.
  *         Because we do not have readonly variables, always returns SUCCESS
  */
-uint8_t		builtin_unset(t_cmd_node *cmd);
+uint8_t		builtin_unset(char **argv);
 
 /**
  * Print a message on stderr and exit with status

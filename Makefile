@@ -16,6 +16,7 @@ CC := gcc
 
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
+#CFLAGS += -std=c17
 CFLAGS += -g
 #CFLAGS += -fsanitize=address
 
@@ -33,13 +34,8 @@ SRCS := main.c																\
 		signals/rl_signal.c													\
 		lexer/tokenize.c													\
 		lexer/lex/lex_operator.c											\
-		lexer/lex/lex_simple.c												\
-		lexer/lex/lex_variable.c											\
-		lexer/evaluate.c													\
-		lexer/preparse.c													\
-		lexer/preparse/expand_var.c											\
-		lexer/preparse/expand_glob.c										\
-		lexer/preparse/preparse_utils.c										\
+		lexer/lex/lex_whitespace.c											\
+		lexer/lex/lex_word.c												\
 		lexer/token_utils.c													\
 		parser/parse.c														\
 		parser/init_node.c													\
@@ -48,8 +44,10 @@ SRCS := main.c																\
 		parser/parse/parse_command.c										\
 		parser/parse/parse_pipeline.c										\
 		parser/parse/parse_logic.c											\
+		parser/parse/parse_redir.c											\
 		redirect/create_heredoc.c											\
 		redirect/read_heredoc.c												\
+		redirect/write_heredoc.c											\
 		redirect/redirect.c													\
 		executor/execute.c													\
 		executor/fork_utils.c												\
@@ -65,7 +63,14 @@ SRCS := main.c																\
 		executor/builtins/builtin_exit.c									\
 		executor/builtins/builtin_export.c									\
 		executor/builtins/builtin_unset.c									\
-		executor/builtins/builtin_pwd.c
+		executor/builtins/builtin_pwd.c										\
+		executor/expand/expand_variables.c									\
+		executor/expand/split_words.c										\
+		executor/expand/expand_filenames.c									\
+		executor/expand/remove_quotes.c										\
+		executor/expand/glob_utils.c										\
+		type_utils/token_utils.c											\
+		type_utils/wordlist_utils.c
 
 SRCP := $(addprefix $(SRCD), $(SRCS))
 
@@ -84,7 +89,8 @@ INCS := minishell.h															\
 		redir.h																\
 		builtins.h															\
 		environ.h															\
-		signals.h
+		signals.h															\
+		ms_types.h
 INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
@@ -96,9 +102,9 @@ TEST_EXE := $(addprefix $(TEST_DIR), .test)
 TEST_RESD := $(addprefix $(TEST_DIR), res/)
 
 TEST_SRCD := $(addprefix $(TEST_DIR), $(SRCD))
-TEST_SRCS := lexer.c														\
-			 preparser.c													\
-			 parser.c
+TEST_SRCS := main.c															\
+			 print_objects.c												\
+			 perform_test.c
 TEST_SRCP := $(addprefix $(TEST_SRCD), $(TEST_SRCS))
 
 TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
@@ -123,17 +129,19 @@ LIBS += $(LIBFT_L)
 HEADERS += $(addprefix $(LIBFT_I), $(LIBFT_H))
 
 #		READLINE
-LIBS += -lreadline
+LIBS += -lreadline -lhistory
 
 # 		MAC SPECIFIC LINKING
 ifeq ($(shell uname), Darwin)
-	LIBS += -L$(shell brew --prefix readline)
+	LIBS += -L$(shell brew --prefix readline)/lib
+	CFLAGS += -I$(shell brew --prefix readline)/include
 endif
 
 #		LINUX SPECIFIC LINKIG
 ifeq ($(shell uname), Linux)
 	LIBS += -lhistory
-	VALGRIND = valgrind --show-reachable=yes --leak-check=full --log-file=$(TESTNAME)-valgrind
+	VALGRIND = valgrind --show-reachable=yes --leak-check=full --log-fd=3
+	VALGRIND_D = -DVALGRIND=1
 endif
 
 #		RANDOM THINGS
@@ -168,17 +176,19 @@ re: fclean
 	@$(MAKE)
 
 test: $(TEST_LIB)
-	@$(foreach test, $(TEST_SRCP), \
-		echo "Running test $(test)"; \
-		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(test) $(LIBS) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
-		< $(TESTNAME) $(VALGRIND) $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
-		rm -f $(TESTNAME)-diff; \
-		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
-		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \
-		echo "Test $(test) done"; \
-	)
-	@rm -f $(TEST_EXE)
+	@$(COMPILE) $(TEST_SRCP) $(LIBS) $(TEST_LIBS) $(VALGRIND_D) -o $(TEST_EXE)
+	@$(VALGRIND) $(TEST_EXE)
+#	@$(foreach test, $(TEST_SRCP), \
+#		echo "Running test $(test)"; \
+#		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
+#		$(CC) $(test) $(LIBS) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
+#		< $(TESTNAME) $(VALGRIND) $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
+#		rm -f $(TESTNAME)-diff; \
+#		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
+#		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \
+#		echo "Test $(test) done"; \
+#	)
+#	@rm -f $(TEST_EXE)
 
 $(TEST_LIB): $(NAME) $(TEST_LIB_OBJS) $(LIBFT_L)
 	@ar -cr $(TEST_LIB) $(TEST_LIB_OBJS)

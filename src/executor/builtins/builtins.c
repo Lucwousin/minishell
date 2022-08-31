@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <builtins.h>
+#include <minishell.h>
 #include <unistd.h>
 #include <libft.h>
 
@@ -70,9 +71,9 @@ t_builtin	identify_command(char **argv)
 	return (NONE);
 }
 
-uint8_t	execute_builtin(t_builtin builtin, t_cmd_node *cmd)
+uint8_t	execute_builtin(t_builtin builtin, char **argv)
 {
-	g_globals.exit = g_builtin_lut[builtin](cmd);
+	g_globals.exit = g_builtin_lut[builtin](argv);
 	if (g_globals.exit != EXIT_SUCCESS
 		&& (builtin == EXIT || builtin == EXPORT || builtin == UNSET))
 		return (EXIT_FAILURE);

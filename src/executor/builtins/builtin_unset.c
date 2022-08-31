@@ -30,14 +30,12 @@ static uint8_t	try_unset(char *str)
 	return (SUCCESS);
 }
 
-uint8_t	builtin_unset(t_cmd_node *cmd)
+uint8_t	builtin_unset(char **argv)
 {
 	uint8_t	status;
-	char	**args;
 
 	status = SUCCESS;
-	args = cmd->argv.arr;
-	while (*(++args))
-		status |= try_unset(*args);
+	while (*(++argv))
+		status |= try_unset(*argv);
 	return (status);
 }

@@ -1,0 +1,38 @@
+#All tests in this file will get completely lexed->parsed->executed. Don't add blocking things!
+#next line should be empty (test empty input)
+
+#echo tests!
+echo hey
+echo hey"ey"
+echo hey'ey'
+echo ""hey''ey
+echo -n test
+echo $notexisting
+echo "$notexisting" but_null_word
+echo '$notexisting' but quoted
+echo $notexisting,comma
+echo test$notexisting
+echo $? == 0 ? true
+"echo" test
+'echo' test
+#
+#simple binaries (and cd (and pwd) so we don't have to fill output file)
+mkdir tmp
+cd tmp
+pwd
+touch a b c
+ls
+/usr/bin/ls
+ls -l
+/usr/bin/ls -l
+cd ..
+pwd
+rm -rf tmp
+lsl
+/osr/bin/ls
+/usr/bin/lsl
+#
+#pipes?
+echo hey | wc
+echo hey | cat | wc -c
+echo hey | cat | cat |cat| "cat"|'cat'|cat | ca"t" | c'at' |''cat"" | "c"at | 'ca't

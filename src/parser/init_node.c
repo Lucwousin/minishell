@@ -17,18 +17,17 @@
 t_ast_node	*init_cmd_node(void)
 {
 	t_ast_node	*node;
-	t_cmd_node	*c_node;
 
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
 		return (NULL);
 	node->type = COMMAND;
-	c_node = &node->node.command;
-	if (!dynarr_create(&c_node->argv, ARGV_INIT_SIZE, sizeof(char *)))
-		return (free(node), NULL);
-	if (!dynarr_create(&c_node->redirs, REDIR_INIT_SIZE, sizeof(t_redir)))
-		return (dynarr_delete(&c_node->argv), free(node), NULL);
-	return (node);
+	node->command.args.next = NULL;
+	node->command.args.word = (void *) &node->command.args;
+	if (dynarr_create(&node->command.redirs, REDIR_INIT_SIZE, sizeof(t_redir)))
+		return (node);
+	free(node);
+	return (NULL);
 }
 
 t_ast_node	*init_paren_node(void)
@@ -39,25 +38,28 @@ t_ast_node	*init_paren_node(void)
 	if (node == NULL)
 		return (NULL);
 	node->type = PARENTHESIS;
-	node->node.paren.contents = NULL;
+	node->paren.contents = NULL;
 	return (node);
 }
 
 t_ast_node	*init_pipe_node(t_ast_node *first)
 {
 	t_ast_node	*node;
-	t_pipe_node	*p_node;
 
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
+	{
+		destroy_node(&first);
 		return (NULL);
+	}
 	node->type = PIPELINE;
-	p_node = &node->node.pipe;
-	if (!dynarr_create(&p_node->nodes, PIPE_INIT_SIZE, sizeof(t_ast_node *)))
-		return (free(node), NULL);
-	if (dynarr_addone(&p_node->nodes, &first))
-		return (node);
-	dynarr_delete(&p_node->nodes);
+	if (dynarr_create(&node->pipe.nodes, PIPE_INIT_SIZE, sizeof(t_ast_node *)))
+	{
+		if (dynarr_addone(&node->pipe.nodes, &first))
+			return (node);
+		dynarr_delete(&node->pipe.nodes);
+	}
+	destroy_node(&first);
 	free(node);
 	return (NULL);
 }
@@ -65,7 +67,6 @@ t_ast_node	*init_pipe_node(t_ast_node *first)
 t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left)
 {
 	t_ast_node		*node;
-	t_logic_node	*l_node;
 
 	node = malloc(sizeof(t_ast_node));
 	if (node == NULL)
@@ -74,9 +75,8 @@ t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left)
 		return (NULL);
 	}
 	node->type = LOGIC;
-	l_node = &node->node.logic;
-	l_node->type = type;
-	l_node->l = left;
-	l_node->r = NULL;
+	node->logic.type = type;
+	node->logic.l = left;
+	node->logic.r = NULL;
 	return (node);
 }

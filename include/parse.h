@@ -20,6 +20,7 @@
 # define REDIR_INIT_SIZE	4
 
 typedef struct s_parser {
+	const char	*cmd;
 	size_t		idx;
 	t_dynarr	*tokens;
 }	t_parser;
@@ -88,6 +89,10 @@ t_tokentype	parse_pipeline(t_parser *parser, t_ast_node **dst);
  * logical expression node, which contains the node as it's left hand side.
  */
 t_tokentype	parse_logic(t_parser *parser, t_ast_node **dst, t_tokentype type);
+/**
+ * Parse a redirection. This is used in parse_command.
+ */
+bool		parse_redir(t_parser *parser, t_ast_node **dst);
 
 /**
  * Functions to allocate and initialize new AST nodes
@@ -113,5 +118,6 @@ void		destroy_node(t_ast_node **nodep);
  * @return -1
  */
 uint8_t		error_status(t_ast_node **node, char *where, uint8_t status);
+uint8_t		syntax_err(t_ast_node **dst, t_tokentype type);
 
 #endif //PARSE_H

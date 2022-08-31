@@ -14,15 +14,15 @@
 # define EXECUTE_H
 
 # include <minishell.h>
-# include <input.h>
+# include <ms_types.h>
 # include <stdlib.h>
-# include <stdnoreturn.h>
+# include <sys/types.h>
 
 /*
  * The definition of an executor function.
- * Takes a pointer to the node type, and a boolean signifying we're in a fork.
+ * Takes a pointer to the node, and a boolean signifying we're in a fork.
  */
-typedef uint8_t	(*t_executor)(union u_node *, bool);
+typedef uint8_t	(*t_executor)(t_ast_node *, bool);
 
 /*
  * A pipeline data structure. Used in execute_pipeline
@@ -50,18 +50,18 @@ typedef struct s_pipeline {
  *
  * @return EXIT_SUCCESS if execution should continue, EXIT_FAILURE if not
  */
-uint8_t			execute_node(t_ast_node *node, bool must_exit);
+uint8_t	execute_node(t_ast_node *node, bool must_exit);
 
-uint8_t			execute_subshell(t_paren_node *node, bool must_exit);
-uint8_t			execute_command(t_cmd_node *cmd, bool must_exit);
-uint8_t			execute_pipeline(t_pipe_node *node, bool must_exit);
-uint8_t			execute_logic(t_logic_node *node, bool must_exit);
+uint8_t	execute_subshell(t_ast_node *node, bool must_exit);
+uint8_t	execute_command(t_ast_node *node, bool must_exit);
+uint8_t	execute_pipeline(t_ast_node *node, bool must_exit);
+uint8_t	execute_logic(t_ast_node *node, bool must_exit);
 
 /**
  * Execute an executable binary. Searches the PATH for the binary, or tries to
  * execute the binary if the command name contains a `/'
  */
-noreturn void	execute_binary(t_cmd_node *cmd);
+void	execute_binary(char **argv);
 
 /**
  * Wait for a child process, and set the exit global to the exit status.
@@ -70,7 +70,7 @@ noreturn void	execute_binary(t_cmd_node *cmd);
  *
  * @return EXIT_FAILURE if an error occurred, EXIT_SUCCESS on success
  */
-uint8_t			wait_for(pid_t pid);
+uint8_t	wait_for(pid_t pid, uint8_t *exit);
 
 /**
  * Wait for multiple child processes, and set the exit global to the last
@@ -82,7 +82,7 @@ uint8_t			wait_for(pid_t pid);
  *
  * @return EXIT_FAILURE if an error occurred, EXIT_SUCCESS on success
  */
-uint8_t			wait_pids(pid_t *pids, size_t len);
+uint8_t	wait_pids(pid_t *pids, size_t len);
 
 /**
  * Fork the current process, and wait for the child.
@@ -92,20 +92,33 @@ uint8_t			wait_pids(pid_t *pids, size_t len);
  * @return `false' in the child process
  *         `true' in the parent process and on error
  */
-bool			fork_and_wait(uint8_t	*status);
+bool	fork_and_wait(uint8_t	*status);
+
+/**
+ * Fork the current process.
+ *
+ * @param pid_p[out] A pointer to store the pid of the child process
+ * @return false if fork returned -1
+ */
+bool	do_fork(pid_t *pid_p);
 
 /**
  * Duplicate the file descriptors STDIN/STDOUT are currently pointing at.
  * 
  * @return `true' if everything went ok, `false' if an error occurred
  */
-bool			dup_stdio(int32_t dst[2]);
+bool	dup_stdio(int32_t dst[2]);
 
 /**
  * Make the STDIN/STDOUT file descriptors point to the same files as the ones
  * in `fds'
  */
-bool			redir_stdio(int32_t fds[2]);
+bool	redir_stdio(int32_t fds[2]);
+
+bool	expand_variables(t_wordlist *cur, t_dynarr *buf);
+bool	split_words(t_wordlist *cur);
+bool	expand_filenames(t_wordlist *cur);
+bool	remove_quotes(t_wordlist *cur, t_dynarr *buf);
 
 /**
  * If must_exit is true, exit with the last exit code. If must_exit is false,

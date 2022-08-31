@@ -22,12 +22,12 @@ static bool	should_exe_next(t_tokentype type, uint8_t status)
 		return (g_globals.exit == 0);
 }
 
-uint8_t	execute_logic(t_logic_node *node, bool must_exit)
+uint8_t	execute_logic(t_ast_node *node, bool must_exit)
 {
 	uint8_t	status;
 
-	status = execute_node(node->l, false);
-	if (should_exe_next(node->type, status))
-		status = execute_node(node->r, must_exit);
+	status = execute_node(node->logic.l, false);
+	if (should_exe_next(node->logic.type, status))
+		status = execute_node(node->logic.r, must_exit);
 	return (try_exit(status, must_exit));
 }

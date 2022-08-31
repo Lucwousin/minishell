@@ -13,115 +13,83 @@
 #include <environ.h>
 #include <redir.h>
 #include <get_next_line.h>
-#include <sys/fcntl.h>
+#include <minishell.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <signal.h>
 
 #define WARN_EOF	"bash: warning: here-document delimited by end-of-file "
 #define WARN_EOF_2	"(wanted `"
 #define WARN_EOF_3	"')\n"
 
-#define ERR_SIGNAL	"heredoc: Error installing signal handler"
+#define ERR_ALLOC	"heredoc: Error allocating memory"
 #define ERR_OPEN	"heredoc: Error opening heredoc"
-#define ERR_WRITE	"heredoc: Error writing to heredoc"
 
-noreturn
-static void	warn_eof(int32_t fd, const char *delim, size_t delim_len)
+static void	warn_eof(const char *delim, size_t delim_len)
 {
 	static const size_t	lens[] = {54, 9, 3};
 
-	close(fd);
 	write(STDERR_FILENO, "\n", 1);
-	write(STDERR_FILENO, WARN_EOF, lens[0]);
+	write(STDERR_FILENO, WARN_EOF, lens[0] + 1);
 	write(STDERR_FILENO, WARN_EOF_2, lens[1]);
 	write(STDERR_FILENO, delim, delim_len);
 	write(STDERR_FILENO, WARN_EOF_3, lens[2]);
-	exit(EXIT_SUCCESS);
 }
 
-noreturn
-static void	exit_error(int32_t fd, const char *msg, char *file)
+static bool	error(const char *msg, t_dynarr *doc, void *free_)
 {
-	if (file)
-		unlink(file);
-	if (fd >= 0)
-		close(fd);
-	perror(msg);
-	exit(EXIT_FAILURE);
-}
+	size_t	n;
 
-static bool	write_variable(int32_t fd, char **linep)
-{
-	char		*line;
-	char		*var_end;
-	const char	*var_value;
-
-	line = (*linep) + 1;
-	if (*line == '?' || *line == '$')
-		var_end = line + 1;
-	else
-		var_end = var_name_end(line);
-	*linep = var_end;
-	if (var_end == line)
-		return (write(fd, "$", 1));
-	var_value = get_variable_value(line, var_end - line);
-	if (var_value == NULL)
-		return (true);
-	return (write(fd, var_value, ft_strlen(var_value)) >= 0);
-}
-
-static bool	write_heredoc(int32_t fd, char *line, bool expand)
-{
-	size_t	write_len;
-	char	*l;
-
-	l = line;
-	write_len = 0;
-	while (l[write_len])
+	if (doc && doc->arr)
 	{
-		if (!expand || l[write_len] != '$')
-		{
-			++write_len;
-			continue ;
-		}
-		if (write(fd, l, write_len) < 0)
-			return (free(line), false);
-		l += write_len;
-		if (!write_variable(fd, &l))
-			return (free(line), false);
-		write_len = 0;
+		n = doc->length;
+		while (n--)
+			free(dynarr_get(doc, n));
+		dynarr_delete(doc);
 	}
-	if (write(fd, l, write_len) < 0)
-		return (free(line), false);
-	free(line);
+	free(free_);
+	if (msg)
+		perror(msg);
+	return (false);
+}
+
+static bool	get_line(char **line)
+{
+	write(STDOUT_FILENO, ">", 2);
+	*line = get_next_line(STDIN_FILENO);
+	return (*line != NULL && !g_globals.interrupted);
+}
+
+static bool	get_lines(t_dynarr *doc, char *delim, size_t delim_len)
+{
+	char	*line;
+
+	while (get_line(&line))
+	{
+		if (ft_strncmp(line, delim, delim_len) == 0 && line[delim_len] == '\n')
+			break ;
+		if (dynarr_addone(doc, &line))
+			continue ;
+		free(line);
+		return (error(ERR_ALLOC, doc, delim));
+	}
+	if (line == NULL && !g_globals.interrupted)
+		warn_eof(delim, delim_len);
 	return (true);
 }
 
-noreturn void	read_heredoc(char *file, char *delim, bool expand)
+bool	read_heredoc(t_redir *redir, char *delim, size_t delim_len)
 {
-	int32_t	fd;
-	char	*line;
-	size_t	delim_len;
+	const char	*null = NULL;
+	t_dynarr	doc;
 
-	if (signal(SIGINT, SIG_DFL) == SIG_ERR)
-		exit_error(-1, ERR_SIGNAL, NULL);
-	fd = open(file, O_TRUNC | O_WRONLY | O_CREAT, 0644);
-	if (fd < 0)
-		exit_error(fd, ERR_OPEN, file);
-	delim_len = ft_strlen(delim);
-	while (true)
-	{
-		write(STDOUT_FILENO, "> ", 2);
-		line = get_next_line(STDIN_FILENO);
-		if (line == NULL)
-			warn_eof(fd, delim, delim_len);
-		if (ft_strncmp(line, delim, delim_len) == 0 && line[delim_len] == '\n')
-			break ;
-		if (!write_heredoc(fd, line, expand))
-			exit_error(fd, ERR_WRITE, file);
-	}
-	free(line);
-	close(fd);
-	exit(EXIT_SUCCESS);
+	if (!dynarr_create(&doc, 32, sizeof(char *)))
+		return (error(ERR_ALLOC, NULL, delim));
+	if (!get_lines(&doc, delim, delim_len))
+		return (false);
+	if (g_globals.interrupted)
+		return (error(NULL, &doc, delim));
+	if (!dynarr_addone(&doc, &null))
+		return (error(ERR_ALLOC, &doc, delim));
+	redir->hd.doc = doc.arr;
+	return (true);
 }

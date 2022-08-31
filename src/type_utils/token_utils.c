@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   execute_subshell.c                                 :+:    :+:            */
+/*   token_utils.c                                      :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2022/08/05 19:32:37 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/08/05 19:32:37 by lsinke        ########   odam.nl         */
+/*   Created: 2022/08/31 13:41:43 by lsinke        #+#    #+#                 */
+/*   Updated: 2022/08/31 13:41:43 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <execute.h>
+#include <ms_types.h>
 
-uint8_t	execute_subshell(t_ast_node *node, bool must_exit)
+bool	flag(t_flag flags, t_flag flag)
 {
-	uint8_t	status;
+	return ((flags & flag) != 0);
+}
 
-	if (!must_exit)
-		if (fork_and_wait(&status))
-			return (status);
-	exit(execute_node(node->paren.contents, true));
+bool	is_redir(t_tokentype type)
+{
+	return (type >= RED_IN && type <= RED_APP);
 }

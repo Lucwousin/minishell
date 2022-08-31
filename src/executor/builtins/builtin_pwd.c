@@ -15,12 +15,12 @@
 #include <libft.h>
 #include <stdio.h>
 
-uint8_t	builtin_pwd(t_cmd_node *cmd)
+uint8_t	builtin_pwd(char **argv)
 {
 	char	*cwd;
 
-	(void) cmd;
-	cwd = getcwd(NULL, -1);
+	(void) argv;
+	cwd = getcwd(NULL, 0);
 	if (cwd == NULL)
 	{
 		perror("pwd");
@@ -29,6 +29,7 @@ uint8_t	builtin_pwd(t_cmd_node *cmd)
 	else
 	{
 		printf("%s\n", cwd);
+		free(cwd);
 		return (SUCCESS);
 	}
 }

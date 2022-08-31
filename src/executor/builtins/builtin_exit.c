@@ -43,16 +43,16 @@ static bool	parse_status(const char *arg, uint8_t *status)
 	return (true);
 }
 
-uint8_t	builtin_exit(t_cmd_node *cmd)
+uint8_t	builtin_exit(char **argv)
 {
 	uint8_t	status;
 	char	*arg;
 
-	if (cmd->argv.length > 3)
-		return (builtin_err(PRE_EXIT, NULL, ERR_ARGS, ERROR));
-	if (cmd->argv.length == 2)
+	if (argv[1] == NULL)
 		exit(g_globals.exit);
-	arg = ((char **) cmd->argv.arr)[1];
+	if (argv[2] != NULL)
+		return (builtin_err(PRE_EXIT, NULL, ERR_ARGS, ERROR));
+	arg = argv[1];
 	if (parse_status(arg, &status))
 		exit(status);
 	exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, SYNTAX));

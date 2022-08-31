@@ -13,41 +13,55 @@
 #include <input.h>
 #include <token.h>
 #include <stdio.h>
+#include <unistd.h>
+#include "libft.h"
 
-#define SUCCESS	0
-#define ERROR	1
+#define Q_WARN1	"warning: everything after an unclosed quote "
+#define Q_WARN2	"will be considered quoted\n"
 
 /**
- * Lexer state to handler function
+ * Token type to handler function
  */
 static t_lexerfunc			g_lex[] = {
-[DEFAULT] = switch_state,
-[WHITE_S] = lex_simple,
-[WORD_S] = lex_simple,
-[SQUOTE_S] = lex_simple_single,
-[DQUOTE_S] = lex_simple_single,
-[PAR_OPEN_S] = lex_simple_single,
-[PAR_CLOSE_S] = lex_simple_single,
-[OPERATOR_S] = lex_operator,
-[VAR_S] = lex_variable,
-[WILDCARD_S] = lex_simple_single
+[NO_TYPE] = switch_state,
+[WHITESPACE] = lex_whitespace,
+[OPERATOR] = lex_operator,
+[WORD] = lex_word
 };
 
 /**
  * Lexer state/char type to token type
  */
 static const t_tokentype	g_types[] = {
-[DEFAULT] = END_OF_INPUT,
+[DEFAULT] = NO_TYPE,
 [WHITE_S] = WHITESPACE,
 [OPERATOR_S] = OPERATOR,
 [WORD_S] = WORD,
-[SQUOTE_S] = SQUOTE,
-[DQUOTE_S] = DQUOTE,
-[PAR_OPEN_S] = PAR_OPEN,
-[PAR_CLOSE_S] = PAR_CLOSE,
-[VAR_S] = VARIABLE,
-[WILDCARD_S] = GLOB
+[SQUOTE_S] = WORD,
+[DQUOTE_S] = WORD,
+[VAR_S] = WORD,
+[WILDCARD_S] = WORD,
+[EOF_S] = END_OF_INPUT
 };
+
+static void	warn_unclosed_quote(t_lexer *lexer)
+{
+	t_token	*token;
+
+	token = dynarr_get(lexer->tokens, lexer->tokens->length - 2);
+	if (token == NULL)
+		return ;
+	if (!(token->flags & IS_QUOTED))
+		return ;
+	if (lexer->str[token->end] == '\'' && token->flags & S_QUOTED)
+		return ;
+	if (lexer->str[token->end] == '"' && token->flags & D_QUOTED)
+		return ;
+	ft_putstr_fd(Q_WARN1 Q_WARN2, STDERR_FILENO);
+	ft_putstr_fd("-->> ", STDERR_FILENO);
+	ft_putstr_fd(lexer->str + token->start, STDERR_FILENO);
+	ft_putstr_fd(" <<--\n", STDERR_FILENO);
+}
 
 uint8_t	tokenize(t_dynarr *tokens, const char *cmd)
 {
@@ -55,8 +69,11 @@ uint8_t	tokenize(t_dynarr *tokens, const char *cmd)
 
 	lexer = (t_lexer){.tokens = tokens, .str = cmd};
 	if (!dynarr_create(lexer.tokens, TOKENS_INIT_SIZE, sizeof(t_token)))
-		return (perror("tokenize"), ERROR); // TODO: cleaner error shit
-	while (lexer.state != EOF_S)
+	{
+		perror("tokenize");
+		return (ERROR);
+	}
+	while (lexer.state != END_OF_INPUT)
 	{
 		if (g_lex[lexer.state](&lexer, get_type(lexer.str + lexer.idx)))
 			continue ;
@@ -64,19 +81,30 @@ uint8_t	tokenize(t_dynarr *tokens, const char *cmd)
 		dynarr_delete(tokens);
 		return (ERROR);
 	}
+	warn_unclosed_quote(&lexer);
 	return (SUCCESS);
 }
 
 static bool	delimit_token(t_lexer *lexer)
 {
-	if (lexer->idx == lexer->current_token.start)
-		lexer->current_token.end = lexer->idx;
-	else
-		lexer->current_token.end = lexer->idx - 1;
-	return (dynarr_addone(lexer->tokens, &lexer->current_token));
+	t_token	new_token;
+
+	if (lexer->state == NO_TYPE)
+		lexer->state = END_OF_INPUT;
+	new_token.type = lexer->state;
+	new_token.flags = lexer->flags;
+	new_token.start = lexer->token_start;
+	new_token.end = lexer->idx - 1;
+	if (new_token.type == OPERATOR)
+		id_operator(lexer->str, &new_token);
+	if (is_redir(new_token.type))
+		lexer->flags |= REDIR_WORD;
+	else if (!flag(lexer->flags, APPEND_NEXT))
+		lexer->flags &= ~REDIR_WORD;
+	return (dynarr_addone(lexer->tokens, &new_token));
 }
 
-bool	switch_state(t_lexer *lexer, t_lex_state new_state)
+bool	switch_state(t_lexer *lexer, t_char_type new_state)
 {
 	bool	rv;
 
@@ -84,20 +112,10 @@ bool	switch_state(t_lexer *lexer, t_lex_state new_state)
 		rv = delimit_token(lexer);
 	else
 		rv = true;
-	if (new_state != EOF_S)
-	{
-		lexer->current_token.type = g_types[new_state];
-		lexer->current_token.start = lexer->idx;
-	}
-	lexer->state = new_state;
+	lexer->state = g_types[new_state];
+	lexer->flags &= ~(APPEND_NEXT | IS_QUOTED | HAS_VAR | HAS_GLOB);
+	lexer->token_start = lexer->idx;
 	return (rv);
-}
-
-bool	set_state(t_lexer *lexer, t_lex_state new_state)
-{
-	lexer->state = new_state;
-	lexer->current_token.type = g_types[new_state];
-	return (true);
 }
 
 bool	consume_char(t_lexer *lexer)

@@ -21,30 +21,16 @@
 #define OPERATOR_OR			"||"
 #define OPERATOR_AND		"&&"
 
-bool	add_token(const char *cmd, t_dynarr *buf, t_token *token)
-{
-	size_t	len;
-
-	len = token->end - token->start + 1;
-	return (dynarr_add(buf, cmd + token->start, len));
-}
-
-bool	toggle_quote(bool in_quote[2], t_tokentype type)
-{
-	if (type != DQUOTE && type != SQUOTE)
-		return (false);
-	if (in_quote[type == SQUOTE])
-		return (false);
-	in_quote[type != SQUOTE] = !in_quote[type != SQUOTE];
-	return (true);
-}
-
 void	id_operator(const char *cmd, t_token *token)
 {
 	size_t		len;
 
 	len = token->end - token->start + 1;
-	if (ft_strncmp(OPERATOR_RED_IN, cmd + token->start, len) == 0)
+	if (cmd[token->start] == PAR_OPEN_CHAR)
+		token->type = PAR_OPEN;
+	else if (cmd[token->start] == PAR_CLOSE_CHAR)
+		token->type = PAR_CLOSE;
+	else if (ft_strncmp(OPERATOR_RED_IN, cmd + token->start, len) == 0)
 		token->type = RED_IN;
 	else if (ft_strncmp(OPERATOR_RED_HD, cmd + token->start, len) == 0)
 		token->type = RED_HD;
@@ -72,12 +58,8 @@ t_char_type	get_type(const char *c)
 		return (SQUOTE_S);
 	if (*c == DOUBLE_QUOTE)
 		return (DQUOTE_S);
-	if (*c == VAR_CHAR && (c[1] == VAR_CHAR || get_type(c + 1) == WORD_S))
+	if (*c == VAR_CHAR)
 		return (VAR_S);
-	if (*c == PAR_OPEN_CHAR)
-		return (PAR_OPEN_S);
-	if (*c == PAR_CLOSE_CHAR)
-		return (PAR_CLOSE_S);
 	if (*c == WILDCARD_CHAR)
 		return (WILDCARD_S);
 	return (WORD_S);

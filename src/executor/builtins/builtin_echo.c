@@ -10,31 +10,37 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <execute.h>
 #include <libft.h>
 #include <unistd.h>
 
-#define FLAG_N	"-n"
-
-static bool	should_print_newline(char **argv, size_t len, size_t *i)
+static bool	should_print_newline(char **argv, size_t *i)
 {
-	if (len == 2)
-		return (true);
-	if (ft_strncmp(argv[*i], FLAG_N, 3) != 0)
-		return (true);
-	*i = *i + 1;
-	return (false);
+	bool	print;
+	size_t	j;
+
+	print = true;
+	while (argv[*i])
+	{
+		j = 0;
+		if (argv[*i][j++] != '-')
+			return (print);
+		while (argv[*i][j] == 'n')
+			++j;
+		if (argv[*i][j] != '\0')
+			return (print);
+		print = false;
+		*i = *i + 1;
+	}
+	return (print);
 }
 
-uint8_t	builtin_echo(t_cmd_node *cmd)
+uint8_t	builtin_echo(char **argv)
 {
 	size_t	i;
-	char	**argv;
 	bool	print_newline;
 
 	i = 1;
-	argv = cmd->argv.arr;
-	print_newline = should_print_newline(argv, cmd->argv.length, &i);
+	print_newline = should_print_newline(argv, &i);
 	while (argv[i])
 	{
 		ft_putstr_fd(argv[i++], STDOUT_FILENO);

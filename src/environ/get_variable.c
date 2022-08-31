@@ -51,6 +51,8 @@ const char	*get_variable_value(const char *var, size_t len)
 {
 	const char	**varp;
 
+	if (*var == '?' && len == 1)
+		return (get_exit_str());
 	varp = find_variable(var, len);
 	if (varp == NULL)
 		return (NULL);

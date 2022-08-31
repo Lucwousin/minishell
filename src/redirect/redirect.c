@@ -11,9 +11,12 @@
 /* ************************************************************************** */
 
 #include <redir.h>
+#include <execute.h>
+#include <libft.h>
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <limits.h>
 
 #define DEST	0
 #define FLAG	1
@@ -38,20 +41,49 @@ static bool	error(const char *where)
 	return (false);
 }
 
+static const char	*expand_redir(t_redir *redir)
+{
+	t_dynarr	buf;
+
+	if (redir->type == RED_HD || redir->type == RED_HD_Q)
+	{
+		if (!write_heredoc(redir))
+			return (NULL);
+		return (redir->hd.file);
+	}
+	dynarr_create(&buf, NAME_MAX, sizeof(char));
+	if (!expand_variables(&redir->wl, &buf) || \
+		!split_words(&redir->wl) || \
+		!remove_quotes(&redir->wl, &buf) || \
+		!expand_filenames(&redir->wl))
+	{
+		dynarr_delete(&buf);
+		return (NULL);
+	}
+	if (redir->wl.next == NULL || redir->wl.next->next != NULL)
+	{
+		ft_putendl_fd("ambiguous redirect", STDERR_FILENO);
+		return (NULL);
+	}
+	return (redir->wl.next->word);
+}
+
 bool	redirect(t_redir *redir, int32_t fds[2])
 {
-	const int32_t	*opts;
+	const bool		is_here = redir->type == RED_HD || redir->type == RED_HD_Q;
+	const int32_t	*opts = g_redir_opts[redir->type - RED_IN];
+	const char		*file = expand_redir(redir);
 
-	opts = g_redir_opts[redir->type - RED_IN];
+	if (file == NULL)
+		return (false);
 	if (fds[opts[DEST]] != -1)
 		if (close(fds[opts[DEST]]) == -1)
 			error(CLOSE_ERR);
-	fds[opts[DEST]] = open(redir->str, opts[FLAG], opts[MODE]);
+	fds[opts[DEST]] = open(file, opts[FLAG], opts[MODE]);
 	if (fds[opts[DEST]] == -1)
 		return (error(ERR_OPEN));
-	if (redir->type == RED_HD || redir->type == RED_HD_Q)
-		if (unlink(redir->str) == -1)
-			error(UNLINK_ERR);
+	else if (is_here && unlink(redir->hd.file) == -1)
+		error(UNLINK_ERR);
 	return (true);
 }
 

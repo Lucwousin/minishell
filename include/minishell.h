@@ -36,7 +36,7 @@
  *
  * `orig_signals' Contains a copy of the original signal handlers (signals.h)
  *                This is necessary, as bash resets the signal handlers to the
- *                inherited values from the shell's paren
+ *                inherited values from the shell's parent
  */
 typedef struct s_shell_environment {
 	bool				interrupted;

@@ -13,16 +13,23 @@
 #ifndef REDIR_H
 # define REDIR_H
 
-# include <input.h>
+# include <ms_types.h>
 # include <stdnoreturn.h>
 
 typedef struct s_redirection {
 	t_tokentype	type;
-	char		*str;
+	union {
+		t_wordlist	wl;
+		struct s_heredoc {
+			char	**doc;
+			char	*file;
+		}	hd;
+	};
 }	t_redir;
 
-bool			redirect(t_redir *redir, int32_t fds[2]);
-bool			create_heredoc(char **dst, bool expand);
-noreturn void	read_heredoc(char *file, char *delim, bool expand);
+bool	redirect(t_redir *redir, int32_t fds[2]);
+bool	create_heredoc(t_redir *redir);
+bool	read_heredoc(t_redir *redir, char *delim, size_t delim_len);
+bool	write_heredoc(t_redir *hd);
 
 #endif //REDIR_H

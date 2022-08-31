@@ -46,6 +46,11 @@ void	syntax_error_type(t_tokentype type)
 	[OR] = "||",
 	[AND] = "&&",
 	[PIPE] = "|",
+	[RED_IN] = "<",
+	[RED_HD] = "<<",
+	[RED_HD_Q] = "<<",
+	[RED_OUT] = ">",
+	[RED_APP] = ">>"
 	};
 
 	return (syntax_error(strs[type]));

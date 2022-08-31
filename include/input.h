@@ -13,81 +13,14 @@
 #ifndef INPUT_H
 # define INPUT_H
 
-# include <dynarr.h>
-# include <stdint.h>
-
-# define SUCCESS	0
-# define ERROR		1
-# define SYNTAX		2
-
-/*
- * This file contains prototypes and typedefs for the lex/expand/parse/exe stack
- */
-
-typedef enum e_tokentype {
-	END_OF_INPUT = 0,
-	WHITESPACE,
-	WORD,
-	VARIABLE,
-	SQUOTE,
-	DQUOTE,
-	PAR_OPEN,
-	PAR_CLOSE,
-	OPERATOR,
-	RED_IN,
-	RED_HD,
-	RED_HD_Q,
-	RED_OUT,
-	RED_APP,
-	OR,
-	AND,
-	PIPE,
-	GLOB
-}	t_tokentype;
+# include <ms_types.h>
 
 typedef enum e_in_handler_state {
 	TOKENIZE,
-	EVALUATE,
-	PREPARSE,
 	PARSE,
 	EXECUTE,
 	DONE
 }	t_hstate;
-
-typedef enum e_ast_type {
-	COMMAND,
-	LOGIC,
-	PARENTHESIS,
-	PIPELINE,
-}	t_ast_type;
-
-typedef struct s_ast_node	t_ast_node;
-
-typedef struct s_cmd_node	t_cmd_node;
-typedef struct s_logic_node	t_logic_node;
-typedef struct s_paren_node	t_paren_node;
-typedef struct s_pipe_node	t_pipe_node;
-
-struct s_ast_node {
-	t_ast_type	type;
-	union u_node {
-		struct s_cmd_node {
-			t_dynarr	argv;
-			t_dynarr	redirs;
-		}	command;
-		struct s_logic_node {
-			t_tokentype	type;
-			t_ast_node	*l;
-			t_ast_node	*r;
-		}	logic;
-		struct s_paren_node {
-			t_ast_node	*contents;
-		}	paren;
-		struct s_pipe_node {
-			t_dynarr	nodes;
-		}	pipe;
-	}	node;
-};
 
 typedef struct s_in_handler	t_in_handler;
 typedef void				(*t_h_hook)(t_in_handler *);
@@ -96,7 +29,6 @@ struct s_in_handler {
 	const char	*input;
 	t_hstate	state;
 	t_dynarr	tokens;
-	t_dynarr	expanded_tokens;
 	t_ast_node	*root_node;
 	t_h_hook	hooks[DONE];
 };
@@ -117,37 +49,16 @@ typedef struct s_expanded_token {
 uint8_t		tokenize(t_dynarr *tokens, const char *cmd);
 
 /**
- * Remove all unnecessary whitespace and unclosed quotes
- * 
- * @param tokens[in/out] the tokens to evaluate
- *
- * @return true if nothing went wrong, false if an allocation failed
- */
-uint8_t		evaluate(t_dynarr *tokens);
-
-/**
- * Join all adjacent words, remove quotes, expand variables, combine redirects
- * with their arguments.
- * 
- * @param tokens[in] the tokens to expand
- * @param cmd[in]
- * @param exp_tokens[out] the output array of expanded tokens
- * 
- * @return true if nothing went wrong, false in the case of a syntax error or
- * allocation failure
- */
-uint8_t		preparse(const char *cmd, t_dynarr *tokens, t_dynarr *exp_tokens);
-
-/**
  * Parse all expanded tokens in tokens to an AST tree representing the command
  * line we have to execute.
  *
+ * @param cmd[in] The user input
  * @param tokens[in] The expanded tokens, made by preparse
  * @param dst[out] A pointer where the root node will be stored.
  *
  * @return EXIT_SUCCESS if everything went ok, EXIT_FAILURE on error
  */
-uint8_t		build_ast(t_dynarr *tokens, t_ast_node **dst);
+uint8_t		build_ast(const char *cmd, t_dynarr *tokens, t_ast_node **dst);
 
 /**
  * Execute the abstract syntax tree.

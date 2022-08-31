@@ -14,6 +14,7 @@
 #include <libft.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdnoreturn.h>
 
 #define ERR_PIPEL	"pipe: something went wrong in a pipeline"
 #define ERR_PIDS	"pipe: failed to allocate for pids"
@@ -66,14 +67,14 @@ static bool	lay_pipe(t_pipeline *p, t_ast_node *node)
 	return (p->pids[p->idx++] == -1);
 }
 
-uint8_t	execute_pipeline(t_pipe_node *node, bool must_exit)
+uint8_t	execute_pipeline(t_ast_node *node, bool must_exit)
 {
 	t_pipeline	p;
 	t_ast_node	**nodes;
 	uint8_t		status;
 
-	nodes = node->nodes.arr;
-	if (init_pipe(&p, node->nodes.length))
+	nodes = node->pipe.nodes.arr;
+	if (init_pipe(&p, node->pipe.nodes.length))
 		return (EXIT_FAILURE);
 	status = EXIT_SUCCESS;
 	while (status == EXIT_SUCCESS && p.idx < p.len)

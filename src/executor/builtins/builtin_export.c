@@ -96,22 +96,20 @@ static uint8_t	try_set_env(char *var)
 	}
 	if (*name_end == '=' && var != name_end)
 		return (set_variable(var, name_end));
-	name = ft_substr(var, 0, name_end - var);
+	name = ft_substr(var, 0, ft_max((int)(name_end - var), 1));
 	builtin_err(PRE_EXPORT, name, ERR_INVAL, ERROR);
 	free(name);
 	return (ERROR);
 }
 
-uint8_t	builtin_export(t_cmd_node *cmd)
+uint8_t	builtin_export(char **argv)
 {
-	char		**args;
 	uint8_t		status;
 
-	if (cmd->argv.length == 2)
+	if (argv[1] == NULL)
 		return (export_print(g_globals.vars.arr, g_globals.vars.length - 1));
 	status = SUCCESS;
-	args = cmd->argv.arr;
-	while (*(++args))
-		status |= try_set_env(*args);
+	while (*(++argv))
+		status |= try_set_env(*argv);
 	return (status);
 }

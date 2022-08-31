@@ -19,31 +19,16 @@ static bool	check_start_syntax(t_parser *parser, t_tokentype *type)
 {
 	t_exp_tok	*token;
 
-	++parser->idx;
-	if (parser->idx >= parser->tokens->length)
-		return (syntax_error_type(END_OF_INPUT), true);
-	token = dynarr_get(parser->tokens, parser->idx);
+	token = dynarr_get(parser->tokens, ++parser->idx);
 	*type = token->type;
-	if (*type == WORD
-		|| *type == VARIABLE
-		|| *type == PAR_OPEN
-		|| (*type >= RED_IN && *type <= RED_APP))
+	if (*type == WORD || *type == PAR_OPEN || is_redir(*type))
 		return (false);
-	return (syntax_error_type(*type), true);
-}
-
-static bool	is_terminating_type(t_tokentype type)
-{
-	return (type == END_OF_INPUT
-		|| type == PAR_OPEN
-		|| type == PAR_CLOSE
-		|| type == AND
-		|| type == OR);
+	syntax_error_type(*type);
+	return (true);
 }
 
 t_tokentype	parse_logic(t_parser *parser, t_ast_node **dst, t_tokentype type)
 {
-	t_ast_node	*r;
 	t_tokentype	next_type;
 
 	*dst = init_logic_node(type, *dst);
@@ -51,19 +36,10 @@ t_tokentype	parse_logic(t_parser *parser, t_ast_node **dst, t_tokentype type)
 		return (error_status(NULL, "parse_logic", ERROR));
 	if (check_start_syntax(parser, &next_type))
 		return (error_status(dst, NULL, SYNTAX));
-	while (parser->idx < parser->tokens->length)
-	{
-		next_type = parse_node(parser, next_type, &r);
-		if (r == NULL)
-			return (error_status(dst, NULL, 0));
-		if (is_terminating_type(next_type))
-			break ;
-	}
-	(*dst)->node.logic.r = r;
-	if (next_type == PAR_OPEN)
-	{
-		syntax_error_type(next_type);
-		return (error_status(dst, NULL, SYNTAX));
-	}
+	next_type = parse_node(parser, next_type, &(*dst)->logic.r);
+	if (next_type == PIPE)
+		next_type = parse_node(parser, next_type, &(*dst)->logic.r);
+	if ((*dst)->logic.r == NULL)
+		return (error_status(dst, NULL, 0));
 	return (next_type);
 }

@@ -10,35 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <execute.h>
-#include <libft.h>
+#include <builtins.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 #define ERR_PREFIX		"cd: "
 #define ARGS_NOT_IMPL	"no args cd is not implemented"
 
-static uint8_t	error(char *what, char *arg, bool fail)
-{
-	ft_putstr_fd(ERR_PREFIX, STDERR_FILENO);
-	if (what)
-		ft_putstr_fd(what, STDERR_FILENO);
-	if (fail)
-		perror(arg);
-	else
-		ft_putchar_fd('\n', STDERR_FILENO);
-	return (ERROR);
-}
-
-// TODO: $PWD $OLD_PWD
-uint8_t	builtin_cd(t_cmd_node *cmd)
+uint8_t	builtin_cd(char **argv)
 {
 	char	*path;
 
-	if (cmd->argv.length < 3)
-		return (error(ARGS_NOT_IMPL, NULL, false));
-	path = ((char **) cmd->argv.arr)[1];
+	if (argv[1] == NULL)
+		return (builtin_err(ERR_PREFIX, NULL, ARGS_NOT_IMPL, ERROR));
+	path = argv[1];
 	if (chdir(path) != SUCCESS)
-		return (error(NULL, path, true));
+		return (builtin_err(ERR_PREFIX, path, strerror(errno), ERROR));
 	return (SUCCESS);
 }

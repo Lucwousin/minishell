@@ -56,18 +56,17 @@ static char	*find_executable(char *name)
 	return (cur);
 }
 
-noreturn void	execute_binary(t_cmd_node *cmd)
+noreturn void	execute_binary(char **argv)
 {
 	char	*path;
 
-	// TODO: maybe $_ ? Not sure
 	errno = 0;
-	if (cmd->argv.length == 1)
+	if (*argv == NULL)
 		exit_(SUCCESS);
-	path = find_executable(*((char **) dynarr_get(&cmd->argv, 0)));
+	path = find_executable(argv[0]);
 	if (path == NULL)
 		exit_(127);
-	execve(path, cmd->argv.arr, g_globals.vars.arr);
+	execve(path, argv, g_globals.vars.arr);
 	free(path);
 	exit_(126);
 }

@@ -21,14 +21,16 @@ static const t_executor	g_executors[] = {
 
 uint8_t	execute_node(t_ast_node *node, bool must_exit)
 {
-	return (g_executors[node->type](&node->node, must_exit));
+	return (g_executors[node->type](node, must_exit));
 }
 
 uint8_t	execute(t_ast_node *root_node)
 {
 	t_paren_node	*root;
 
-	root = &root_node->node.paren;
+	if (root_node == NULL)
+		return (EXIT_SUCCESS);
+	root = &root_node->paren;
 	if (root->contents == NULL)
 		return (EXIT_SUCCESS);
 	return (execute_node(root->contents, false));

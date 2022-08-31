@@ -14,11 +14,11 @@
 #include <minishell.h>
 #include <stdio.h>
 
-uint8_t	builtin_env(t_cmd_node *cmd)
+uint8_t	builtin_env(char **argv)
 {
 	const char	**env;
 
-	(void) cmd;
+	(void) argv;
 	env = g_globals.vars.arr;
 	while (*env)
 		printf("%s\n", *env++);

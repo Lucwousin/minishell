@@ -12,45 +12,51 @@
 
 #include <parse.h>
 #include <stdlib.h>
+#include <redir.h>
+#include <libft.h>
 
 static void	destroy_command(t_ast_node *node)
 {
-	t_cmd_node	*c_node;
+	size_t	i;
+	t_redir	*red;
 
-	c_node = &node->node.command;
-	dynarr_delete(&c_node->argv);
-	dynarr_delete(&c_node->redirs);
+	destroy_wordlist(&node->command.args);
+	i = 0;
+	while (i < node->command.redirs.length)
+	{
+		red = dynarr_get(&node->command.redirs, i++);
+		if (red->type != RED_HD && red->type != RED_HD_Q)
+			destroy_wordlist(&red->wl);
+		else
+		{
+			free(red->hd.file);
+			ft_free_mult((void **) red->hd.doc);
+		}
+	}
+	dynarr_delete(&node->command.redirs);
 }
 
 static void	destroy_logic(t_ast_node *node)
 {
-	t_logic_node	*l_node;
-
-	l_node = &node->node.logic;
-	destroy_node(&l_node->l);
-	destroy_node(&l_node->r);
+	destroy_node(&node->logic.l);
+	destroy_node(&node->logic.r);
 }
 
 static void	destroy_pipeline(t_ast_node *node)
 {
-	t_pipe_node	*p_node;
 	t_ast_node	**nodes;
 	size_t		i;
 
-	p_node = &node->node.pipe;
-	nodes = p_node->nodes.arr;
-	i = p_node->nodes.length;
+	nodes = node->pipe.nodes.arr;
+	i = node->pipe.nodes.length;
 	while (i--)
 		destroy_node(nodes + i);
-	dynarr_delete(&p_node->nodes);
+	dynarr_delete(&node->pipe.nodes);
 }
 
 static void	destroy_parenthesis(t_ast_node *node)
 {
-	t_paren_node	*p_node;
-
-	p_node = &node->node.paren;
-	destroy_node(&p_node->contents);
+	destroy_node(&node->paren.contents);
 }
 
 static void	(*g_destroylut[])(t_ast_node *) = {
@@ -67,5 +73,4 @@ void	destroy_node(t_ast_node **nodep)
 	g_destroylut[(*nodep)->type](*nodep);
 	free(*nodep);
 	*nodep = NULL;
-	return ;
 }

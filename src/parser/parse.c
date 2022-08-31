@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <minishell.h>
 
-bool	general_error(const char *where);
+void	syntax_error_type(t_tokentype type);
 
 uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 {
@@ -27,25 +27,34 @@ uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 	return (-1);
 }
 
+uint8_t	syntax_err(t_ast_node **dst, t_tokentype type)
+{
+	syntax_error_type(type);
+	return (error_status(dst, NULL, SYNTAX));
+}
+
 t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 {
 	if (type == PAR_OPEN)
 		return (parse_nodelist(parser, dst, true));
-	else if (type == WORD || type == VARIABLE || type == GLOB
-		|| (type >= RED_IN && type <= RED_APP))
+	else if (type == WORD || is_redir(type))
 		return (parse_command(parser, dst));
 	if (type == PIPE)
 		return (parse_pipeline(parser, dst));
 	else if (type == OR || type == AND)
 		return (parse_logic(parser, dst, type));
-	else
-		return (-1);
+	syntax_error_type(type);
+	return (error_status(dst, NULL, SYNTAX));
 }
 
-uint8_t	build_ast(t_dynarr *tokens, t_ast_node **dst)
+uint8_t	build_ast(const char *cmd, t_dynarr *tokens, t_ast_node **dst)
 {
 	t_parser	parser;
 
-	parser = ((t_parser){0, tokens});
-	return (parse_nodelist(&parser, dst, false));
+	if (tokens->length == 1)
+		return (SUCCESS);
+	parser = ((t_parser){cmd, 0, tokens});
+	if (parse_nodelist(&parser, dst, false) != END_OF_INPUT)
+		return (ERROR);
+	return (SUCCESS);
 }
