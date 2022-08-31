@@ -53,10 +53,11 @@ uint8_t	init_environment(void)
 
 	env_len = get_env_len();
 	vars = &g_globals.vars;
-	if (dynarr_create(vars, env_len + 1, sizeof(char *)))
-		if (copy_values(vars, env_len))
-			return (EXIT_SUCCESS);
+	if (dynarr_create(vars, env_len + 1, sizeof(char *))
+		&& copy_values(vars, env_len))
+		return (EXIT_SUCCESS);
 	perror("init_environment");
+	dynarr_delete(vars);
 	return (EXIT_FAILURE);
 }
 

@@ -25,7 +25,7 @@ static bool	put(t_dynarr *buf, const char *str, size_t len)
 	return (general_error("expand_variables"));
 }
 
-static bool	add_var(const char **cmd_p, t_dynarr *buf)
+static bool	add_var(const char **cmd_p, t_dynarr *buf, t_wordlist *cur)
 {
 	const char	*cmd = (*cmd_p) + 1;
 	const char	*var_end = var_name_end(cmd);
@@ -34,8 +34,9 @@ static bool	add_var(const char **cmd_p, t_dynarr *buf)
 	*cmd_p = var_end;
 	if (var_end == cmd)
 	{
-		if (*var_end != '?' && !ft_isdigit(*var_end))
-			return (put(buf, cmd - 1, 1));
+		if ((*var_end != '?' && !ft_isdigit(*var_end))
+			&& !(*var_end == '\0' && flag(cur->flags, APPEND_NEXT)))
+			return (put(buf, "$", 1));
 		(*cmd_p)++;
 		if (*var_end == '?')
 			return (put(buf, get_variable("?"), SIZE_MAX));
@@ -90,7 +91,7 @@ static bool	expand_word(t_wordlist **cur_p, t_wordlist *prev, t_dynarr *buf)
 			return (true);
 		else if (var == NULL
 			|| !put(buf, idx, var - idx)
-			|| !add_var(&var, buf))
+			|| !add_var(&var, buf, cur))
 			return (false);
 		idx = var;
 	}

@@ -17,18 +17,18 @@
 
 static uint8_t	add_variable(char *var)
 {
-	const char	*null = NULL;
 	char		**arr;
 	size_t		index;
 
 	index = g_globals.vars.length - 1;
-	if (!dynarr_grow(&g_globals.vars, g_globals.vars.length + 1))
-		return (EXIT_FAILURE);
-	arr = g_globals.vars.arr;
-	arr[index] = ft_strdup(var);
-	dynarr_addone(&g_globals.vars, &null);
-	if (arr[index] != NULL)
-		return (EXIT_SUCCESS);
+	if (dynarr_grow(&g_globals.vars, ++g_globals.vars.length))
+	{
+		arr = g_globals.vars.arr;
+		arr[index] = ft_strdup(var);
+		arr[index + 1] = NULL;
+		if (arr[index] != NULL)
+			return (EXIT_SUCCESS);
+	}
 	perror("add_variable");
 	return (EXIT_FAILURE);
 }
