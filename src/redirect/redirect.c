@@ -60,6 +60,7 @@ static const char	*expand_redir(t_redir *redir)
 		dynarr_delete(&buf);
 		return (NULL);
 	}
+	dynarr_delete(&buf);
 	if (redir->wl.next == NULL || redir->wl.next->next != NULL)
 	{
 		ft_putendl_fd("ambiguous redirect", STDERR_FILENO);
