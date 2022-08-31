@@ -16,13 +16,23 @@
 #include <libft.h>
 
 static const char			*g_builtin_names[] = {
-[CD] = "CD",
-[ECHO] = "ECHO",
-[ENV] = "ENV",
-[EXIT] = "EXIT",
-[EXPORT] = "EXPORT",
-[PWD] = "PWD",
-[UNSET] = "UNSET",
+[CD] = "cd",
+[ECHO] = "echo",
+[ENV] = "env",
+[EXIT] = "exit",
+[EXPORT] = "export",
+[PWD] = "pwd",
+[UNSET] = "unset",
+};
+
+static const uint8_t		g_builtin_lengths[] = {
+[CD] = 3,
+[ECHO] = 5,
+[ENV] = 4,
+[EXIT] = 5,
+[EXPORT] = 7,
+[PWD] = 4,
+[UNSET] = 6,
 };
 
 static const t_builtinfun	g_builtin_lut[] = {
@@ -47,13 +57,6 @@ uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
 	return (status);
 }
 
-static bool	equals_ignore_case(const char *a, const char *b)
-{
-	while (ft_toupper(*a++) == *b++)
-		if (*a == '\0')
-			return (true);
-	return (false);
-}
 
 t_builtin	identify_command(char **argv)
 {
@@ -64,7 +67,7 @@ t_builtin	identify_command(char **argv)
 	cur = EXIT;
 	while (cur != NONE)
 	{
-		if (equals_ignore_case(*argv, g_builtin_names[cur]))
+		if (ft_strncmp(*argv, g_builtin_names[cur], g_builtin_lengths[cur]) == 0)
 			return (cur);
 		--cur;
 	}
