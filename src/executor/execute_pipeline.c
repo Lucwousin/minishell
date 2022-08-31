@@ -29,7 +29,10 @@ static bool	init_pipe(t_pipeline *pipe, size_t len)
 	pipe->len = len;
 	pipe->pids = malloc(pipe->len * sizeof(pid_t));
 	if (pipe->pids == NULL)
-		return (perror(ERR_PIDS), EXIT_FAILURE);
+	{
+		perror(ERR_PIDS);
+		return (EXIT_FAILURE);
+	}
 	if (dup_stdio(pipe->orig))
 		return (EXIT_SUCCESS);
 	return (EXIT_FAILURE);
@@ -82,5 +85,6 @@ uint8_t	execute_pipeline(t_ast_node *node, bool must_exit)
 	if (status == EXIT_FAILURE)
 		perror(ERR_PIPEL);
 	status = wait_pids(p.pids, p.len);
+	free(p.pids);
 	return (try_exit(status, must_exit));
 }
