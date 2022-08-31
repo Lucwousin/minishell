@@ -28,46 +28,48 @@ static noreturn void	exit_(char *arg, uint8_t status)
 		else if (status == 127)
 		{
 			ft_putstr_fd(arg, STDERR_FILENO);
-			ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+			ft_putstr_fd(": Command not found\n", STDERR_FILENO);
 		}
 	}
 	exit(status);
 }
 
-static char	*search_path(char *name)
+static char	*search_path(char *name, char **path)
 {
-	char	**path;
-	char	**p;
-	char	*result;
+	const char	*orig_arg = name;
+	char		*result;
 
-	path = ft_split(get_variable("PATH"), ':');
-	if (path == NULL)
+	name = ft_strjoin("/", orig_arg);
+	if (name == NULL)
 		return (NULL);
-	p = (char **) path;
-	while (*p)
+	while (*path)
 	{
-		result = ft_strjoin(*p, name);
+		result = ft_strjoin(*path, name);
 		if (result == NULL || access(result, X_OK) == 0)
 			break ;
 		free(result);
 		result = NULL;
-		++p;
+		errno = 0;
+		++path;
 	}
-	ft_free_mult((void **) path);
+	free(name);
 	return (result);
 }
 
-static char	*find_executable(char *name)
+static char	*find_executable(char *orig_arg)
 {
+	char	**path;
 	char	*result;
 
-	if (ft_strchr(name, '/') != NULL)
-		return (ft_strdup(name));
-	name = ft_strjoin("/", name);
-	if (!name)
-		return (NULL);
-	result = search_path(name);
-	free(name);
+	if (ft_strchr(orig_arg, '/') != NULL)
+		return (ft_strdup(orig_arg));
+	path = ft_split(get_variable("PATH"), ':');
+	if (path != NULL && *path != NULL)
+		result = search_path(orig_arg, path);
+	else
+		result = ft_strdup(orig_arg);
+	if (path != NULL)
+		ft_free_mult((void **) path);
 	return (result);
 }
 
