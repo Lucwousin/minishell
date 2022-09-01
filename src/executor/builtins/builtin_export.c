@@ -15,7 +15,6 @@
 #include <environ.h>
 #include <libft.h>
 #include <stdio.h>
-#include <unistd.h>
 
 #define PRE_EXPORT	"export: "
 #define ERR_INVAL	": not a valid identifier"
@@ -88,15 +87,11 @@ static uint8_t	try_set_env(char *var)
 	char	*name_end;
 
 	name_end = var_name_end(var);
-	if (*name_end == '\0')
-	{
-		ft_putendl_fd(PRE_EXPORT WARN_IMPL1 WARN_IMPL2, STDERR_FILENO);
-		return (SUCCESS);
-	}
-	if (*name_end == '=' && var != name_end)
-		return (set_variable(var, name_end));
-	builtin_err(PRE_EXPORT, var, ERR_INVAL, ERROR);
-	return (ERROR);
+	if (var == name_end || (*name_end != '\0' && *name_end != '='))
+		return (builtin_err(PRE_EXPORT, var, ERR_INVAL, ERROR));
+	if (*name_end != '=')
+		return (builtin_err(PRE_EXPORT, var, WARN_IMPL1 WARN_IMPL2, SUCCESS));
+	return (set_variable(var, name_end));
 }
 
 uint8_t	builtin_export(char **argv)

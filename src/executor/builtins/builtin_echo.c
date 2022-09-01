@@ -26,7 +26,7 @@ static bool	should_print_newline(char **argv, size_t *i)
 			return (print);
 		while (argv[*i][j] == 'n')
 			++j;
-		if (argv[*i][j] != '\0')
+		if (argv[*i][j] != '\0' || j == 1)
 			return (print);
 		print = false;
 		*i = *i + 1;
