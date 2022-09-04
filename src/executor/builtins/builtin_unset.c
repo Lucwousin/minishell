@@ -24,6 +24,7 @@ static uint8_t	try_unset(char *str)
 	varp = find_variable(str, ft_strlen(str));
 	if (varp == NULL)
 		return (SUCCESS);
+	free((char *) *varp);
 	env = &g_globals.vars;
 	environ = env->arr;
 	to_move = env->length - (varp - environ + 1);
