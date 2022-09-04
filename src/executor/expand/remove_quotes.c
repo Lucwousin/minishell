@@ -30,6 +30,17 @@ static bool	set_from_buf(t_wordlist *dst, t_wordlist *next, t_dynarr *buf)
 	return (true);
 }
 
+static size_t	get_length(t_wordlist *word)
+{
+	const bool	quote = flag(word->flags, IS_QUOTED);
+	size_t		len;
+
+	len = ft_strlen(word->word + quote);
+	if (quote && !flag(word->flags, UNCLOSED_QUOTE))
+		--len;
+	return (len);
+}
+
 static bool	add_words(t_wordlist *dst, t_wordlist *cur, t_dynarr *buf)
 {
 	const bool	quote = flag(cur->flags, IS_QUOTED);
@@ -39,8 +50,8 @@ static bool	add_words(t_wordlist *dst, t_wordlist *cur, t_dynarr *buf)
 
 	if (flag(cur->flags, HAS_GLOB))
 		return (dst == cur || set_from_buf(dst, cur, buf));
-	len = ft_strlen(cur->word + quote);
-	if (len != 0 && !dynarr_add(buf, cur->word + quote, len - quote))
+	len = get_length(cur);
+	if (len != 0 && !dynarr_add(buf, cur->word + quote, len))
 		return (false);
 	next = cur->next;
 	if (dst != cur)

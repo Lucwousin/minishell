@@ -57,6 +57,7 @@ static void	warn_unclosed_quote(t_lexer *lexer)
 		return ;
 	if (lexer->str[token->end] == '"' && token->flags & D_QUOTED)
 		return ;
+	token->flags |= UNCLOSED_QUOTE;
 	ft_putstr_fd(Q_WARN1 Q_WARN2, STDERR_FILENO);
 	ft_putstr_fd("-->> ", STDERR_FILENO);
 	ft_putstr_fd(lexer->str + token->start, STDERR_FILENO);

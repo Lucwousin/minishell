@@ -55,6 +55,7 @@ typedef enum e_flag {
 	HAS_VAR = 8,
 	HAS_GLOB = 16,
 	REDIR_WORD = 32,
+	UNCLOSED_QUOTE = 64,
 	IS_QUOTED = S_QUOTED | D_QUOTED,
 }	t_flag;
 
