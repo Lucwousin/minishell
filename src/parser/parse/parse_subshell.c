@@ -46,6 +46,7 @@ static t_tokentype	get_next_type(t_parser *parser, t_tokentype type)
 
 static bool	check_done(t_tokentype type)
 {
+	// TODO: change to check continue? Only pipes or logic can be continued
 	return (type == END_OF_INPUT || type == PAR_OPEN || type == PAR_CLOSE);
 }
 
