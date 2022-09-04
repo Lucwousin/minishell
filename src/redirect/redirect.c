@@ -21,11 +21,9 @@
 #define DEST	0
 #define FLAG	1
 #define MODE	2
-#define CLOSE_ERR	"Something went wrong trying to close a file"
-#define ERR_OPEN	"Something went wrong trying to open a file"
-#define UNLINK_ERR	"Unlinking heredoc failed? This should never happen?"
-#define STDIN_ERR	"Redirecting to stdin failed"
-#define STDOUT_ERR	"Redirecting to stdout failed"
+#define CLOSE_ERR	"closing file failed"
+#define STDIN_ERR	"redirecting to stdin failed"
+#define STDOUT_ERR	"redirecting to stdout failed"
 
 static const int32_t	g_redir_opts[][3] = {
 [RED_IN - RED_IN] = {STDIN_FILENO, O_RDONLY, 0},
@@ -35,9 +33,10 @@ static const int32_t	g_redir_opts[][3] = {
 [RED_APP - RED_IN] = {STDOUT_FILENO, O_APPEND | O_CREAT | O_WRONLY, 0644}
 };
 
-static bool	error(const char *where)
+static bool	error(const char *file)
 {
-	perror(where);
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	perror(file);
 	return (false);
 }
 
@@ -82,9 +81,9 @@ bool	redirect(t_redir *redir, int32_t fds[2])
 			error(CLOSE_ERR);
 	fds[opts[DEST]] = open(file, opts[FLAG], opts[MODE]);
 	if (fds[opts[DEST]] == -1)
-		return (error(ERR_OPEN));
+		return (error(file));
 	else if (is_here && unlink(redir->hd.file) == -1)
-		error(UNLINK_ERR);
+		error(redir->hd.file);
 	return (true);
 }
 

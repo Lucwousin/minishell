@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include <libft.h>
 
+#define ERR_PRE	"minishell: "
+
 static const char			*g_builtin_names[] = {
 [CD] = "cd",
 [ECHO] = "echo",
@@ -47,6 +49,7 @@ static const t_builtinfun	g_builtin_lut[] = {
 
 uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
 {
+	ft_putstr_fd(ERR_PRE, STDERR_FILENO);
 	if (cmd)
 		ft_putstr_fd(cmd, STDERR_FILENO);
 	if (arg)
