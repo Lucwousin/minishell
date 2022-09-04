@@ -36,7 +36,7 @@ static size_t	get_length(t_wordlist *word)
 	size_t		len;
 
 	len = ft_strlen(word->word + quote);
-	if (quote && !flag(word->flags, UNCLOSED_QUOTE))
+	if (len != 0 && quote && !flag(word->flags, UNCLOSED_QUOTE))
 		--len;
 	return (len);
 }
