@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   parse_nodelist.c                                   :+:    :+:            */
+/*   parse_subshell.c                                   :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
@@ -18,10 +18,8 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 {
 	parser->idx += paren;
 	*type = ((t_token *) parser->tokens->arr)[parser->idx].type;
-	if (*type == WORD
-		|| is_redir(*type)
-		|| *type == PAR_OPEN
-		|| (!paren && *type == END_OF_INPUT))
+	if (*type == WORD || is_redir(*type)
+		|| (!paren && (*type == PAR_OPEN || *type == END_OF_INPUT)))
 		return (false);
 	syntax_error_type(*type);
 	return (true);
@@ -51,7 +49,7 @@ static bool	check_done(t_tokentype type)
 	return (type == END_OF_INPUT || type == PAR_OPEN || type == PAR_CLOSE);
 }
 
-t_tokentype	parse_nodelist(t_parser *parser, t_ast_node **dst, bool paren)
+t_tokentype	parse_subshell(t_parser *parser, t_ast_node **dst, bool paren)
 {
 	t_ast_node	**sub;
 	t_tokentype	type;

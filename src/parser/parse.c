@@ -36,7 +36,7 @@ uint8_t	syntax_err(t_ast_node **dst, t_tokentype type)
 t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 {
 	if (type == PAR_OPEN)
-		return (parse_nodelist(parser, dst, true));
+		return (parse_subshell(parser, dst, true));
 	else if (type == WORD || is_redir(type))
 		return (parse_command(parser, dst));
 	if (type == PIPE)
@@ -54,7 +54,7 @@ uint8_t	build_ast(const char *cmd, t_dynarr *tokens, t_ast_node **dst)
 	if (tokens->length == 1)
 		return (SUCCESS);
 	parser = ((t_parser){cmd, 0, tokens});
-	if (parse_nodelist(&parser, dst, false) != END_OF_INPUT)
+	if (parse_subshell(&parser, dst, false) != END_OF_INPUT)
 		return (ERROR);
 	return (SUCCESS);
 }
