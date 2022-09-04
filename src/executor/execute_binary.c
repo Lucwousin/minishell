@@ -28,7 +28,7 @@ static noreturn void	exit_(char *arg, uint8_t status)
 		else if (status == 127)
 		{
 			ft_putstr_fd(arg, STDERR_FILENO);
-			ft_putstr_fd(": Command not found\n", STDERR_FILENO);
+			ft_putstr_fd(": command not found\n", STDERR_FILENO);
 		}
 	}
 	exit(status);
@@ -66,8 +66,10 @@ static char	*find_executable(char *orig_arg)
 	path = ft_split(get_variable("PATH"), ':');
 	if (path != NULL && *path != NULL)
 		result = search_path(orig_arg, path);
-	else
+	else if (access(orig_arg, X_OK) == 0)
 		result = ft_strdup(orig_arg);
+	else
+		result = NULL;
 	if (path != NULL)
 		ft_free_mult((void **) path);
 	return (result);
