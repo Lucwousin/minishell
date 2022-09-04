@@ -19,11 +19,30 @@
 #define ERR_ARGS	"too many arguments"
 #define ERR_NUMS	": numeric argument required"
 
-static const char	*skip_whitespace(const char *arg)
+#define SPACE_TAB	" \t"
+#define WHITES		"\n\v\r\f"
+
+static const char	*skip_chars(const char *chars, const char *arg)
 {
-	while (*arg == ' ' || *arg == '\t' || *arg == '\n')
+	while (*arg && ft_strchr(chars, *arg))
 		++arg;
 	return (arg);
+}
+
+static bool	check_overflow(uint64_t parse, int8_t sign, char c)
+{
+	static const uint64_t	pos_max = 0x7fffffffffffffff;
+	static const uint64_t	neg_max = 0x8000000000000000;
+	uint64_t				cutoff;
+	int						max_val;
+
+	if (sign == 1)
+		cutoff = pos_max;
+	else
+		cutoff = neg_max;
+	max_val = (int) (cutoff % 10u) + '0';
+	cutoff /= 10;
+	return (parse > cutoff || (parse == cutoff && c > max_val));
 }
 
 static bool	parse_status(const char *arg, uint8_t *status)
@@ -31,7 +50,7 @@ static bool	parse_status(const char *arg, uint8_t *status)
 	int8_t		sign;
 	uint64_t	parse;
 
-	arg = skip_whitespace(arg);
+	arg = skip_chars(SPACE_TAB WHITES, arg);
 	sign = 1;
 	if (*arg == '-')
 		sign = -1;
@@ -40,16 +59,14 @@ static bool	parse_status(const char *arg, uint8_t *status)
 	parse = 0;
 	while (ft_isdigit(*arg))
 	{
+		if (check_overflow(parse, sign, *arg))
+			return (false);
 		parse *= 10;
 		parse += (*arg++ - '0');
-		if ((sign == 1 && parse > INT64_MAX) || (sign == -1 && parse > (uint64_t) INT64_MIN))
-			return (false);
 	}
-	arg = skip_whitespace(arg);
-	if (*arg != '\0')
-		return (false);
 	*status = sign * parse;
-	return (true);
+	arg = skip_chars(SPACE_TAB, arg);
+	return (*arg == '\0');
 }
 
 uint8_t	builtin_exit(char **argv)
@@ -59,10 +76,10 @@ uint8_t	builtin_exit(char **argv)
 
 	if (argv[1] == NULL)
 		exit(g_globals.exit);
+	arg = argv[1];
+	if (!parse_status(arg, &status))
+		exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, SYNTAX));
 	if (argv[2] != NULL)
 		return (builtin_err(PRE_EXIT, NULL, ERR_ARGS, ERROR));
-	arg = argv[1];
-	if (parse_status(arg, &status))
-		exit(status);
-	exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, SYNTAX));
+	exit(status);
 }
