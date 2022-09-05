@@ -17,34 +17,14 @@
 
 #define ERR_PRE	"minishell: "
 
-static const char			*g_builtin_names[] = {
-[CD] = "cd",
-[ECHO] = "echo",
-[ENV] = "env",
-[EXIT] = "exit",
-[EXPORT] = "export",
-[PWD] = "pwd",
-[UNSET] = "unset",
-};
-
-static const uint8_t		g_builtin_lengths[] = {
-[CD] = 3,
-[ECHO] = 5,
-[ENV] = 4,
-[EXIT] = 5,
-[EXPORT] = 7,
-[PWD] = 4,
-[UNSET] = 6,
-};
-
-static const t_builtinfun	g_builtin_lut[] = {
-[CD] = builtin_cd,
-[ECHO] = builtin_echo,
-[ENV] = builtin_env,
-[EXIT] = builtin_exit,
-[EXPORT] = builtin_export,
-[PWD] = builtin_pwd,
-[UNSET] = builtin_unset,
+static const t_builtin_info	g_bi_info[] = {
+[CD] = {"cd", 3, builtin_cd},
+[ECHO] = {"echo", 5, builtin_echo},
+[ENV] = {"env", 4, builtin_env},
+[EXIT] = {"exit", 5, builtin_exit},
+[EXPORT] = {"export", 7, builtin_export},
+[PWD] = {"pwd", 4, builtin_pwd},
+[UNSET] = {"unset", 6, builtin_unset},
 };
 
 uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
@@ -60,7 +40,6 @@ uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
 	return (status);
 }
 
-
 t_builtin	identify_command(char **argv)
 {
 	t_builtin	cur;
@@ -70,7 +49,7 @@ t_builtin	identify_command(char **argv)
 	cur = EXIT;
 	while (cur != NONE)
 	{
-		if (ft_strncmp(*argv, g_builtin_names[cur], g_builtin_lengths[cur]) == 0)
+		if (ft_strncmp(*argv, g_bi_info[cur].name, g_bi_info[cur].len) == 0)
 			return (cur);
 		--cur;
 	}
@@ -79,7 +58,7 @@ t_builtin	identify_command(char **argv)
 
 uint8_t	execute_builtin(t_builtin builtin, char **argv)
 {
-	g_globals.exit = g_builtin_lut[builtin](argv);
+	g_globals.exit = g_bi_info[builtin].fun(argv);
 	if (g_globals.exit != EXIT_SUCCESS
 		&& (builtin == EXIT || builtin == EXPORT || builtin == UNSET))
 		return (EXIT_FAILURE);

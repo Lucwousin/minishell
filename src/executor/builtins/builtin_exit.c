@@ -40,7 +40,7 @@ static bool	check_overflow(uint64_t parse, int8_t sign, char c)
 		cutoff = pos_max;
 	else
 		cutoff = neg_max;
-	max_val = (int) (cutoff % 10u) + '0';
+	max_val = (int)(cutoff % 10u) + '0';
 	cutoff /= 10;
 	return (parse > cutoff || (parse == cutoff && c > max_val));
 }

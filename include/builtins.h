@@ -28,6 +28,12 @@ typedef enum e_builtin {
 
 typedef uint8_t	(*t_builtinfun)(char **);
 
+typedef struct s_builtin_info {
+	const char		*name;
+	uint8_t			len;
+	t_builtinfun	fun;
+}	t_builtin_info;
+
 /**
  * Check if the name (first argument) of a command corresponds to a builtin
  *
