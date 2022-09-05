@@ -16,10 +16,6 @@
 
 #define IFS	" \t\n"
 
-//TODO: export A=' ' && echo "@"$A "@"
-// ^ prints @  @ instead of @ @
-// echo "@"$A"@"  -- dit ook, empty var niet correct removed!
-
 static bool	add_word(t_wordlist *next, t_wordlist **prev, char *str, size_t len)
 {
 	t_wordlist	*node;
@@ -58,6 +54,8 @@ static bool	split_word(t_wordlist *cur, t_wordlist *prev)
 			++str;
 		while (str[length] && ft_strchr(IFS, str[length]) == NULL)
 			++length;
+		if (length == 0)
+			break ;
 		if (str[length] == '\0' && str == cur->word)
 			return (true);
 		if (!add_word(cur, &prev, str, length))
