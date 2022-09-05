@@ -62,7 +62,11 @@ static char	*find_executable(char *orig_arg)
 	char	*result;
 
 	if (ft_strchr(orig_arg, '/') != NULL)
-		return (ft_strdup(orig_arg));
+	{
+		if (access(orig_arg, X_OK) == 0)
+			return (ft_strdup(orig_arg));
+		return (NULL);
+	}
 	path = ft_split(get_variable("PATH"), ':');
 	if (path != NULL && *path != NULL)
 		result = search_path(orig_arg, path);
