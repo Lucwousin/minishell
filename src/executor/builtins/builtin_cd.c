@@ -20,6 +20,10 @@
 #define ARGS_NOT_IMPL	"no args cd is not implemented"
 #define TOO_MANY_ARGS	"too many arguments"
 
+/*
+ * cd on cluster macs does not check argument count. I think that's a useful
+ * check, so I'm keeping it in here.
+ */
 uint8_t	builtin_cd(char **argv)
 {
 	char	*path;
