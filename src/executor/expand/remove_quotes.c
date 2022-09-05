@@ -21,9 +21,9 @@ static bool	set_from_buf(t_wordlist *dst, t_wordlist *next, t_dynarr *buf)
 	if (!dynarr_addone(buf, ""))
 		return (false);
 	word = ft_strdup(buf->arr);
-	buf->length = 0;
 	if (word == NULL)
 		return (false);
+	buf->length = 0;
 	free(dst->word);
 	dst->word = word;
 	dst->next = next;
@@ -54,14 +54,15 @@ static bool	add_words(t_wordlist *dst, t_wordlist *cur, t_dynarr *buf)
 	if (len != 0 && !dynarr_add(buf, cur->word + quote, len))
 		return (false);
 	next = cur->next;
+	if ((append && !add_words(dst, next, buf)) || \
+		(!append && !set_from_buf(dst, next, buf)))
+		return (false);
 	if (dst != cur)
 	{
 		free(cur->word);
 		free(cur);
 	}
-	if (append)
-		return (add_words(dst, next, buf));
-	return (set_from_buf(dst, next, buf));
+	return (true);
 }
 
 bool	remove_quotes(t_wordlist *cur, t_dynarr *buf)
