@@ -1,0 +1,34 @@
+#subshell:
+)
+||
+&&
+|
+(
+()
+(||)
+(&&)
+(|)
+#redirections:
+>
+<
+<<
+>>
+> ||
+> (
+>> &&
+<< |
+#pipelines:
+echo |
+echo | |
+echo | ||
+echo | &&
+echo | )
+#logic:
+echo &&
+echo ||
+echo && )
+echo || )
+echo && |
+echo || |
+echo && &&
+echo || &&
