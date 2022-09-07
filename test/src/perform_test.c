@@ -58,7 +58,7 @@ static void	test(char *line)
 	handler.hooks[TOKENIZE] = tokenize_hook;
 	handler.hooks[PARSE] = parse_hook;
 	status = handle_input_target(&handler, target);
-	printf("`%s' done: status %u\n\n", line, g_globals.exit);
+	printf("`%s' done: status %u\n\n", line, g_env.exit);
 	clean_handler(&handler, status);
 }
 
@@ -70,7 +70,7 @@ void	perform_test(void)
 	{
 		line = get_next_line(STDIN_FILENO);
 		if (line == NULL)
-			exit(0);
+			break ;
 		fflush(stdout);
 		line[ft_strlen(line) - 1] = '\0';
 		if (*line != '#')
@@ -80,4 +80,5 @@ void	perform_test(void)
 		free(line);
 		fflush(stdout);
 	}
+	exit(g_env.exit);
 }

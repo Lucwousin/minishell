@@ -15,7 +15,7 @@
 # define VALGRIND 0
 #endif
 
-t_sh_env	g_globals;
+t_sh_env	g_env;
 
 static int	ignore(struct dirent *entry, int argc, char **argv)
 {
@@ -41,37 +41,27 @@ static char	*get_file_name(const char *pre, const char *test, const char *suf)
 	return (name);
 }
 
-static void	redirect(const char *test, bool gen)
+static int	run_test(char *file, bool gen)
 {
-	int		fd;
-	char	*file;
+	char	*files[2];
+	int32_t	fds[2];
 
-	file = get_file_name("./test/cases/", test, NULL);
-	fd = open(file, O_RDONLY);
-	dup2(fd, STDIN_FILENO);
-	close(fd);
-	free(file);
-	file = get_file_name("./test/output/", test, gen ? "-expected" : "-output");
-	fd = open(file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	dup2(fd, STDOUT_FILENO);
-	dup2(fd, STDERR_FILENO);
-	close(fd);
-	free(file);
-	if (!VALGRIND)
-		return ;
-	file = get_file_name("./test/output/", test, "-valgrind");
-	setenv("valgrind_log", file, true);
-}
-
-static int	run_test(const char *file, DIR *test_dir, bool generate)
-{
 	pid_t	pid = fork();
 	if (pid == -1)
 		return (2);
 	if (pid != 0)
 		return (0);
-	redirect(file, generate);
-	closedir(test_dir);
+	files[0] = get_file_name("./test/cases/", file, NULL);
+	files[1] = get_file_name("./test/output/", file, gen ? "-expected" : "-output");
+	fds[0] = open(files[0], O_RDONLY);
+	fds[1] = open(files[1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	free(files[0]);
+	free(files[1]);
+	dup2(fds[0], STDIN_FILENO);
+	dup2(fds[1], STDOUT_FILENO);
+	dup2(fds[1], STDERR_FILENO);
+	close(fds[0]);
+	close(fds[1]);
 	perform_test();
 	return (69);
 }
@@ -92,7 +82,7 @@ static int	run_tests(int argc, char **argv, bool generate)
 			break ;
 		if (entry->d_name[0] == '.' || ignore(entry, argc, argv))
 			continue ;
-		if (run_test(entry->d_name, test_dir, generate))
+		if (run_test(entry->d_name, generate))
 			break ;
 	}
 	if (errno != 0) {
@@ -108,12 +98,20 @@ int	main(int argc, char **argv)
 {
 	const bool	generate = argc > 1 && strcmp(argv[1], "--generate") == 0;
 	int			rv;
+	int			stat;
 
 	if (generate)
 		--argc, ++argv;
 	init_environment();
 	rv = run_tests(--argc, ++argv, generate);
+	printf("run_tests returned: %d\n", rv);
 	clean_environment();
-	while (wait(NULL) > 0);
+	while (wait(&stat) > 0)
+	{
+		if (WIFEXITED(stat))
+			printf("test returned: %d\n", WEXITSTATUS(stat));
+		if (WIFSIGNALED(stat))
+			printf("test signaled: %d\n", WSTOPSIG(stat));
+	}
 	return (rv);
 }
