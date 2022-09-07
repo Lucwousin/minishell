@@ -139,7 +139,6 @@ endif
 
 #		LINUX SPECIFIC LINKIG
 ifeq ($(shell uname), Linux)
-	LIBS += -lhistory
 	VALGRIND = valgrind --show-reachable=yes --leak-check=full --log-fd=3
 	VALGRIND_D = -DVALGRIND=1
 endif
@@ -176,18 +175,8 @@ re: fclean
 	@$(MAKE)
 
 test: $(TEST_LIB)
-	@$(COMPILE) $(TEST_SRCP) $(LIBS) $(TEST_LIBS) $(VALGRIND_D) -o $(TEST_EXE)
+	@$(COMPILE) $(TEST_SRCP) $(TEST_LIBS) $(VALGRIND_D) -o $(TEST_EXE)
 	@$(VALGRIND) $(TEST_EXE)
-#	@$(foreach test, $(TEST_SRCP), \
-#		echo "Running test $(test)"; \
-#		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-#		$(CC) $(test) $(LIBS) $(TEST_LIBS) $(CFLAGS) -o $(TEST_EXE); \
-#		< $(TESTNAME) $(VALGRIND) $(TEST_EXE) > $(TESTNAME)-output 2> /dev/null; \
-#		rm -f $(TESTNAME)-diff; \
-#		diff $(TESTNAME)-expected $(TESTNAME)-output > $(TESTNAME)-diff; \
-#		if [ -s $(TESTNAME)-diff ]; then echo "[KO] $(test) - files differ"; fi; \
-#		echo "Test $(test) done"; \
-#	)
 #	@rm -f $(TEST_EXE)
 
 $(TEST_LIB): $(NAME) $(TEST_LIB_OBJS) $(LIBFT_L)
@@ -205,5 +194,6 @@ generate_test_files: $(TEST_LIBS)
 cleantest:
 	@rm -f $(TEST_RESD)*-diff $(TEST_RESD)*-output
 	@rm -f $(TEST_LIB)
+	@rm -f $(TEST_EXE)
 
-.PHONY: all clean fclean re test
+.PHONY: all clean fclean re test cleantest generate_test_files
