@@ -10,11 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <input.h>
 #include <environ.h>
 #include <libft.h>
-
-bool	general_error(const char *where);
+#include <error.h>
 
 static bool	put(t_dynarr *buf, const char *str, size_t len)
 {

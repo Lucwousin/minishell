@@ -14,14 +14,15 @@
 #include <signals.h>
 #include <libft.h>
 #include <unistd.h>
-#include "execute.h"
+#include <error.h>
 
 #define HEX_CHARS		"0123456789abcdef"
 #define PREFIX			"/tmp/ms_"
 #define PREFIX_L		8
 #define NAME_TOO_LONG	"Heredoc delimiter is too long! Can't generate filename"
 
-bool	general_error(const char *where);
+// Prototype so execute.h does not need to be included
+bool	remove_quotes(t_wordlist *cur, t_dynarr *buf);
 
 static void	add_pointer(char *name, uint64_t pointer)
 {

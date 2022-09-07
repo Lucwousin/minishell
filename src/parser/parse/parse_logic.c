@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include <parse.h>
-
-bool	general_error(const char *where);
-void	syntax_error_type(t_tokentype type);
+#include <error.h>
 
 static bool	check_start_syntax(t_parser *parser, t_tokentype *type)
 {
@@ -23,7 +21,7 @@ static bool	check_start_syntax(t_parser *parser, t_tokentype *type)
 	*type = token->type;
 	if (*type == WORD || *type == PAR_OPEN || is_redir(*type))
 		return (false);
-	syntax_error_type(*type);
+	syntax_error(*type);
 	return (true);
 }
 

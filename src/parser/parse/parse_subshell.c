@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include <parse.h>
-
-void	syntax_error_type(t_tokentype type);
+#include <error.h>
 
 static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 {
@@ -23,7 +22,7 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 		|| *type == PAR_OPEN
 		|| (!paren && *type == END_OF_INPUT))
 		return (false);
-	syntax_error_type(*type);
+	syntax_error(*type);
 	return (true);
 }
 
@@ -32,7 +31,7 @@ static bool	check_end_syntax(t_tokentype type, bool parenthesis)
 	if ((type == PAR_CLOSE && parenthesis) || \
 		(type == END_OF_INPUT && !parenthesis))
 		return (false);
-	syntax_error_type(type);
+	syntax_error(type);
 	return (true);
 }
 

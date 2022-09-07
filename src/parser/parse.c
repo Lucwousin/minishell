@@ -13,8 +13,7 @@
 #include <parse.h>
 #include <stdio.h>
 #include <minishell.h>
-
-void	syntax_error_type(t_tokentype type);
+#include <error.h>
 
 uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 {
@@ -29,7 +28,7 @@ uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 
 uint8_t	syntax_err(t_ast_node **dst, t_tokentype type)
 {
-	syntax_error_type(type);
+	syntax_error(type);
 	return (error_status(dst, NULL, SYNTAX));
 }
 
@@ -43,7 +42,7 @@ t_tokentype	parse_node(t_parser *parser, t_tokentype type, t_ast_node **dst)
 		return (parse_pipeline(parser, dst));
 	else if (type == OR || type == AND)
 		return (parse_logic(parser, dst, type));
-	syntax_error_type(type);
+	syntax_error(type);
 	return (error_status(dst, NULL, SYNTAX));
 }
 

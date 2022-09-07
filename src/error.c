@@ -15,43 +15,67 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#define ERR_PRE				"minishell: "
 #define ERROR_MSG_PREFIX	"minishell: error in "
-#define SYNTAX_MSG_PREFIX	"minishell: syntax error near unexpected token `"
-#define SYNTAX_MSG_SUFFIX	"'\n"
-#define NEWLINE_NAME		"newline"
+#define SYNTAX_PRE			"syntax error near unexpected token `"
+#define SYNTAX_SUF			"'\n"
 
-bool	general_error(const char *where)
+static const char	*g_type_strs[] = {
+[END_OF_INPUT] = "newline",
+[PAR_OPEN] = "(",
+[PAR_CLOSE] = ")",
+[OR] = "||",
+[AND] = "&&",
+[PIPE] = "|",
+[RED_IN] = "<",
+[RED_HD] = "<<",
+[RED_HD_Q] = "<<",
+[RED_OUT] = ">",
+[RED_APP] = ">>",
+[WORD] = "(a word)"
+};
+
+bool	print_error(const char **args, bool use_perror, bool add_colons)
 {
-	ft_putstr_fd(ERROR_MSG_PREFIX, STDERR_FILENO);
-	perror(where);
+	size_t	i;
+
+	ft_putstr_fd(ERR_PRE, STDERR_FILENO);
+	i = 0;
+	while (args[i])
+	{
+		if (args[i + 1] == NULL && use_perror)
+			perror(args[i]);
+		else
+		{
+			ft_putstr_fd(args[i], STDERR_FILENO);
+			if (args[i + 1] && add_colons)
+				ft_putstr_fd(": ", STDERR_FILENO);
+		}
+		++i;
+	}
+	if (!use_perror)
+		ft_putchar_fd('\n', STDERR_FILENO);
 	return (false);
 }
 
-void	syntax_error(const char *where)
+bool	general_error(const char *where)
 {
-	ft_putstr_fd(SYNTAX_MSG_PREFIX, STDERR_FILENO);
-	if (*where == '\n')
-		ft_putstr_fd(NEWLINE_NAME, STDERR_FILENO);
-	else
-		ft_putstr_fd((char *) where, STDERR_FILENO);
-	ft_putstr_fd(SYNTAX_MSG_SUFFIX, STDERR_FILENO);
-}
-
-void	syntax_error_type(t_tokentype type)
-{
-	static const char	*strs[] = {
-	[END_OF_INPUT] = "\n",
-	[PAR_OPEN] = "(",
-	[PAR_CLOSE] = ")",
-	[OR] = "||",
-	[AND] = "&&",
-	[PIPE] = "|",
-	[RED_IN] = "<",
-	[RED_HD] = "<<",
-	[RED_HD_Q] = "<<",
-	[RED_OUT] = ">",
-	[RED_APP] = ">>"
+	const char	*err[] = {
+		where,
+		NULL
 	};
 
-	return (syntax_error(strs[type]));
+	return (print_error(err, true, true));
+}
+
+void	syntax_error(t_tokentype type)
+{
+	const char	*err[] = {
+		SYNTAX_PRE,
+		g_type_strs[type],
+		SYNTAX_SUF,
+		NULL
+	};
+
+	print_error(err, false, true);
 }

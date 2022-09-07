@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include <parse.h>
-
-bool	general_error(const char *where);
-void	syntax_error_type(t_tokentype type);
+#include <error.h>
 
 static bool	add_node(t_ast_node *node, t_ast_node **sub)
 {

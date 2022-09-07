@@ -20,8 +20,6 @@
 
 #define FLAG_C	"-c"
 
-bool	general_error(const char *where);
-
 static uint8_t	init_minishell(void)
 {
 	if (init_signals() != EXIT_SUCCESS)

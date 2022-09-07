@@ -90,7 +90,9 @@ INCS := minishell.h															\
 		builtins.h															\
 		environ.h															\
 		signals.h															\
-		ms_types.h
+		ms_types.h															\
+		error.h
+
 INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
