@@ -32,7 +32,7 @@ echo "$notexisting" but_null_word
 echo '$notexisting' but quoted
 echo $notexisting,comma
 echo test$notexisting
-echo $? == 0 ? true
+echo $? == 0 true
 "echo" test
 'echo' test
 #
@@ -56,22 +56,10 @@ lsl
 echo hey | wc
 echo hey | cat | wc -c
 echo hey | cat | cat |cat| "cat"|'cat'|cat | ca"t" | c'at' |''cat"" | "c"at | 'ca't
+echo hey || cat Makefile | wc -c
 env
 cd
 cd whatever
 export
-export var=changeme
-export var="ooh "
-echo $var
-echo "$var"
-echo foo$var
-echo $varr
-echo $var"t"
-echo "t"$var
-echo '$var'
-unset var cheese milk
+unset cheese milk
 export 1=no ;''sa=no
-echo *
-echo i*
-echo incl*ude
-echo include*
