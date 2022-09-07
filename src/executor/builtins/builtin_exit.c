@@ -15,9 +15,9 @@
 #include <libft.h>
 #include <stdlib.h>
 
-#define PRE_EXIT	"exit: "
+#define PRE_EXIT	"exit"
 #define ERR_ARGS	"too many arguments"
-#define ERR_NUMS	": numeric argument required"
+#define ERR_NUMS	"numeric argument required"
 
 #define SPACE_TAB	" \t"
 #define WHITES		"\n\v\r\f"

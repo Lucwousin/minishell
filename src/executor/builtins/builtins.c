@@ -12,10 +12,8 @@
 
 #include <builtins.h>
 #include <minishell.h>
-#include <unistd.h>
 #include <libft.h>
-
-#define ERR_PRE	"minishell: "
+#include <error.h>
 
 static const t_builtin_info	g_bi_info[] = {
 [CD] = {"cd", 3, builtin_cd},
@@ -27,16 +25,21 @@ static const t_builtin_info	g_bi_info[] = {
 [UNSET] = {"unset", 6, builtin_unset},
 };
 
-uint8_t	builtin_err(char *cmd, char *arg, char *msg, uint8_t status)
+uint8_t	builtin_err(
+		const char *cmd, const char *arg, const char *msg, uint8_t status)
 {
-	ft_putstr_fd(ERR_PRE, STDERR_FILENO);
+	const char	*err[4];
+	size_t		i;
+
+	i = 0;
 	if (cmd)
-		ft_putstr_fd(cmd, STDERR_FILENO);
+		err[i++] = cmd;
 	if (arg)
-		ft_putstr_fd(arg, STDERR_FILENO);
+		err[i++] = arg;
 	if (msg)
-		ft_putstr_fd(msg, STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
+		err[i++] = msg;
+	err[i] = NULL;
+	print_error(err, false, true);
 	return (status);
 }
 

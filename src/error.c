@@ -16,7 +16,6 @@
 #include <stdio.h>
 
 #define ERR_PRE				"minishell: "
-#define ERROR_MSG_PREFIX	"minishell: error in "
 #define SYNTAX_PRE			"syntax error near unexpected token `"
 #define SYNTAX_SUF			"'\n"
 
@@ -77,5 +76,5 @@ void	syntax_error(t_tokentype type)
 		NULL
 	};
 
-	print_error(err, false, true);
+	print_error(err, false, false);
 }

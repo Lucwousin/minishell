@@ -16,9 +16,9 @@
 #include <libft.h>
 #include <stdio.h>
 
-#define PRE_EXPORT	"export: "
-#define ERR_INVAL	": not a valid identifier"
-#define WARN_IMPL1	": export without value exports a shell variable, "
+#define PRE_EXPORT	"export"
+#define ERR_INVAL	"not a valid identifier"
+#define WARN_IMPL1	"export without value exports a shell variable, "
 #define WARN_IMPL2	"which are not implemented. ignoring"
 
 static void	sort_strings(char **strs, size_t len)

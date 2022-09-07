@@ -144,6 +144,7 @@ uint8_t		builtin_unset(char **argv);
 /**
  * Print a message on stderr and exit with status
  */
-uint8_t		builtin_err(char *cmd, char *arg, char *msg, uint8_t status);
+uint8_t		\
+builtin_err(const char *cmd, const char *arg, const char *msg, uint8_t status);
 
 #endif //BUILTINS_H
