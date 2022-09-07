@@ -82,8 +82,8 @@ uint8_t	minishell(int argc, char **argv)
 	if (flag_c && argc > 2)
 		handle_input(argv[2]);
 	else if (input_readline() == EXIT_FAILURE)
-		if (g_globals.exit == EXIT_SUCCESS)
-			g_globals.exit = EXIT_FAILURE;
+		if (g_env.exit == EXIT_SUCCESS)
+			g_env.exit = EXIT_FAILURE;
 	clean_environment();
-	return (g_globals.exit);
+	return (g_env.exit);
 }

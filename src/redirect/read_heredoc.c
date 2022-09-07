@@ -22,7 +22,6 @@
 #define WARN_EOF_3	"')\n"
 
 #define ERR_ALLOC	"heredoc: Error allocating memory"
-#define ERR_OPEN	"heredoc: Error opening heredoc"
 
 static void	warn_eof(const char *delim, size_t delim_len)
 {
@@ -56,7 +55,7 @@ static bool	get_line(char **line)
 {
 	write(STDOUT_FILENO, ">", 2);
 	*line = get_next_line(STDIN_FILENO);
-	return (*line != NULL && !g_globals.interrupted);
+	return (*line != NULL && !g_env.interrupted);
 }
 
 static bool	get_lines(t_dynarr *doc, char *delim, size_t delim_len)
@@ -72,7 +71,7 @@ static bool	get_lines(t_dynarr *doc, char *delim, size_t delim_len)
 		free(line);
 		return (error(ERR_ALLOC, doc, delim));
 	}
-	if (line == NULL && !g_globals.interrupted)
+	if (line == NULL && !g_env.interrupted)
 		warn_eof(delim, delim_len);
 	free(line);
 	return (true);
@@ -87,7 +86,7 @@ bool	read_heredoc(t_redir *redir, char *delim, size_t delim_len)
 		return (error(ERR_ALLOC, NULL, delim));
 	if (!get_lines(&doc, delim, delim_len))
 		return (false);
-	if (g_globals.interrupted)
+	if (g_env.interrupted)
 		return (error(NULL, &doc, delim));
 	if (!dynarr_addone(&doc, &null))
 		return (error(ERR_ALLOC, &doc, delim));

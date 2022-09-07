@@ -20,14 +20,15 @@ static uint8_t	add_variable(char *var)
 	char		**arr;
 	size_t		index;
 
-	index = g_globals.vars.length - 1;
-	if (dynarr_grow(&g_globals.vars, ++g_globals.vars.length))
+	index = g_env.vars.length - 1;
+	if (dynarr_grow(&g_env.vars, g_env.vars.length + 1))
 	{
-		arr = g_globals.vars.arr;
+		arr = g_env.vars.arr;
 		arr[index] = ft_strdup(var);
 		arr[index + 1] = NULL;
 		if (arr[index] != NULL)
 			return (EXIT_SUCCESS);
+		--g_env.vars.length;
 	}
 	perror("add_variable");
 	return (EXIT_FAILURE);

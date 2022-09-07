@@ -20,7 +20,7 @@ static const char	*get_exit_str(void)
 	int32_t		exit_status;
 	uint8_t		i;
 
-	exit_status = g_globals.exit;
+	exit_status = g_env.exit;
 	i = 4;
 	val[--i] = '\0';
 	while (true)
@@ -37,7 +37,7 @@ const char	**find_variable(const char *var, size_t len)
 {
 	const char		**env;
 
-	env = g_globals.vars.arr;
+	env = g_env.vars.arr;
 	while (*env)
 	{
 		if (ft_strncmp(*env, var, len) == 0 && (*env)[len] == '=')

@@ -40,7 +40,7 @@ uint8_t	handle_input_target(t_in_handler *h, t_hstate target)
 {
 	uint8_t	status;
 
-	g_globals.interrupted = false;
+	g_env.interrupted = false;
 	while (h->state <= target)
 	{
 		if (h->state == TOKENIZE)
@@ -49,7 +49,7 @@ uint8_t	handle_input_target(t_in_handler *h, t_hstate target)
 			status = build_ast(h->input, &h->tokens, &h->root_node);
 		else if (h->state == EXECUTE)
 			status = execute(h->root_node);
-		if (g_globals.interrupted || status != SUCCESS)
+		if (g_env.interrupted || status != SUCCESS)
 			break ;
 		if (h->hooks[h->state] != NULL)
 			h->hooks[h->state](h);
@@ -65,9 +65,9 @@ uint8_t	handle_input(const char *input)
 
 	init_handler(&handler, input);
 	status = handle_input_target(&handler, EXECUTE);
-	if (status != SUCCESS && g_globals.exit == 0)
-		g_globals.exit = status;
-	if (g_globals.interrupted)
+	if (status != SUCCESS && g_env.exit == 0)
+		g_env.exit = status;
+	if (g_env.interrupted)
 		printf("\n");
 	return (clean_handler(&handler, status));
 }

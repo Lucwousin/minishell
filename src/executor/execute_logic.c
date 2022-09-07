@@ -17,9 +17,9 @@ static bool	should_exe_next(t_tokentype type, uint8_t status)
 	if (status != EXIT_SUCCESS)
 		return (false);
 	if (type == OR)
-		return (g_globals.exit != 0);
+		return (g_env.exit != 0);
 	else
-		return (g_globals.exit == 0);
+		return (g_env.exit == 0);
 }
 
 uint8_t	execute_logic(t_ast_node *node, bool must_exit)

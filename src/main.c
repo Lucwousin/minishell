@@ -12,7 +12,7 @@
 
 #include <minishell.h>
 
-t_sh_env	g_globals;
+t_sh_env	g_env;
 
 int	main(int argc, char **argv)
 {

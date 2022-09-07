@@ -52,7 +52,7 @@ uint8_t	init_environment(void)
 	size_t		env_len;
 
 	env_len = get_env_len();
-	vars = &g_globals.vars;
+	vars = &g_env.vars;
 	if (dynarr_create(vars, env_len + 1, sizeof(char *))
 		&& copy_values(vars, env_len))
 		return (EXIT_SUCCESS);
@@ -65,8 +65,8 @@ void	clean_environment(void)
 {
 	char	**env;
 
-	env = g_globals.vars.arr;
+	env = g_env.vars.arr;
 	while (*env)
 		free(*env++);
-	dynarr_delete(&g_globals.vars);
+	dynarr_delete(&g_env.vars);
 }

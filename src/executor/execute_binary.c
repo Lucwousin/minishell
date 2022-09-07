@@ -89,7 +89,7 @@ noreturn void	execute_binary(char **argv)
 	path = find_executable(argv[0]);
 	if (path == NULL)
 		exit_(argv[0], 127);
-	execve(path, argv, g_globals.vars.arr);
+	execve(path, argv, g_env.vars.arr);
 	free(path);
 	exit_(argv[0], 126);
 }

@@ -58,8 +58,8 @@ t_builtin	identify_command(char **argv)
 
 uint8_t	execute_builtin(t_builtin builtin, char **argv)
 {
-	g_globals.exit = g_bi_info[builtin].fun(argv);
-	if (g_globals.exit != EXIT_SUCCESS
+	g_env.exit = g_bi_info[builtin].fun(argv);
+	if (g_env.exit != EXIT_SUCCESS
 		&& (builtin == EXIT || builtin == EXPORT || builtin == UNSET))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

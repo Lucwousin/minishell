@@ -25,7 +25,7 @@ static uint8_t	try_unset(char *str)
 	if (varp == NULL)
 		return (SUCCESS);
 	free((char *) *varp);
-	env = &g_globals.vars;
+	env = &g_env.vars;
 	environ = env->arr;
 	to_move = env->length - (varp - environ + 1);
 	ft_memmove(varp, varp + 1, to_move * sizeof(char *));

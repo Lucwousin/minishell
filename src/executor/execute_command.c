@@ -84,7 +84,7 @@ static uint8_t \
 	cleanup_exit(uint8_t status, bool must_exit, bool set_exit, char **argv)
 {
 	if (set_exit)
-		g_globals.exit = status;
+		g_env.exit = status;
 	free(argv);
 	return (try_exit(status, must_exit));
 }

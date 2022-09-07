@@ -99,7 +99,7 @@ uint8_t	builtin_export(char **argv)
 	uint8_t		status;
 
 	if (argv[1] == NULL)
-		return (export_print(g_globals.vars.arr, g_globals.vars.length - 1));
+		return (export_print(g_env.vars.arr, g_env.vars.length - 1));
 	status = SUCCESS;
 	while (*(++argv))
 		status |= try_set_env(*argv);

@@ -21,7 +21,7 @@ static void	rl_interrupt(int32_t sig)
 	printf("\n");
 	rl_on_new_line();
 	rl_redisplay();
-	g_globals.exit = 0x80 + sig;
+	g_env.exit = 0x80 + sig;
 }
 
 uint8_t	signal_readline_interrupt(void)

@@ -127,7 +127,7 @@ bool	remove_quotes(t_wordlist *cur, t_dynarr *buf);
 static inline uint8_t	try_exit(uint8_t status, bool must_exit)
 {
 	if (must_exit)
-		exit(g_globals.exit);
+		exit(g_env.exit);
 	else
 		return (status);
 }

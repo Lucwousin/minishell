@@ -45,7 +45,7 @@ typedef struct s_shell_environment {
 	struct sigaction	orig_signals[2];
 }	t_sh_env;
 
-extern t_sh_env	g_globals;
+extern t_sh_env	g_env;
 
 /**
  * Main entry point of the process. This is the only function called by main.

@@ -19,7 +19,7 @@ uint8_t	builtin_env(char **argv)
 	const char	**env;
 
 	(void) argv;
-	env = g_globals.vars.arr;
+	env = g_env.vars.arr;
 	while (*env)
 		printf("%s\n", *env++);
 	return (SUCCESS);

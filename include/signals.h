@@ -33,7 +33,7 @@ uint8_t	reset_signals(void);
 /**
  * Set the standard signal handler for SIGINT
  *
- * Sets g_globals.interrupted to true, and g_globals.exit to 128 + SIGINT when
+ * Sets g_env.interrupted to true, and g_env.exit to 128 + SIGINT when
  * a SIGINT is received
  *
  * @return 0 on success, 1 on failure
@@ -44,7 +44,7 @@ uint8_t	signal_standard_interrupt(void);
  * Set the readline signal handler for SIGINT
  *
  * Clears the current line, and starts a new one.
- * Sets g_globals.exit to 128 + SIGINT
+ * Sets g_env.exit to 128 + SIGINT
  *
  * @return 0 on success, 1 on failure
  */

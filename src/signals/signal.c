@@ -16,8 +16,8 @@
 
 static void	standard_interrupt(int32_t sig)
 {
-	g_globals.interrupted = true;
-	g_globals.exit = 0x80 + sig;
+	g_env.interrupted = true;
+	g_env.exit = 0x80 + sig;
 }
 
 uint8_t	signal_standard_interrupt(void)
@@ -42,8 +42,8 @@ uint8_t	signal_ignore_interrupt(void)
 
 uint8_t	init_signals(void)
 {
-	if (sigaction(SIGINT, NULL, g_globals.orig_signals + 0) == 0 && \
-		sigaction(SIGQUIT, NULL, g_globals.orig_signals + 1) == 0 && \
+	if (sigaction(SIGINT, NULL, g_env.orig_signals + 0) == 0 && \
+		sigaction(SIGQUIT, NULL, g_env.orig_signals + 1) == 0 && \
 		signal_standard_interrupt() != EXIT_FAILURE && \
 		signal(SIGQUIT, SIG_IGN) != SIG_ERR)
 		return (EXIT_SUCCESS);
@@ -53,8 +53,8 @@ uint8_t	init_signals(void)
 
 uint8_t	reset_signals(void)
 {
-	if (sigaction(SIGINT, g_globals.orig_signals + 0, NULL) >= 0 && \
-		sigaction(SIGQUIT, g_globals.orig_signals + 1, NULL) >= 0)
+	if (sigaction(SIGINT, g_env.orig_signals + 0, NULL) >= 0 && \
+		sigaction(SIGQUIT, g_env.orig_signals + 1, NULL) >= 0)
 		return (EXIT_SUCCESS);
 	perror("reset_signals");
 	return (EXIT_FAILURE);

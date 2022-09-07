@@ -75,7 +75,7 @@ uint8_t	builtin_exit(char **argv)
 	char	*arg;
 
 	if (argv[1] == NULL)
-		exit(g_globals.exit);
+		exit(g_env.exit);
 	arg = argv[1];
 	if (!parse_status(arg, &status))
 		exit(builtin_err(PRE_EXIT, arg, ERR_NUMS, SYNTAX));

@@ -23,7 +23,7 @@ uint8_t	error_status(t_ast_node **node, char *where, uint8_t status)
 	if (node != NULL)
 		destroy_node(node);
 	if (status != SUCCESS)
-		g_globals.exit = status;
+		g_env.exit = status;
 	return (-1);
 }
 
