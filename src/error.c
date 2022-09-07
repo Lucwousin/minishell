@@ -15,8 +15,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define ERROR_MSG_PREFIX	"Minishell: Error in "
-#define SYNTAX_MSG_PREFIX	"Minishell: Syntax error near unexpected token `"
+#define ERROR_MSG_PREFIX	"minishell: error in "
+#define SYNTAX_MSG_PREFIX	"minishell: syntax error near unexpected token `"
 #define SYNTAX_MSG_SUFFIX	"'\n"
 #define NEWLINE_NAME		"newline"
 
