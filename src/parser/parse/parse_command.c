@@ -15,15 +15,6 @@
 bool	general_error(const char *where);
 void	syntax_error_type(t_tokentype type);
 
-static bool	check_start_syntax(t_parser *parser, t_tokentype *type)
-{
-	*type = ((t_token *) parser->tokens->arr)[parser->idx].type;
-	if (*type == WORD || is_redir(*type))
-		return (false);
-	syntax_error_type(*type);
-	return (true);
-}
-
 static bool	add_arg(t_parser *parser, t_ast_node *dst)
 {
 	t_token		*token;
@@ -44,11 +35,10 @@ t_tokentype	parse_command(t_parser *parser, t_ast_node **dst)
 {
 	t_tokentype	type;
 
-	if (check_start_syntax(parser, &type))
-		return (error_status(NULL, NULL, SYNTAX));
 	*dst = init_cmd_node();
 	if (*dst == NULL)
 		return (error_status(NULL, "parse_cmd", ERROR));
+	type = ((t_token *) dynarr_get(parser->tokens, parser->idx))->type;
 	while (type == WORD || is_redir(type))
 	{
 		if (type == WORD)

@@ -18,8 +18,10 @@ static bool	check_start_syntax(t_parser *parser, bool paren, t_tokentype *type)
 {
 	parser->idx += paren;
 	*type = ((t_token *) parser->tokens->arr)[parser->idx].type;
-	if (*type == WORD || is_redir(*type)
-		|| (!paren && (*type == PAR_OPEN || *type == END_OF_INPUT)))
+	if (*type == WORD
+		|| is_redir(*type)
+		|| *type == PAR_OPEN
+		|| (!paren && *type == END_OF_INPUT))
 		return (false);
 	syntax_error_type(*type);
 	return (true);
@@ -44,10 +46,9 @@ static t_tokentype	get_next_type(t_parser *parser, t_tokentype type)
 	return (next_tok->type);
 }
 
-static bool	check_done(t_tokentype type)
+static bool	should_parse_next(t_tokentype type)
 {
-	// TODO: change to check continue? Only pipes or logic can be continued
-	return (type == END_OF_INPUT || type == PAR_OPEN || type == PAR_CLOSE);
+	return (type == OR || type == AND || type == PIPE);
 }
 
 t_tokentype	parse_subshell(t_parser *parser, t_ast_node **dst, bool paren)
@@ -66,7 +67,7 @@ t_tokentype	parse_subshell(t_parser *parser, t_ast_node **dst, bool paren)
 		type = parse_node(parser, type, sub);
 		if (*sub == NULL)
 			return (error_status(dst, NULL, 0));
-		if (check_done(type))
+		if (!should_parse_next(type))
 			break ;
 	}
 	if (check_end_syntax(type, paren))
