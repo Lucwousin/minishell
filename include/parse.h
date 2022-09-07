@@ -102,7 +102,7 @@ bool		parse_redir(t_parser *parser, t_ast_node **dst);
  * Functions to allocate and initialize new AST nodes
  */
 t_ast_node	*init_cmd_node(void);
-t_ast_node	*init_paren_node(void);
+t_ast_node	*init_subsh_node(void);
 t_ast_node	*init_pipe_node(t_ast_node *first);
 t_ast_node	*init_logic_node(t_tokentype type, t_ast_node *left);
 

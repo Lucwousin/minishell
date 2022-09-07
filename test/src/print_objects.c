@@ -75,7 +75,7 @@ void	print_node(const char *cmd, t_ast_node *node, uint32_t ind)
 	printf("%s\n", type);
 	switch (node->type) {
 		case PARENTHESIS:
-			print_node(cmd, node->paren.contents, ind + 1);
+			print_node(cmd, node->subsh.contents, ind + 1);
 			break;
 		case LOGIC:
 			printf("L:");

@@ -30,7 +30,7 @@ t_ast_node	*init_cmd_node(void)
 	return (NULL);
 }
 
-t_ast_node	*init_paren_node(void)
+t_ast_node	*init_subsh_node(void)
 {
 	t_ast_node		*node;
 
@@ -38,7 +38,7 @@ t_ast_node	*init_paren_node(void)
 	if (node == NULL)
 		return (NULL);
 	node->type = PARENTHESIS;
-	node->paren.contents = NULL;
+	node->subsh.contents = NULL;
 	return (node);
 }
 

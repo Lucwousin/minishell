@@ -58,10 +58,10 @@ t_tokentype	parse_subshell(t_parser *parser, t_ast_node **dst, bool paren)
 
 	if (check_start_syntax(parser, paren, &type))
 		return (error_status(NULL, NULL, SYNTAX));
-	*dst = init_paren_node();
+	*dst = init_subsh_node();
 	if (*dst == NULL)
 		return (error_status(NULL, "parse subshell", ERROR));
-	sub = &(*dst)->paren.contents;
+	sub = &(*dst)->subsh.contents;
 	while (true)
 	{
 		type = parse_node(parser, type, sub);

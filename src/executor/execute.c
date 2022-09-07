@@ -26,11 +26,11 @@ uint8_t	execute_node(t_ast_node *node, bool must_exit)
 
 uint8_t	execute(t_ast_node *root_node)
 {
-	t_paren_node	*root;
+	t_subsh_node	*root;
 
 	if (root_node == NULL)
 		return (EXIT_SUCCESS);
-	root = &root_node->paren;
+	root = &root_node->subsh;
 	if (root->contents == NULL)
 		return (EXIT_SUCCESS);
 	return (execute_node(root->contents, false));

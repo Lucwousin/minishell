@@ -19,5 +19,5 @@ uint8_t	execute_subshell(t_ast_node *node, bool must_exit)
 	if (!must_exit)
 		if (fork_and_wait(&status))
 			return (status);
-	exit(execute_node(node->paren.contents, true));
+	exit(execute_node(node->subsh.contents, true));
 }

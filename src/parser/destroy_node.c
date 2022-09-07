@@ -54,16 +54,16 @@ static void	destroy_pipeline(t_ast_node *node)
 	dynarr_delete(&node->pipe.nodes);
 }
 
-static void	destroy_parenthesis(t_ast_node *node)
+static void	destroy_subshell(t_ast_node *node)
 {
-	destroy_node(&node->paren.contents);
+	destroy_node(&node->subsh.contents);
 }
 
 static void	(*g_destroylut[])(t_ast_node *) = {
 [COMMAND] = destroy_command,
 [LOGIC] = destroy_logic,
 [PIPELINE] = destroy_pipeline,
-[PARENTHESIS] = destroy_parenthesis
+[PARENTHESIS] = destroy_subshell
 };
 
 void	destroy_node(t_ast_node **nodep)
