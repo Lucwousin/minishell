@@ -16,9 +16,6 @@ CC := gcc
 
 CFLAGS += -Wall -Werror -Wextra
 CFLAGS += -I $(INCD)
-#CFLAGS += -std=c17
-CFLAGS += -g
-#CFLAGS += -fsanitize=address
 
 # SOURCE FILES
 SRCD := src/
@@ -97,24 +94,6 @@ INCP := $(addprefix $(INCD), $(INCS))
 
 HEADERS += $(INCP)
 
-# TEST FILES
-TEST_DIR := test/
-
-TEST_EXE := $(addprefix $(TEST_DIR), .test)
-TEST_RESD := $(addprefix $(TEST_DIR), res/)
-
-TEST_SRCD := $(addprefix $(TEST_DIR), $(SRCD))
-TEST_SRCS := main.c															\
-			 print_objects.c												\
-			 perform_test.c
-TEST_SRCP := $(addprefix $(TEST_SRCD), $(TEST_SRCS))
-
-TEST_LIB := $(addprefix $(TEST_DIR), $(addsuffix _test.a, $(NAME)))
-TEST_LIB_OBJS := $(filter-out $(OBJD)main.o, $(OBJP))
-
-TEST_LIBS += $(TEST_LIB)
-TEST_LIBS += $(LIBS)
-
 # LIBRARIES
 
 #		LIBFT
@@ -139,17 +118,11 @@ ifeq ($(shell uname), Darwin)
 	CFLAGS += -I$(shell brew --prefix readline)/include
 endif
 
-#		LINUX SPECIFIC LINKIG
-ifeq ($(shell uname), Linux)
-	VALGRIND = valgrind --show-reachable=yes --leak-check=full --log-fd=3
-	VALGRIND_D = -DVALGRIND=1
-endif
-
 #		RANDOM THINGS
 COMPILE := @$(CC) $(CFLAGS)
 
 # RECIPES
-all: $(NAME) test
+all: $(NAME)
 
 $(NAME): $(LIBFT_L) $(OBJP)
 	@echo "Compiling main executable!"
@@ -163,7 +136,7 @@ $(OBJD)%.o: $(SRCD)%.c $(HEADERS)
 $(LIBFT_L):
 	@$(MAKE) -C $(LIBFT_D)
 
-clean: cleantest
+clean:
 	@rm -rf $(OBJD)
 	@echo "Done cleaning $(CURDIR)/$(OBJD)"
 	@$(MAKE) -C $(LIBFT_D) clean
@@ -176,26 +149,4 @@ fclean:
 re: fclean
 	@$(MAKE)
 
-test: $(TEST_LIB)
-	@$(COMPILE) $(TEST_SRCP) $(TEST_LIBS) $(VALGRIND_D) -o $(TEST_EXE)
-	@$(VALGRIND) $(TEST_EXE)
-#	@rm -f $(TEST_EXE)
-
-$(TEST_LIB): $(NAME) $(TEST_LIB_OBJS) $(LIBFT_L)
-	@ar -cr $(TEST_LIB) $(TEST_LIB_OBJS)
-	@echo "Done creating archive $(TEST_LIB)"
-
-generate_test_files: $(TEST_LIBS)
-	@$(foreach test, $(TEST_SRCP), \
-		echo "Generating files for $(test)"; \
-		$(eval TESTNAME := $(TEST_RESD)$(basename $(notdir $(test)))) \
-		$(CC) $(test) $(TEST_LIBS) $(CFLAGS)/ -o $(TEST_EXE); \
-		cat $(TESTNAME) | $(TEST_EXE) > $(TESTNAME)-expected 2> /dev/null; \
-	)
-
-cleantest:
-	@rm -f $(TEST_RESD)*-diff $(TEST_RESD)*-output
-	@rm -f $(TEST_LIB)
-	@rm -f $(TEST_EXE)
-
-.PHONY: all clean fclean re test cleantest generate_test_files
+.PHONY: all clean fclean re
