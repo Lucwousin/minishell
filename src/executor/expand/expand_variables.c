@@ -32,10 +32,11 @@ static bool	add_var(const char **cmd_p, t_dynarr *buf, t_wordlist *cur)
 	*cmd_p = var_end;
 	if (var_end == cmd)
 	{
-		if ((*var_end != '?' && !ft_isdigit(*var_end))
-			&& !(*var_end == '\0' && flag(cur->flags, APPEND_NEXT)))
+		if (*var_end == '\0' && flag(cur->flags, APPEND_NEXT))
+			return (true);
+		if (*var_end != '?' && !ft_isdigit(*var_end))
 			return (put(buf, "$", 1));
-		(*cmd_p)++;
+		++*cmd_p;
 		if (*var_end == '?')
 			return (put(buf, get_variable("?"), SIZE_MAX));
 		return (true);

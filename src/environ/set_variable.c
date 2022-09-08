@@ -21,15 +21,15 @@ static uint8_t	add_variable(char *var)
 	size_t		index;
 
 	index = g_env.vars.length - 1;
-	if (dynarr_grow(&g_env.vars, g_env.vars.length + 1))
+	if (dynarr_grow(&g_env.vars, g_env.vars.length += 1))
 	{
 		arr = g_env.vars.arr;
 		arr[index] = ft_strdup(var);
 		arr[index + 1] = NULL;
 		if (arr[index] != NULL)
 			return (EXIT_SUCCESS);
-		--g_env.vars.length;
 	}
+	--g_env.vars.length;
 	perror("add_variable");
 	return (EXIT_FAILURE);
 }
