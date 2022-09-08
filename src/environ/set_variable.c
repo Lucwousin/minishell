@@ -21,7 +21,7 @@ static uint8_t	add_variable(char *var)
 	size_t		index;
 
 	index = g_env.vars.length - 1;
-	if (dynarr_grow(&g_env.vars, g_env.vars.length += 1))
+	if (dynarr_grow(&g_env.vars, ++g_env.vars.length))
 	{
 		arr = g_env.vars.arr;
 		arr[index] = ft_strdup(var);
