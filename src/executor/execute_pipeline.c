@@ -28,13 +28,9 @@ static bool	init_pipe(t_pipeline *pipe, size_t len)
 	pipe->pipe[1] = -1;
 	pipe->len = len;
 	pipe->pids = malloc(pipe->len * sizeof(pid_t));
-	if (pipe->pids == NULL)
-	{
-		perror(ERR_PIDS);
-		return (EXIT_FAILURE);
-	}
-	if (dup_stdio(pipe->orig))
+	if (pipe->pids != NULL)
 		return (EXIT_SUCCESS);
+	perror(ERR_PIDS);
 	return (EXIT_FAILURE);
 }
 
@@ -49,25 +45,27 @@ void	run_pipe(t_pipeline *p, t_ast_node *node, int32_t io[2])
 	exit(EXIT_FAILURE);
 }
 
-static bool	lay_pipe(t_pipeline *p, t_ast_node *node)
+static uint8_t	lay_pipe(t_pipeline *p, t_ast_node *node)
 {
 	const bool	need_pipe = p->idx != p->len - 1;
 	int32_t		io[2];
+	uint8_t		status;
 
 	io[0] = p->pipe[PIPE_READ];
-	if (io[0] == -1)
-		io[0] = p->orig[STDIN_FILENO];
 	if ((need_pipe && (pipe(p->pipe) == -1)))
 		return (EXIT_FAILURE);
-	io[1] = p->orig[STDOUT_FILENO];
+	io[1] = -1;
 	if (need_pipe)
 		io[1] = p->pipe[PIPE_WRITE];
 	p->pids[p->idx] = fork();
-	if (p->pids[p->idx] != 0 && close(io[0]) | close(io[1]))
-		return (EXIT_FAILURE);
 	if (p->pids[p->idx] == 0)
 		run_pipe(p, node, io);
-	return (p->pids[p->idx++] == -1);
+	status = EXIT_SUCCESS;
+	if (io[0] != -1 && close(io[0]) != 0)
+		status = EXIT_FAILURE;
+	if (io[1] != -1 && close(io[1]) != 0)
+		status = EXIT_FAILURE;
+	return (p->pids[p->idx++] == -1 || status);
 }
 
 uint8_t	execute_pipeline(t_ast_node *node, bool must_exit)
@@ -78,13 +76,13 @@ uint8_t	execute_pipeline(t_ast_node *node, bool must_exit)
 
 	nodes = node->pipe.nodes.arr;
 	if (init_pipe(&p, node->pipe.nodes.length))
-		return (EXIT_FAILURE);
+		return (try_exit(EXIT_FAILURE, must_exit));
 	status = EXIT_SUCCESS;
 	while (status == EXIT_SUCCESS && p.idx < p.len)
 		status = lay_pipe(&p, nodes[p.idx]);
 	if (status == EXIT_FAILURE)
 		perror(ERR_PIPEL);
-	status = wait_pids(p.pids, p.len);
+	status = wait_pids(p.pids, p.idx);
 	free(p.pids);
 	return (try_exit(status, must_exit));
 }
