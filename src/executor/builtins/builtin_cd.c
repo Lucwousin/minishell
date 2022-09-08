@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <builtins.h>
-#include <libft.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>

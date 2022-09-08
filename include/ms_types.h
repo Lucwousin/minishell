@@ -24,9 +24,6 @@ typedef enum e_tokentype {
 	NO_TYPE,
 	WHITESPACE,
 	WORD,
-	VARIABLE,
-	SQUOTE,
-	DQUOTE,
 	OPERATOR,
 	RED_IN,
 	RED_HD,
@@ -73,11 +70,6 @@ struct s_wordlist {
 	char		*word;
 	t_flag		flags;
 };
-
-typedef struct s_cmd_node	t_cmd_node;
-typedef struct s_logic_node	t_logic_node;
-typedef struct s_subsh_node	t_subsh_node;
-typedef struct s_pipe_node	t_pipe_node;
 
 typedef struct s_ast_node	t_ast_node;
 struct s_ast_node {

@@ -34,7 +34,6 @@ typedef uint8_t	(*t_executor)(t_ast_node *, bool);
  * `pids' is where the process id of every piped node is stored
  */
 typedef struct s_pipeline {
-	int32_t	orig[2];
 	int32_t	pipe[2];
 	size_t	idx;
 	size_t	len;
