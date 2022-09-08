@@ -1,6 +1,7 @@
 #include "test.h"
 #include "get_next_line.h"
 #include "input.h"
+#include "environ.h"
 #include <minishell.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -80,5 +81,6 @@ void	perform_test(void)
 		free(line);
 		fflush(stdout);
 	}
+	clean_environment();
 	exit(g_env.exit);
 }
