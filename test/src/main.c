@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <valgrind/valgrind.h>
 
 #ifndef VALGRIND
 # define VALGRIND 0
@@ -41,27 +42,41 @@ static char	*get_file_name(const char *pre, const char *test, const char *suf)
 	return (name);
 }
 
-static int	run_test(char *file, bool gen)
+static int	run_test(char *file, DIR *test_dir, bool gen)
 {
-	char	*files[2];
-	int32_t	fds[2];
+	char	*files[3];
+	int32_t	fds[3];
 
 	pid_t	pid = fork();
 	if (pid == -1)
 		return (2);
 	if (pid != 0)
 		return (0);
+
 	files[0] = get_file_name("./test/cases/", file, NULL);
 	files[1] = get_file_name("./test/output/", file, gen ? "-expected" : "-output");
+	files[2] = VALGRIND ? get_file_name("./test/output/", file, "-valgrind") : NULL;
+
+	if (VALGRIND)
+		setenv("VG_LOG", files[2], true);
 	fds[0] = open(files[0], O_RDONLY);
 	fds[1] = open(files[1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	fds[2] = VALGRIND ? open(files[2], O_WRONLY | O_TRUNC | O_CREAT, 0644) : -1;
+
 	free(files[0]);
 	free(files[1]);
+	free(files[2]);
+
 	dup2(fds[0], STDIN_FILENO);
 	dup2(fds[1], STDOUT_FILENO);
 	dup2(fds[1], STDERR_FILENO);
+	dup2(fds[2], 3);
+
 	close(fds[0]);
 	close(fds[1]);
+	close(fds[2]);
+
+	closedir(test_dir);
 	perform_test();
 	return (69);
 }
@@ -82,7 +97,7 @@ static int	run_tests(int argc, char **argv, bool generate)
 			break ;
 		if (entry->d_name[0] == '.' || ignore(entry, argc, argv))
 			continue ;
-		if (run_test(entry->d_name, generate))
+		if (run_test(entry->d_name, test_dir, generate))
 			break ;
 	}
 	if (errno != 0) {

@@ -63,10 +63,10 @@ static bool	lay_pipe(t_pipeline *p, t_ast_node *node)
 	if (need_pipe)
 		io[1] = p->pipe[PIPE_WRITE];
 	p->pids[p->idx] = fork();
-	if (p->pids[p->idx] != 0 && close(io[0]) | close(io[1]))
-		return (EXIT_FAILURE);
 	if (p->pids[p->idx] == 0)
 		run_pipe(p, node, io);
+	if ((close(io[0]) | close(io[1])) != 0)
+		return (EXIT_FAILURE);
 	return (p->pids[p->idx++] == -1);
 }
 
@@ -78,7 +78,7 @@ uint8_t	execute_pipeline(t_ast_node *node, bool must_exit)
 
 	nodes = node->pipe.nodes.arr;
 	if (init_pipe(&p, node->pipe.nodes.length))
-		return (EXIT_FAILURE);
+		return (try_exit(EXIT_FAILURE, must_exit));
 	status = EXIT_SUCCESS;
 	while (status == EXIT_SUCCESS && p.idx < p.len)
 		status = lay_pipe(&p, nodes[p.idx]);

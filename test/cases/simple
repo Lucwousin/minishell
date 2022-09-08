@@ -55,7 +55,10 @@ lsl
 #pipes?
 echo hey | wc
 echo hey | cat | wc -c
-echo hey | cat | cat |cat| "cat"|'cat'|cat | ca"t" | c'at' |''cat"" | "c"at | 'ca't
+<< test cat | cat | cat |cat| "cat"|'cat'|cat | ca"t" | c'at' |''cat"" | "c"at | 'ca't
+hey lol
+heredoc
+test
 echo hey || cat Makefile | wc -c
 env
 cd
