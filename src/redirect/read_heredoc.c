@@ -6,7 +6,7 @@
 /*   By: lsinke <lsinke@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2022/08/04 16:15:54 by lsinke        #+#    #+#                 */
-/*   Updated: 2022/08/04 16:15:54 by lsinke        ########   odam.nl         */
+/*   Updated: 2022/09/11 19:02:26 by lsinke        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static bool	error(const char *msg, t_dynarr *doc, void *free_)
 	{
 		n = doc->length;
 		while (n--)
-			free(dynarr_get(doc, n));
+			free(*((char **) dynarr_get(doc, n)));
 		dynarr_delete(doc);
 	}
 	free(free_);
